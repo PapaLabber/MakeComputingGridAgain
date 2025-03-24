@@ -1,9 +1,11 @@
-// Main server script
+// MAIN SERVER SCRIPT
 
 // Import required modules
-import express from "express";
-import { createServer } from "http";
-import { WebSocketServer } from "ws";
+import express from "express"; // Express is a popular web framework for Node.js. 
+/* 
+more info see https://expressjs.com/
+remember to install express with "npm install express" in cmd 
+*/
 
 // Initialize Express app
 const app = express(); 
@@ -13,14 +15,18 @@ It represents your web application and provides a set of methods and
 middleware to handle HTTP requests, define routes, and manage server-side logic.
 */
 
-// Define the port number for communicating with clients
+// Define the port number for client communication
 const PORT = 3000;
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
+/* Why do we need to parse JSON request bodies?
+Data responses from clients are sent in JSON format.
+This middleware parses incoming request bodies and makes the data available in the req.body object.
+*/
 
 // Define a simple GET endpoint
-app.get("/", (req, res) => { // A simple GET endpoint (/) responds with a message to confirm the server is running.
+app.get("/", (req, res) => { // A simple GET endpoint (/) responds with a message for now.
     res.send("Server is running!"); // *** Should be changed to make it answer with a task ***
 });
 
