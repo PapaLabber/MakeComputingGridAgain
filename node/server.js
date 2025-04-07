@@ -1,13 +1,19 @@
 // MAIN SERVER SCRIPT
 
-import http from 'http';
-import fs from 'fs';
+import https from 'https'; // to create an HTTP server
+import fs from 'fs'; // to read files from the server file system
 
 const hostname = '127.0.0.1';
 const PORT = 3000;
-const path = 'node/PublicResources/index.html';
+const path = 'node/PublicResources/clientPage.html';
 
-const server = http.createServer(function(req, res) {
+// Load SSL/TLS certificate and private key (These are self-signed for now, so the browser will show a warning)
+const options = {
+    key: fs.readFileSync('node/SSL_TLS_certificate/key.pem'), // Path to private key
+    cert: fs.readFileSync('node/SSL_TLS_certificate/cert.pem') // Path to certificate
+};
+
+const server = https.createServer(options, function(req, res) {
     fs.readFile(path, function(err, data) {
         if (err) {
             res.writeHead(404, {'Content-Type': 'text/html'});
@@ -19,12 +25,14 @@ const server = http.createServer(function(req, res) {
     });
 });
 
+// Start the server and listen on the specified port
+// and log the server address to the console
 server.listen(PORT, function(error) {
     if (error) {
         console.error('Error starting server:', error);
     } 
     else {
-        console.log(`Server running at http://${hostname}:${PORT}/`);
+        console.log(`Server running at https://${hostname}:${PORT}/`);
     }
 });
 
