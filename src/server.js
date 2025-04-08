@@ -1,5 +1,7 @@
 // Main server script
 
+//
+
 // Import required modules
 import express from "express";
 import { createServer } from "http";
@@ -21,6 +23,11 @@ app.use(express.json());
 
 // Define a simple GET endpoint
 app.get("/", (req, res) => { // A simple GET endpoint (/) responds with a message to confirm the server is running.
+    res.send("Server is running!"); // *** Should be changed to make it answer with a task ***
+});
+
+//Register
+app.get("/register", (req, res) => { // A simple GET endpoint (/) responds with a message to confirm the server is running.
     res.send("Server is running!"); // *** Should be changed to make it answer with a task ***
 });
 

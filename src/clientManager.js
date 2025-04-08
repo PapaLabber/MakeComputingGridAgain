@@ -1,56 +1,44 @@
-//export {validateForm};
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('userData');
+  if (form) {
+      form.addEventListener('submit', function(event) {
+          event.preventDefault(); // Prevent form submission for validation
 
-//import signup from './src';
+          const username = document.getElementById('username-input').value;
+          const email = document.getElementById('email-input').value;
+          const password = document.getElementById('password-input').value;
+          const repeatPassword = document.getElementById('repeat-password').value;
 
-const data = FileSystem.readFileSync("clientManager.json");
-const jsonData = JSON.parse(data);
-// Tracks connected clients
+          // Validation checks...
+          if (password !== repeatPassword) {
+              alert('Passwords do not match.');
+              return;
+          }
 
-//json function
-
-function validateForm(userData){
-
-    const signUpForm = document.getElementById("userData");
-      let userName=String(document.getElementsByName("username").value);
-      let email=String(document.getElementsByName("email").value);
-      let password=String(document.getElementsByName("password").value);
-    
-
-      console.log(`${userName} ${password} ${email}`)
-
-    //if(userData.has("username") && userData.has("email") && userData.has("password")){
-    //  let userName=String(userData.get("username"));
-    //  let email=String(userData.get("email"));
-    //  let password=String(userData.get("password"));
-    //
-    //      //return a fresh object with ONLY the validated fields
-    //      let validUserData={userName: userName, email: email, password: password};
-    //      console.log("Validated: "); console.log(validUserData);
-    //      return validUserData;
-    //   }
-      
-
-      console.log("Before adding data", JSON.stringify(jsonData,null,4));
-
-    jsonData.users.push({
-        username:`${userName}`,
-        email:`${email}`,
-        password:`${password}`,
-    })
-    
-    const jsonString = JSON.stringify(jsonData)
-
-    fs.writeFileSync('clientManager.json',jsonString,'utf-8',(err)=>{
-        if (err) throw err;
-        console.log("Data added to file");
-    });
-    const update_data = FileSystem.readFileSync('clientManager.json');
-    const updated_jsonData = JSON.parse(updata_data);
-    console.log("After adding data", JSON.stringify(updated_jsonData,null,4));
-}
-    //validate login function
-    
-
-
-
-    /*database*/
+          // Send the data to the back-end server using fetch
+          fetch('/register', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  username: username,
+                  email: email,
+                  password: password
+              })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.message === 'User successfully registered') {
+                  alert('Sign-up successful!');
+              } else {
+                  alert('Error: ' + data.message);
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('There was an error. Please try again later.');
+          });
+      });
+  }
+});
