@@ -27,8 +27,8 @@ app.get("/", (req, res) => { // A simple GET endpoint (/) responds with a messag
 });
 
 //Register
-app.get("/register", (req, res) => { // A simple GET endpoint (/) responds with a message to confirm the server is running.
-    res.send("Server is running!"); // *** Should be changed to make it answer with a task ***
+app.get("/register", (req, res) => {
+    res.send("User registered succesfully");
 });
 
 // Define a POST endpoint to receive data from clients
