@@ -5,7 +5,7 @@ import fs from 'fs'; // to read files from the server file system
 
 const hostname = '127.0.0.1';
 const PORT = 3430;
-const path = 'node/PublicResources/clientPage.html';
+const path = 'node/PublicResources/ClientPage.html';
 
 
 const server = http.createServer(function(req, res) {
