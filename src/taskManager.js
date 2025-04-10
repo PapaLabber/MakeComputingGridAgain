@@ -51,9 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 document.body.appendChild(taskBox);
 
-                // Listen for the submit button click
-                const submitBtn = document.getElementById("submitResult");
-                submitBtn.addEventListener("click", () => {
                     const userResult = document.getElementById("resultInput").value;
                     // Send the result to the server (optional step, depending on your needs)
                     fetch('/submitResult', {
@@ -77,7 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Optional: Disable the button and input after submission
                     submitBtn.disabled = true;
-                });
             } else {
                 console.log("No task found.");
                 alert('Could not fetch a task.');
