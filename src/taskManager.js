@@ -1,5 +1,5 @@
 // ***Handles task distribution***
-
+/*
 // Connect to the server
 const socket = io(); // This connects to the same server that served the page
 
@@ -34,9 +34,25 @@ socket.on('taskAssigned', (task) => {
          submitBtn.disabled = true;
      });
  });
-
-    /* Show the task on the page (you can get fancy later)
-    const header = document.createElement("h3");
-    header.innerText = `Your task: ${task.expression}`;
-    document.body.appendChild(header);
 })*/
+
+fetch('/submitTask', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      taskId: task.id,
+      expression: task.expression,
+      result: userResult
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("Server response:", data);
+    alert(data.message || "Result submitted!");
+  })
+  .catch(err => {
+    console.error("Error submitting result:", err);
+    alert("There was an error submitting your result.");
+  });
