@@ -73,23 +73,17 @@ app.get('/getUserProfile',(req,res) =>{
     }
 });
 
-//ASSIGNING TASKS TO USERS
-// Example list of tasks
-const tasks = [
-    { id: 1, expression: "5 + 3" },
-    { id: 2, expression: "12 - 7" },
-    { id: 3, expression: "6 * 9" },
-    { id: 4, expression: "10 / 2" }
-];
+//GETTING USER DATA FOR TASK OVERVIEW
+app.get('/api/users-tasks', (req, res) => {
+    const userId = req.query.userId;
 
-// Endpoint to get a random task
-app.get("/getRandomTask", (req, res) => {
-    // Select a random task
-    const randomIndex = Math.floor(Math.random() * tasks.length);
-    const randomTask = tasks[randomIndex];
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+    }
 
-    // Send the random task to the client
-    res.json(randomTask);
+    const userTasks = tasks.filter(task => task.user_id === parseInt(userId));
+
+    res.json(userTasks);
 });
 
 // Start the HTTP server
