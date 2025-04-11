@@ -86,10 +86,15 @@ function acknowledge(queue, taskId) {
     let targetNode = queue.head;
     while (targetNode) {
         if (targetNode.id === taskId) { // Check if current task ID is the same as the ID we are looking for
-            if (targetNode === queue.head) { // Check if target node is the head.
+            if (queue.head === queue.tail) { // Check if target node is the only node in the list.
+                queue.head = null; // Nuke all pointers, because target node is the only node in the list.
+                queue.tail = null;
+            } else if (targetNode === queue.head) { // Check if target node is the head.
+                queue.head = targetNode.next; // Set the head to the next node
                 targetNode.next.prev = null; // Nuke only pointers to the next node, because target node is first.
                 targetNode.next = null;
             } else if (targetNode === queue.tail) { // Check if target node is the tail.
+                queue.tail = targetNode.prev; // Set the tail to the previous node
                 targetNode.prev.next = null; // Nuke only pointers to previous node, because target node is last.
                 targetNode.prev = null;
             } else { // Target node is in between two nodes, and has pointers going both ways.
@@ -112,29 +117,41 @@ function acknowledge(queue, taskId) {
 
 // Make a function that re-adds unfinished tasks, that have already been started, but not finished
 // to the back of the list again (requeue)
-function requeue(queue, taskId) {
-    let currentNode = queue.head.prev;
+function requeue(dq, mq, targetId) {
+    let currentNode = dq.head; // Start at the head of the dequeued list
     while (currentNode) {
-        if (currentNode.id === taskId) { // Check if current task ID is the same as the ID we are looking for
-            // remove current from the queue
-            currentNode.prev.next = currentNode.next; // Set the next of the previous node to the next node of the current node
-            currentNode.next.prev = currentNode.prev; // Set the previous of the next node to the previous node of the current node
-            // insert current at the head of the queue
-            queue.head.prev.next = currentNode;
-            currentNode.prev = queue.head.prev;
-            currentNode.next = queue.head;
-            queue.head.prev = currentNode;
+        if (currentNode.id === targetId) { // Check if current task ID is the same as the ID we are looking for
+            // remove current from the dq
+            if (dq.head === dq.tail) { // Check if target node is the only node in the list.
+                dq.head = null; // Nuke all pointers, because target node is the only node in the list.
+                dq.tail = null;
+            } else if (currentNode === dq.head) { // Check if target node is the head.
+                dq.head = currentNode.next; // Set the head to the next node
+                currentNode.next.prev = null; // Nuke only pointers to the next node, because target node is first.
+                currentNode.next = null;
+            } else if (currentNode === dq.tail) { // Check if target node is the tail.
+                dq.tail = currentNode.prev; // Set the tail to the previous node
+                currentNode.prev.next = null; // Nuke only pointers to previous node, because target node is last.
+                currentNode.prev = null;
+            } else { // Target node is in between two nodes, and has pointers going both ways.
+                currentNode.prev.next = currentNode.next; // Connect the previous node and the next node with eachother
+                currentNode.next.prev = currentNode.prev;
+                currentNode.next = null; // Nuke outgoing pointers
+                currentNode.prev = null;
+            }
 
-            // Make current the new head
-            queue.head = currentTask; // Set the head to the current node
+           // insert current at the head of the mq
+            mq.head.prev = currentNode;
+            currentNode.next = mq.head;
+            mq.head = currentNode;
 
-            console.log(`Task ${taskId} has been requeued at the head.`)
+            console.log(`Task ${targetId} has been requeued at the head.`)
             return true; // Return if the ID's are the same
         } else {
-            currentTask = currentTask.prev; // continue the iteration in the while-loop
+            currentNode = currentNode.prev; // continue the iteration in the while-loop
         }
 
-        console.log(`Task ${taskId} was not found`);
+        console.log(`Task ${targetId} was not found`);
         return false;
     }
 }
