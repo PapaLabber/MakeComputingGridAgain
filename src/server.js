@@ -25,33 +25,45 @@ app.get("/", (req, res) => { // A simple GET endpoint (/) responds with a messag
 
 //CREATING USER PROFILES
 // In-memory storage for users (for demo purposes)
-let users = []; // Array to store registered users
+const users = []; // Array to store registered users
 
-// Register route: Accept user data and create a new user with a unique ID
-app.post("/register", (req, res) => {
+app.post('/register', (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
-    /*
-    // Generate a unique user ID (using timestamp as an example for simplicity)
-    const userId = Date.now(); // Use timestamp as unique ID for this example
-    */
+    // Optional: prevent duplicate usernames
+    const existingUser = users.find(user => user.username === username);
+    if (existingUser) {
+        return res.status(409).json({ message: 'Username already taken.' });
+    }
 
-    // This is where we'd store these users in a database (not implemented).
-    const newUser = { userId, username, email, password };
+    const newUser = { username, email, password };
     users.push(newUser);
 
-    // Respond with the user ID upon successful registration
-    res.status(201).json({
-        message: "User successfully registered",
-        userId: newUser.userId
-    });
+    res.status(201).json({ message: 'User successfully registered' });
 });
 
 //GETTING USER DATA FOR LOGIN
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password are required.' });
+    }
+
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (user) {
+        return res.json({ message: 'Login successful' });
+    } else {
+        return res.status(401).json({ message: 'Invalid username or password.' });
+    }
+});
+
+//GETTING USER DATA FOR PROFILE
 app.get('/getUserProfile',(req,res) =>{
     const user = users.find(u => u.id === userId);
     if (user) {
@@ -59,17 +71,6 @@ app.get('/getUserProfile',(req,res) =>{
     } else {
         res.status(404).json({ message: 'User not found' }); // Handle case where user is not found
     }
-});
-
-//GETTING USER DATA FOR PROFILE
-// Define a POST endpoint to receive data from clients
-app.post("/process", (req, res) => {
-    const { taskId, data } = req.body;
-    console.log(`Received task ${taskId} with data:`, data);
-
-    // Simulate processing and send a response
-    const result = `Processed data for task ${taskId}`;
-    res.json({ taskId, result });
 });
 
 //ASSIGNING TASKS TO USERS

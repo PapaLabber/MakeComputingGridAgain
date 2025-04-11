@@ -50,30 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button id="submitResult">Submit Result</button>
                 `;
                 document.body.appendChild(taskBox);
-
-                    const userResult = document.getElementById("resultInput").value;
-                    // Send the result to the server (optional step, depending on your needs)
-                    fetch('/submitResult', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            taskId: task.id,
-                            result: userResult
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('There was an error submitting your result.');
-                    });
-
-                    // Optional: Disable the button and input after submission
-                    submitBtn.disabled = true;
             } else {
                 console.log("No task found.");
                 alert('Could not fetch a task.');
