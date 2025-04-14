@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+
             // Send the data to the back-end server using fetch
             fetch('/register', {
                 method: 'POST',

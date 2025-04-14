@@ -34,9 +34,22 @@ app.use((req, res) => {
                 return res.status(400).json({ message: 'All fields are required.' });
             }
 
+            //Check if username is already taken
             const existingUser = users.find(user => user.username === username);
             if (existingUser) {
                 return res.status(409).json({ message: 'Username already taken.' });
+            }
+
+            // Check if email is already registered
+            const existingEmail = users.find(user => user.email === email);
+            if (existingEmail) {
+                alert('Email already registered. Please use another one.');
+                return;
+            }
+
+            // Check if password is strong enough (e.g., length, complexity)
+            if (password.length < 6) {
+                return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
             }
 
             const newUser = { username, email, password };
