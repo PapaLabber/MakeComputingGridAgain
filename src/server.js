@@ -5,15 +5,24 @@ import express from "express";
 import { createServer } from "http";
 
 // Initialize Express app
-const app = express(); 
-/* What is an Express app?
-An Express app is an instance of the express framework in Node.js. 
-It represents your web application and provides a set of methods and 
-middleware to handle HTTP requests, define routes, and manage server-side logic.
-*/
-
-// Define the port number for communicating with clients
+const app = express();
 const PORT = 3000;
+
+// Temporary in-memory data storage
+const users = [
+    { username: "test_user", email: "test@example.com", password: "Password123" },
+    { username: "john_doe", email: "john@example.com", password: "John12345" },
+    { username: "jane_doe", email: "jane@example.com", password: "Jane12345" }
+];
+
+const tasks = [
+    { username: "test_user", task: "Complete project", status: "In Progress" },
+    { username: "test_user", task: "Write documentation", status: "Completed" },
+    { username: "john_doe", task: "Fix bugs", status: "Completed" },
+    { username: "john_doe", task: "Deploy application", status: "In Progress" },
+    { username: "jane_doe", task: "Design UI", status: "Completed" },
+    { username: "jane_doe", task: "Conduct testing", status: "Completed" }
+];
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
@@ -26,7 +35,8 @@ app.use((req, res) => {
         case method === 'GET' && path === '/':
             res.send("Server is running!");
             break;
-//POST REGISTER USER
+
+        // POST REGISTER USER
         case method === 'POST' && path === '/register': {
             const { username, email, password } = req.body;
 
@@ -34,31 +44,30 @@ app.use((req, res) => {
                 return res.status(400).json({ message: 'All fields are required.' });
             }
 
-            //Check if username is already taken
-            const existingUser = users.find(user => user.username === username);
-            if (existingUser) {
+            if (users.find(user => user.username === username)) {
                 return res.status(409).json({ message: 'Username already taken.' });
             }
 
-            // Check if email is already registered
-            const existingEmail = users.find(user => user.email === email);
-            if (existingEmail) {
-                alert('Email already registered. Please use another one.');
-                return;
+            if (users.find(user => user.email === email)) {
+                return res.status(409).json({ message: 'Email already registered.' });
             }
 
-            // Check if password is strong enough (e.g., length, complexity)
-            if (password.length < 6) {
-                return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return res.status(400).json({ message: 'Invalid email format.' });
             }
 
-            const newUser = { username, email, password };
-            users.push(newUser);
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
+            if (!passwordRegex.test(password)) {
+                return res.status(400).json({ message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.' });
+            }
 
+            users.push({ username, email, password });
             res.status(201).json({ message: 'User successfully registered' });
             break;
         }
-//POST USER LOGIN 
+
+        // POST USER LOGIN
         case method === 'POST' && path === '/login': {
             const { username, password } = req.body;
 
@@ -74,25 +83,42 @@ app.use((req, res) => {
                 return res.status(401).json({ message: 'Invalid username or password.' });
             }
         }
-//GET USER PROFILE
+
+        // GET USER PROFILE
         case method === 'GET' && path === '/getUserProfile': {
-            const user = users.find(u => u.id === userId);
+            const { username } = req.query;
+
+            if (!username) {
+                return res.status(400).json({ message: 'Username is required.' });
+            }
+
+            const user = users.find(u => u.username === username);
             if (user) {
-                res.json(user);
+                const userTasks = tasks.filter(task => task.username === username);
+                const completedTasks = userTasks.filter(task => task.status === 'Completed');
+                const points = completedTasks.length * 10; // Example: 10 points per completed task
+
+                res.json({
+                    username: user.username,
+                    email: user.email,
+                    points: points,
+                    tasks: userTasks
+                });
             } else {
-                res.status(404).json({ message: 'User not found' });
+                res.status(404).json({ message: 'User not found.' });
             }
             break;
         }
-//GET USER TASKS FOR OVERVIEW
-        case method === 'GET' && path === '/api/users-tasks': {
-            const userId = req.query.userId;
 
-            if (!userId) {
-                return res.status(400).json({ message: 'User ID is required' });
+        // GET USER TASKS FOR OVERVIEW
+        case method === 'GET' && path === '/api/users-tasks': {
+            const { username } = req.query;
+
+            if (!username) {
+                return res.status(400).json({ message: 'Username is required' });
             }
 
-            const userTasks = tasks.filter(task => task.user_id === parseInt(userId));
+            const userTasks = tasks.filter(task => task.username === username);
             res.json(userTasks);
             break;
         }

@@ -1,18 +1,23 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Get the userId from localStorage (it should be saved after the user signs up or logs in)
-    const userId = localStorage.getItem('userId');
-    
-    if (userId) {
+document.addEventListener('DOMContentLoaded', function () {
+    // Define the username (this could be dynamically set based on the logged-in user)
+    const username = "test_user"; // Example: hardcoded username for testing
+
+    if (username) {
         // Fetch the user's tasks when the page loads
-        fetchUserTasks(userId);
+        fetchUserTasks(username);
     } else {
         alert('No user found! Please log in.');
     }
 
     // Function to fetch user tasks from the backend
-    function fetchUserTasks(userId) {
-        fetch(`/api/users-tasks?userId=${userId}`)
-            .then(response => response.json())
+    function fetchUserTasks(username) {
+        fetch(`/api/users-tasks?username=${username}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json(); // Parse the response as JSON
+            })
             .then(tasks => {
                 displayTasks(tasks);
             })
@@ -28,17 +33,17 @@ document.addEventListener('DOMContentLoaded', function() {
         taskContainer.innerHTML = ''; // Clear any previous content
 
         // Filter tasks by status
-        const completedTasks = tasks.filter(task => task.status === 'completed');
-        const currentTask = tasks.find(task => task.status === 'in-progress');
+        const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
+        const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
 
         // Display completed tasks
         const completedList = completedTasks.length
-            ? '<ul>' + completedTasks.map(task => `<li>${task.title}</li>`).join('') + '</ul>'
+            ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
             : '<p>No completed tasks yet!</p>';
 
         // Display current task
         const currentTaskDisplay = currentTask
-            ? `<p>Currently working on: <strong>${currentTask.title}</strong></p>`
+            ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
             : '<p>No current task in progress.</p>';
 
         // Update the page with the fetched data
