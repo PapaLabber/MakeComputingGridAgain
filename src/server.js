@@ -27,7 +27,7 @@ const tasks = [
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
-// Centralized route handling using a switch-like structure
+// Centralized route handling using a switch-case structure
 app.use((req, res) => {
     const { method, path } = req;
 

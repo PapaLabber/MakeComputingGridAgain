@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-
             // Send the data to the back-end server using fetch
             fetch('/register', {
                 method: 'POST',
@@ -31,9 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.message === 'User successfully registered') {
-                    alert('Sign-up successful! Your user ID is ' + data.userId);
-                    // Optionally, store the user ID in localStorage or sessionStorage
-                    localStorage.setItem('userId', data.userId);
+                    alert('Sign-up successful!');
+                    // Optionally, redirect to a login page or another page
+                    window.location.href = '/login.html';
                 } else {
                     alert('Error: ' + data.message);
                 }
