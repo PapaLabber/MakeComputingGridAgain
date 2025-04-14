@@ -1,6 +1,8 @@
 
-// Export functions
-export { enqueue, dequeue, acknowledge, requeue, print, task, queue };
+const fs = require('fs');
+const csv = require('csv-parser');
+
+module.exports = { taskBrokerMain };
 
 
 // Make a linked list to hold tasks
@@ -27,6 +29,35 @@ class queue { // The queue itself
         this.tail; // The back node in the queue
     }
 }
+
+
+// Initialize message queue for task distribution
+const messageQueue = new queue;
+const dqList = new queue;
+
+
+function taskBrokerMain() {
+    fs.createReadStream('./primes_1_to_1000.csv') // Replace 'data.csv' with your file path
+        .pipe(csv())
+        .on('data', (row) => {
+            // Extract only the values from the row
+            const values = Object.values(row); // Example: ['1', 'bla']
+
+            // Create a new task using the extracted values
+            const newTask = new task(values[1], values[0]); // Assuming task(id, data)
+
+            enqueue(messageQueue, newTask); // Add each row to the linked list
+        })
+        .on('end', () => {
+            console.log('CSV file successfully processed.');
+            printQueue(messageQueue);
+        });
+}
+
+
+/*#########################################################*/
+
+
 
 // Make a function that adds tasks to the linked list (enqueue)
 function enqueue(queue, task) {
@@ -84,24 +115,7 @@ function acknowledge(queue, taskId) {
     let targetNode = queue.head;
     while (targetNode) {
         if (targetNode.task.id === taskId) { // Check if current task ID is the same as the ID we are looking for
-            if (queue.head === queue.tail) { // Check if target node is the only node in the list.
-                queue.head = null; // Nuke all pointers, because target node is the only node in the list.
-                queue.tail = null;
-            } else if (targetNode === queue.head) { // Check if target node is the head.
-                queue.head = targetNode.next; // Set the head to the next node
-                targetNode.next.prev = null; // Nuke only pointers to the next node, because target node is first.
-                targetNode.next = null;
-            } else if (targetNode === queue.tail) { // Check if target node is the tail.
-                queue.tail = targetNode.prev; // Set the tail to the previous node
-                targetNode.prev.next = null; // Nuke only pointers to previous node, because target node is last.
-                targetNode.prev = null;
-            } else { // Target node is in between two nodes, and has pointers going both ways.
-                targetNode.prev.next = targetNode.next; // Connect the previous node and the next node with eachother
-                targetNode.next.prev = targetNode.prev;
-                targetNode.next = null; // Nuke outgoing pointers
-                targetNode.prev = null;
-            }
-
+            removeNode(queue, targetNode)
             console.log(`Task ${taskId} has been acknowledged and deleted from the list.`)
             return true; // Return if the ID's are the same
         } else {
@@ -116,46 +130,29 @@ function acknowledge(queue, taskId) {
 // Make a function that re-adds unfinished tasks, that have already been started, but not finished
 // to the back of the list again (requeue)
 function requeue(dq, mq, targetId) {
-    let currentNode = dq.head; // Start at the head of the dequeued list
-    while (currentNode) {
-        if (currentNode.task.id === targetId) { // Check if current task ID is the same as the ID we are looking for
+    let targetNode = dq.head; // Start at the head of the dequeued list
+    while (targetNode) {
+        if (targetNode.task.id === targetId) { // Check if current task ID is the same as the ID we are looking for
             // remove current from the dq
-            if (dq.head === dq.tail) { // Check if target node is the only node in the list.
-                dq.head = null; // Nuke all pointers, because target node is the only node in the list.
-                dq.tail = null;
-            } else if (currentNode === dq.head) { // Check if target node is the head.
-                dq.head = currentNode.next; // Set the head to the next node
-                currentNode.next.prev = null; // Nuke only pointers to the next node, because target node is first.
-                currentNode.next = null;
-            } else if (currentNode === dq.tail) { // Check if target node is the tail.
-                dq.tail = currentNode.prev; // Set the tail to the previous node
-                currentNode.prev.next = null; // Nuke only pointers to previous node, because target node is last.
-                currentNode.prev = null;
-            } else { // Target node is in between two nodes, and has pointers going both ways.
-                currentNode.prev.next = currentNode.next; // Connect the previous node and the next node with eachother
-                currentNode.next.prev = currentNode.prev;
-                currentNode.next = null; // Nuke outgoing pointers
-                currentNode.prev = null;
-            }
+            removeNode(dq, targetNode);
 
             // insert current at the head of the mq
-            mq.head.prev = currentNode;
-            currentNode.next = mq.head;
-            mq.head = currentNode;
+            mq.head.prev = targetNode;
+            targetNode.next = mq.head;
+            mq.head = targetNode;
 
             console.log(`Task ${targetId} has been requeued at the head.`)
             return true; // Return if the ID's are the same
         } else {
-            currentNode = currentNode.next; // continue the iteration in the while-loop
+            targetNode = targetNode.next; // continue the iteration in the while-loop
         }
-
     }
     console.log(`Task ${targetId} was not found`);
     return false;
 }
 
 // Print the linked list
-function print(queue) {
+function printQueue(queue) {
     if (!queue.head) { // If queue empty
         console.log("Nothing to print - List is empty");
         return null;
@@ -166,3 +163,54 @@ function print(queue) {
         current = current.next;
     }
 }
+
+// Helper function 
+function removeNode(queue, targetNode) {
+    if (queue.head === queue.tail) { // Check if target node is the only node in the list.
+        queue.head = null; // Nuke all pointers, because target node is the only node in the list.
+        queue.tail = null;
+    } else if (targetNode === queue.head) { // Check if target node is the head.
+        queue.head = targetNode.next; // Set the head to the next node
+        targetNode.next.prev = null; // Nuke only pointers to the next node, because target node is first.
+        targetNode.next = null;
+    } else if (targetNode === queue.tail) { // Check if target node is the tail.
+        queue.tail = targetNode.prev; // Set the tail to the previous node
+        targetNode.prev.next = null; // Nuke only pointers to previous node, because target node is last.
+        targetNode.prev = null;
+    } else { // Target node is in between two nodes, and has pointers going both ways.
+        targetNode.prev.next = targetNode.next; // Connect the previous node and the next node with eachother
+        targetNode.next.prev = targetNode.prev;
+        targetNode.next = null; // Nuke outgoing pointers
+        targetNode.prev = null;
+    }
+}
+
+
+
+//______________________________________________________________________________
+// *** TEST OF OTHER FUNCTIONS *** ///
+
+setTimeout(() => {
+    console.log('Dequeue id 1, 2, 3:');
+    dequeue(messageQueue, dqList);
+    dequeue(messageQueue, dqList);
+    dequeue(messageQueue, dqList);
+    printQueue(messageQueue);
+    printQueue(dqList);
+    console.log('___________');
+
+    console.log('Ackowledge:');
+    acknowledge(dqList, '2');
+    printQueue(dqList);
+    console.log('___________');
+
+    console.log('Requeue:');
+    requeue(dqList, messageQueue, '3');
+    printQueue(dqList);
+    console.log('___________');
+
+    console.log('print message queue again:');
+    printQueue(messageQueue);
+
+
+}, 1000); // timer of 1 sec used to let the queue fill up first
