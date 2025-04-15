@@ -17,7 +17,7 @@ html{
 }
 body{
     min-height: 100vh;
-    background-image: url(pexels.jpg);
+    background-image: url(images/pexels.jpg);
     background-size: cover;
     background-position: right;
     overflow: hidden;
