@@ -1,0 +1,19 @@
+h1,h2 {font-family: "Silkscreen", sans-serif}
+body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,button {font-family: "Silkscreen", sans-serif}
+.fa-diamond {font-size:200px}
+
+.button {
+    border: none;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+  }
+  
+  .button1 {border-radius: 50px;}
+  .button2 {border-radius: 50px;}
+  .button3 {border-radius: 50px;}

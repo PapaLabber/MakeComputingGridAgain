@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>MCGA Home</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Silkscreen">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="landingPage.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-black w3-opacity w3-card w3-large w3-left-align">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-black" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="landingPage.html" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    <a href="userProfile.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Profile</a>
+    <a href="aboutUs.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">About Us</a>
+    <a href="signup.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Create Account</a>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="signup.html" class="w3-bar-item w3-button w3-padding-large">Create Account</a>
+    <a href="tasks.html" class="w3-bar-item w3-button w3-padding-large">Tasks</a>
+    <a href="aboutUs.html" class="w3-bar-item w3-button w3-padding-large">About Us</a>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="w3-container w3-teal w3-center" style="padding:80px 16px">
+  <h2 class="w3-margin w3-jumbo w3-text-black"><b>MCGA</b></h2>
+  <p class="w3-large">An Incentive-Based Extension</p>
+  <!--Insert Link to Browser later--> <!--Download button should open link in a new tab--> 
+  <a href="https://chromewebstore.google.com/category/extensions">
+  <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-large w3-margin-top">Download Here</button>
+ </a>
+</header>
+
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-twothird">
+      <h1>Gain rewards from MCGA while being idle!</h1>
+      <h5 class="w3-padding-32">MCGA is an extension that offers reward points for your computer power. Join us to trade your CPU for discounts, points and more! Your power goes to various companies such as (bla bla bla), assisting them with  tasks
+        such as their math computations, research and discoveries. No work required! Just sit back, relax and enjoy your rewards.
+      </h5>
+
+      <p class="w3-text-grey">Sounds too good to be true? Well no worries, see our ethics and security of data <a href="aboutUs.html">here</a></p>
+    </div>
+
+    <div class="w3-third w3-center">
+      <i class="fa fa-handshake-o w3-padding-64 w3-text-teal w3-opacity"></i>
+    </div>
+  </div>
+</div>
+
+<!-- Second Grid -->
+<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-third w3-center">
+      <i class="fa fa-balance-scale w3-padding-64 w3-text-teal w3-opacity w3-margin-right"></i>
+    </div>
+
+    <div class="w3-twothird">
+      <h1>Change your settings easily</h1>
+      <h5 class="w3-padding-32">You can decide yourself how much CPU you want to contribute, change the amount easily in the settings. Fast and easy.</h5>
+
+      <p class="w3-text-grey">MCGA offers many opportunities for customization, you can always check how much of your CPU is being used currently, and what tasks you have helped complete.</p>
+    </div>
+  </div>
+</div>
+
+<div class="w3-container w3-teal w3-center w3-padding-64">
+    <h1 class="w3-margin w3-xlarge">Install, gain points, enjoy</h1>
+</div>
+
+<script>
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+  var x = document.getElementById("navDemo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+</script>
+
+</body>
+</html>

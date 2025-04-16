@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>MCGA Tasks</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Silkscreen">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="userProfile.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-black w3-opacity w3-card w3-large w3-left-align">
+    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-black" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="landingPage.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Home</a>
+    <a href="userProfile.html" class="w3-bar-item w3-button w3-padding-large w3-white">Profile</a>
+    <a href="aboutUs.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">About Us</a>
+    <a href="signup.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Create Account</a>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="signup.html" class="w3-bar-item w3-button w3-padding-large">Create Account</a>
+    <a href="landingPage.html" class="w3-bar-item w3-button w3-padding-large">Home</a>
+    <a href="aboutUs.html" class="w3-bar-item w3-button w3-padding-large">About Us</a>
+  </div>
+</div>
+
+<div>
+<!-- Header -->
+<header class="w3-container w3-teal w3-center" style="padding:80px 16px">
+    <!--Need to add customizable user greeting-->
+    <h2 class="w3-margin w3-jumbo w3-text-black"><b id="username">Hello user!</b></h2>
+    <h2 class="w3-large">Check your profile settings below</h2>
+  </header>
+
+<div class="w3-crow-padding w3-padding-64 w3-container w3-center">
+    <div class="w3-content">
+        <div class="w3-left-align">
+            <a href="tasks.html">
+                <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-xxlarge w3-margin-top">Task overview</button>
+               </a>
+
+               <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                <button class="button button2 w3-button w3-black w3-hover-opacity w3-padding-large w3-xxlarge w3-margin-top">Settings</button>
+               </a>
+
+               <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                <button class="button button3 w3-button w3-black w3-hover-opacity w3-padding-large w3-xxlarge w3-margin-top">Rewards</button>
+               </a>
+        </div>
+    </div>
+  </div>
+
+  <div class="w3-crow-padding w3-padding-64 w3-container w3-center">
+    <div class="w3-content">
+        <h2>CURRENT POINTS: 1.000.000</h2>
+        <i class="	fa fa-diamond w3-padding-64 w3-text-teal w3-opacity"></i>
+    </div>
+  </div>
+
+<script>
+    // Used to toggle the menu on small screens when clicking on the menu button
+    function myFunction() {
+      var x = document.getElementById("navDemo");
+      if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+      } else { 
+        x.className = x.className.replace(" w3-show", "");
+      }
+    }
+
+    </script>
+
+<script src="scripts/userProfile.js"></script>
+</body>
+</html>
+
