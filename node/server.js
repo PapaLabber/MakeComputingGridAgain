@@ -4,14 +4,17 @@ import http from 'http'; // to create an HTTP server
 import fs from 'fs'; // to read files from the server file system
 import express from "express";
 import { createServer } from "http";
+import path from 'path';
 
 // Initialize Express app
 const app = express(); // Delete???
 
 const hostname = '127.0.0.1'; // Why is this not used in express setup??
 const PORT = 3430;
-const path = 'node/PublicResources/ClientPage.html'; // mayhaps use later
+const landingPagePath = 'node/PublicResources/landingPage.html'; // mayhaps use later
 
+
+const __dirname = landingPagePath.dirname(__filename);
 /*
 const server = http.createServer(function(req, res) {
     fs.readFile(path, function(err, data) {
@@ -50,7 +53,13 @@ app.use((req, res) => {
 
     switch (true) {
         case method === 'GET' && path === '/':
-            res.send("Server is running!");
+            const filePath = path.resolve(__dirname, 'node/PublicResources/landingPage.html');
+            res.sendFile(filePath, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                    res.status(500).send('Internal Server Error');
+                }
+            });
             break;
 
         // POST REGISTER USER
