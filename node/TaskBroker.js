@@ -37,7 +37,7 @@ const dqList = new queue;
 
 
 function taskBrokerMain() {
-    fs.createReadStream('./primes_1_to_1000.csv') // Replace 'data.csv' with your file path
+    fs.createReadStream('./data/primes_1_to_1000.csv') // Replace 'data.csv' with your file path
         .pipe(csv())
         .on('data', (row) => {
             // Extract only the values from the row
