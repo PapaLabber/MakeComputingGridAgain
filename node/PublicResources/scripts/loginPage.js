@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     if (data.message === 'Login successful') {
                         alert('Welcome back!');
-                        window.location.href = 'tasks.html';
+                        window.location.href = 'userProfile.html';
                     } else {
                         alert('Login failed: ' + data.message);
                     }
