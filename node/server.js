@@ -2,6 +2,9 @@ import http from 'http'; // To create an HTTP server
 import fs from 'fs'; // To read files from the file system
 import path from 'path'; // To handle file paths
 import { URL } from 'url'; // To parse query parameters
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const hostname = '127.0.0.1'; // Hostname for the server
 const PORT = 3430; // Port number for the server
@@ -41,6 +44,9 @@ const server = http.createServer((req, res) => {
         // Serve the landing page
         const filePath = path.resolve('node/PublicResources/landingPage.html'); // Resolve the file path
         serveFile(res, filePath, 'text/html'); // Serve the HTML file
+    } else if (method === 'GET' && reqPath === '/landingPage.css') {
+        const cssFilePath = path.resolve('node/PublicResources/landingPage.css'); // Resolve the CSS file path
+        serveFile(res, cssFilePath, 'text/css'); // Serve the CSS file with the correct content type
     } else if (method === 'POST' && reqPath === '/register') {
         // Handle user registration
         let body = '';
@@ -142,6 +148,41 @@ const server = http.createServer((req, res) => {
         const userTasks = tasks.filter(task => task.username === username);
         sendJsonResponse(res, 200, userTasks); // Respond with the tasks
     } else {
+        // Serve static files from the "node/PublicResources" directory
+        if (method === 'GET' && reqPath.startsWith('/')) {
+            const staticFilePath = path.resolve(__dirname, 'PublicResources' + reqPath); // Resolve the file path
+            const ext = path.extname(staticFilePath); // Get the file extension
+
+            // Determine the content type based on the file extension
+            let contentType = 'text/plain';
+            if (ext === '.html') contentType = 'text/html';
+            else if (ext === '.css') contentType = 'text/css';
+            else if (ext === '.js') contentType = 'application/javascript';
+            else if (ext === '.png') contentType = 'image/png';
+            else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+
+            // Serve the static file
+            fs.stat(staticFilePath, (err, stats) => {
+                if (err || !stats.isFile()) {
+                    console.error('File not found:', staticFilePath);
+                    res.writeHead(404, { 'Content-Type': 'text/plain' });
+                    res.end('File not found');
+                    return;
+                }
+
+                fs.readFile(staticFilePath, (err, data) => {
+                    if (err) {
+                        console.error('Error reading file:', err);
+                        res.writeHead(500, { 'Content-Type': 'text/plain' });
+                        res.end('Internal Server Error');
+                    } else {
+                        res.writeHead(200, { 'Content-Type': contentType });
+                        res.end(data);
+                    }
+                });
+            });
+            return;
+        }
         // Handle unknown routes
         sendJsonResponse(res, 404, { message: 'Route not found' }); // Respond with not found
     }
