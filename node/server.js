@@ -2,9 +2,11 @@ import http from 'http'; // To create an HTTP server
 import fs from 'fs'; // To read files from the file system
 import path from 'path'; // To handle file paths
 import { URL } from 'url'; // To parse query parameters
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { fileURLToPath } from 'url'; // To define __dirname in ES modules
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url); // Get the current file path
+const __dirname = path.dirname(__filename); // Get the directory name of the current file
 
 const hostname = '127.0.0.1'; // Hostname for the server
 const PORT = 3430; // Port number for the server
