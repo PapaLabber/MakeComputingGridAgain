@@ -34,7 +34,24 @@ body{
     align-items: center;
     justify-content: center;
 }
-h1{
+a{
+    text-decoration: none; 
+    color: inherit; 
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+    width: fit-content; 
+    height: fit-content;
+}
+a h1{
+    margin: 0;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 4rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--accent-color); 
+}
+h2{
     font-size: 2rem;
     font-weight: 900;
     text-transform: uppercase;
@@ -71,4 +88,7 @@ form button{
     padding: 0.85em 4em;
     background-color: teal;
     color: var(--base-color)
+}
+a.login-link{
+    color: blue
 }

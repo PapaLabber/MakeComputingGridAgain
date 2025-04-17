@@ -1,33 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Login Page</title>
-<link rel="stylesheet" href="loginPage.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="signup.css">
 </head>
 <body>
-  <form id="loginForm">
-    <div class="imgcontainer">
-      <img src="https://static.vecteezy.com/system/resources/previews/013/042/571/non_2x/default-avatar-profile-icon-social-media-user-photo-in-flat-style-vector.jpg" alt="Avatar" class="avatar">
+    <div class="wrapper">
+        <a href="landingPage.html"><h1>MCGA</h1></a>
+        <h2>Sign In Here</h2>
+        <form id="userData">
+            <div>
+                <input required type="text" name="username" id="username-input" placeholder="Username" value ="">
+            </div>
+            <div>
+                <input required type="text" name="email" id="email-input" placeholder="Email" value ="">
+            </div>
+            <div>
+                <input type="password" name="password" id="password-input" placeholder="Password" value ="">
+            </div>
+            <button type="submit">Sign In</button>
+            <a href="landingPage.html" class="cancelbtn">Cancel</a>
+        </form>
     </div>
-  
-    <div class="container">
-      <label for="login-username"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" id="login-username" required>
-  
-      <label for="login-password"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" id="login-password" required>
-  
-      <button type="submit">Login</button>
-      <label>
-        <input type="checkbox" checked="checked" name="remember"> Remember me
-      </label>
-    </div>
-  
-    <div class="container" style="background-color:#f1f1f1">
-      <button type="button" class="cancelbtn">Cancel</button>
-      <span class="psw">Forgot <a href="#">password?</a></span>
-    </div>
-  </form>
-  <script src="scripts/loginPage.js"></script>
+    <script src="scripts/signup.js"></script>
 </body>
 </html>
