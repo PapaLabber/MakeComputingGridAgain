@@ -1,165 +1,153 @@
-// MAIN SERVER SCRIPT
+import http from 'http'; // To create an HTTP server
+import fs from 'fs'; // To read files from the file system
+import path from 'path'; // To handle file paths
+import { URL } from 'url'; // To parse query parameters
 
-import http from 'http'; // to create an HTTP server
-import fs from 'fs'; // to read files from the server file system
-import express from "express";
-import { createServer } from "http";
-import path from 'path';
+const hostname = '127.0.0.1'; // Hostname for the server
+const PORT = 3430; // Port number for the server
 
-// Initialize Express app
-const app = express(); // Delete???
+// In-memory storage for users and tasks
+const users = []; // Array to store user data
+const tasks = []; // Array to store task data
 
-const hostname = '127.0.0.1'; // Why is this not used in express setup??
-const PORT = 3430;
-const landingPagePath = 'node/PublicResources/landingPage.html'; // mayhaps use later
+// Helper function to send JSON responses
+function sendJsonResponse(res, statusCode, data) {
+    res.writeHead(statusCode, { 'Content-Type': 'application/json' }); // Set response headers
+    res.end(JSON.stringify(data)); // Send JSON data as the response
+}
 
-
-const __dirname = landingPagePath.dirname(__filename);
-/*
-const server = http.createServer(function(req, res) {
-    fs.readFile(path, function(err, data) {
+// Helper function to serve static files
+function serveFile(res, filePath, contentType) {
+    fs.readFile(filePath, (err, data) => {
         if (err) {
-            res.writeHead(404, {'Content-Type': 'text/html'});
-            return res.end("404 Not Found");
+            console.error('Error reading file:', err); // Log the error
+            res.writeHead(500, { 'Content-Type': 'text/plain' }); // Respond with 500 Internal Server Error
+            res.end('Internal Server Error');
+        } else {
+            res.writeHead(200, { 'Content-Type': contentType }); // Respond with 200 OK and the correct content type
+            res.end(data); // Send the file data as the response
         }
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.write(data);
-        res.end();
     });
-});
+}
 
-// Start the server and listen on the specified port
-// and log the server address to the console
-server.listen(PORT, function(error) {
-    if (error) {
-        console.error('Error starting server:', error);
-    } 
-    else {
-        console.log(`Server running at http://${hostname}:${PORT}/`);
-    }
-});
-*/
+// Create the HTTP server
+const server = http.createServer((req, res) => {
+    const method = req.method; // Get the HTTP method (GET, POST, etc.)
+    const url = new URL(req.url, `http://${hostname}:${PORT}`); // Parse the request URL
+    const reqPath = url.pathname; // Extract the path from the URL
 
+    // Route handling
+    if (method === 'GET' && reqPath === '/') {
+        // Serve the landing page
+        const filePath = path.resolve('node/PublicResources/landingPage.html'); // Resolve the file path
+        serveFile(res, filePath, 'text/html'); // Serve the HTML file
+    } else if (method === 'POST' && reqPath === '/register') {
+        // Handle user registration
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString(); // Collect the request body data
+        });
+        req.on('end', () => {
+            const { username, email, password } = JSON.parse(body); // Parse the JSON body
 
-// #############################################
-
-
-// Middleware to parse JSON request bodies
-app.use(express.json());
-
-// Centralized route handling using a switch-case structure
-app.use((req, res) => {
-    const { method, path } = req;
-
-    switch (true) {
-        case method === 'GET' && path === '/':
-            const filePath = path.resolve(__dirname, 'node/PublicResources/landingPage.html');
-            res.sendFile(filePath, (err) => {
-                if (err) {
-                    console.error('Error sending file:', err);
-                    res.status(500).send('Internal Server Error');
-                }
-            });
-            break;
-
-        // POST REGISTER USER
-        case method === 'POST' && path === '/register': {
-            const { username, email, password } = req.body;
-
+            // Validate input fields
             if (!username || !email || !password) {
-                return res.status(400).json({ message: 'All fields are required.' });
+                return sendJsonResponse(res, 400, { message: 'All fields are required.' });
             }
 
+            // Check if the username is already taken
             if (users.find(user => user.username === username)) {
-                return res.status(409).json({ message: 'Username already taken.' });
+                return sendJsonResponse(res, 409, { message: 'Username already taken.' });
             }
 
+            // Check if the email is already registered
             if (users.find(user => user.email === email)) {
-                return res.status(409).json({ message: 'Email already registered.' });
+                return sendJsonResponse(res, 409, { message: 'Email already registered.' });
             }
 
+            // Validate email format
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                return res.status(400).json({ message: 'Invalid email format.' });
+                return sendJsonResponse(res, 400, { message: 'Invalid email format.' });
             }
 
+            // Validate password strength
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
             if (!passwordRegex.test(password)) {
-                return res.status(400).json({ message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.' });
+                return sendJsonResponse(res, 400, { message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.' });
             }
 
-            users.push({ username, email, password });
-            res.status(201).json({ message: 'User successfully registered' });
-            break;
-        }
+            // Add the new user to the in-memory storage
+            users.push({ username, email, password }); // Change for database comms
+            sendJsonResponse(res, 201, { message: 'User successfully registered' }); // Respond with success
+        });
+    } else if (method === 'POST' && reqPath === '/login') {
+        // Handle user login
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString(); // Collect the request body data
+        });
+        req.on('end', () => {
+            const { username, password } = JSON.parse(body); // Parse the JSON body
 
-        // POST USER LOGIN
-        case method === 'POST' && path === '/login': {
-            const { username, password } = req.body;
-
+            // Validate input fields
             if (!username || !password) {
-                return res.status(400).json({ message: 'Username and password are required.' });
+                return sendJsonResponse(res, 400, { message: 'Username and password are required.' });
             }
 
-            const user = users.find(u => u.username === username && u.password === password);
+            // Check if the user exists and the password matches
+            const user = users.find(u => u.username === username && u.password === password); // Change for database comms
 
             if (user) {
-                return res.json({ message: 'Login successful' });
+                sendJsonResponse(res, 200, { message: 'Login successful' }); // Respond with success
             } else {
-                return res.status(401).json({ message: 'Invalid username or password.' });
+                sendJsonResponse(res, 401, { message: 'Invalid username or password.' }); // Respond with unauthorized
             }
+        });
+    } else if (method === 'GET' && reqPath === '/getUserProfile') {
+        // Get user profile
+        const username = url.searchParams.get('username'); // Extract the username from query parameters
+
+        if (!username) {
+            return sendJsonResponse(res, 400, { message: 'Username is required.' }); // Respond with bad request
         }
 
-        // GET USER PROFILE
-        case method === 'GET' && path === '/getUserProfile': {
-            const { username } = req.query;
-
-            if (!username) {
-                return res.status(400).json({ message: 'Username is required.' });
-            }
-
-            const user = users.find(u => u.username === username);
-            if (user) {
-                const userTasks = tasks.filter(task => task.username === username);
-                const completedTasks = userTasks.filter(task => task.status === 'Completed');
-                const points = completedTasks.length * 10; // Example: 10 points per completed task
-
-                res.json({
-                    username: user.username,
-                    email: user.email,
-                    points: points,
-                    tasks: userTasks
-                });
-            } else {
-                res.status(404).json({ message: 'User not found.' });
-            }
-            break;
-        }
-
-        // GET USER TASKS FOR OVERVIEW
-        case method === 'GET' && path === '/api/users-tasks': {
-            const { username } = req.query;
-
-            if (!username) {
-                return res.status(400).json({ message: 'Username is required' });
-            }
-
+        // Find the user by username
+        const user = users.find(u => u.username === username); // Change for database comms
+        if (user) {
+            // Get the user's tasks and calculate points
             const userTasks = tasks.filter(task => task.username === username);
-            res.json(userTasks);
-            break;
+            const completedTasks = userTasks.filter(task => task.status === 'Completed');
+            const points = completedTasks.length * 10; // Example: 10 points per completed task
+
+            // Respond with the user profile
+            sendJsonResponse(res, 200, {
+                username: user.username,
+                email: user.email,
+                points: points,
+                tasks: userTasks
+            });
+        } else {
+            sendJsonResponse(res, 404, { message: 'User not found.' }); // Respond with not found
+        }
+    } else if (method === 'GET' && reqPath === '/api/users-tasks') {
+        // Get user tasks
+        const username = url.searchParams.get('username'); // Extract the username from query parameters
+
+        if (!username) {
+            return sendJsonResponse(res, 400, { message: 'Username is required' }); // Respond with bad request
         }
 
-        default:
-            res.status(404).json({ message: 'Route not found' });
+        // Find tasks for the given username
+        const userTasks = tasks.filter(task => task.username === username);
+        sendJsonResponse(res, 200, userTasks); // Respond with the tasks
+    } else {
+        // Handle unknown routes
+        sendJsonResponse(res, 404, { message: 'Route not found' }); // Respond with not found
     }
 });
 
-// Start the HTTP server
-const server = createServer(app);
-
-server.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+// Start the server
+server.listen(PORT, hostname, () => {
+    console.log(`Server running at http://${hostname}:${PORT}/`); // Log the server URL
 });
-
-
-
