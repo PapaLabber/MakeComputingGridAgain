@@ -3,7 +3,7 @@
 
 // Imports
 const bcrypt = require('bcrypt');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
 // create a connection to DB
 const connection = mysql.createConnection({
@@ -17,28 +17,16 @@ const connection = mysql.createConnection({
 async function registerUserToDB(connection, newUserEmail, newUserUsername, newUserPassword) { // Function is async, because it involves asynchronous operations,
     try {                                                                                     // such as password hashing and database interactions
         const hashedPassword = await bcrypt.hash(newUserPassword, 10); // Hash the password (asynchronous operation)
-        const query = 'INSERT INTO users (email, username, password, points) VALUES (?, ?, ?, ?)';
         const values = [newUserEmail, newUserUsername, hashedPassword, 0]; // Use parameterized query. This will help prevent SQL injections.
-
-        connection.connect((err) => {
-            if (err) {
-                console.error('Error connecting to the database:', err); // very bad
-                return;
-            }
-            console.log('Connected to the database :>'); // very good
-            connection.query(query, values, (err, result) => { // Query execution.
-                console.log("Registering new user...");
-
-                if (err) { // Check for error. If err is false, then the user has succesfully been registered.
-                    console.error("Error registering new user:", err);
-                } else {
-                    console.log(result);
-                    console.log("New user registered successfully!");
-                }
-            })
-        });
+        
+        console.log('Connected to the database :>'); // very good
+        await connection.execute(
+            'INSERT INTO users (email, username, password, points) VALUES (?, ?, ?, ?)', values
+        );
+        
     } catch (error) { // Error handling. Prevents application from crashing due to unhandled exceptions.
         console.error("Error hashing password or executing query:", error);
+        return false;
     }
 }
 
@@ -54,53 +42,27 @@ registerUserToDB(connection, registerQueryEmail, registerQueryUsername, register
 // Function to store results in the database
 async function storeResultsInDB(connection, primeComputed, userName, resultIsPrime, perfectEvenOrOdd) {
     try {
-        const query = 'INSERT INTO results (prime computed, username, result is prime, perfect even or odd) VALUES (?, ?, ?, ?)';
         const values = [primeComputed, userName, resultIsPrime, perfectEvenOrOdd];
     
         if(!resultIsPrime) {
             console.log("Result is not prime");
+            await connection.execute(
+                'INSERT INTO results (prime computed, username, result is prime, perfect even or odd) VALUES (?, ?, ?, ?)', values
+            );
+            console.log("Result has successfully been stored in the database!");
+            return false;
 
-            connection.connect((err) => {
-                if (err) {
-                    console.error('Error connecting to the database:', err); // very bad
-                    return;
-                }
-                console.log('Connected to the database :>'); // very good
-                connection.query(query, values, (err, result) => {
-                    console.log("Storing results in database...");
-                    
-                    if (err) {
-                        console.error("Error storing results in database:", err);
-                    } else {
-                        console.log(result);
-                        console.log("Results has succesfully been stored in database!");
-                    }
-                });
-            });
-            return 1;
         } else {
             console.log("Result is prime and associated perfect number has been checked.");
-                
-            connection.connect((err) => {
-                if (err) {
-                    console.error('Error connecting to the database:', err); // very bad
-                    return;
-                }
-                console.log('Connected to the database :>'); // very good
-                connection.query(query, values, (err, result) => {
-                    console.log("Storing results in database...");
-
-                    if (err) {
-                        console.error("Error storing results in database:", err);
-                    } else {
-                        console.log(result);
-                        console.log("Results has succesfully been stored in database!");
-                    }
-                });
-            });
+            await connection.execute(
+                'INSERT INTO results (prime computed, username, result is prime, perfect even or odd) VALUES (?, ?, ?, ?)', values
+            );
+            console.log("Result has successfully been stored in the database!");
+            return true;
         }
     } catch (error) {
         console.error("Something went wrong:", error);
+        return false;
     }
 }
 
@@ -121,42 +83,34 @@ storeResultsInDB(connection, testPrime, testUsername, testIsPrimeFalse, testPerf
 
 
 async function checkLoginInfo(connection, username, password) {
-    // Check if the username and password are provided
     if (!username || !password) {
         console.error("Username and password are required.");
         return false;
     }
 
     try {
-        const query = 'SELECT password FROM users WHERE username=?'; // Might not work as a placeholder.
-        
-        connection.connect((err) => {
-            if (err) {
-                console.error('Error connecting to the database:', err); // very bad
-                return;
-            }
-            console.log('Connected to the database :>'); // very good
+        const [rows] = await connection.execute(
+            'SELECT password FROM users WHERE username = ?', [username]
+        );
 
-            connection.query(query, [username], (err, result) => {
-                
-                if (err) {
-                    console.error("Error fetching database:", err);
-                } else {
-                    console.log(result);
-                    console.log("connection established!");
-                }
-            })
-        });
-    
-        if (password === result) { // check if password is correct
-            console.log("Password is correct!"); // very good
-            return true; // Password is correct, let client side know user is good to go (more code here)
-        } else {
-            console.error("Password is incorrect! fat motherfucker"); // very bad
-            return false; // Password is incorrect, let client side know user is not good to go (more code here)
+        if (rows.length === 0) {
+            console.error("User not found.");
+            return false;
         }
-        
-    } catch {
-        console.error("Error fetching database:", error);
-    }   
+
+        const hashedPassword = rows[0].password;
+
+        const match = await bcrypt.compare(password, hashedPassword);
+        if (match) {
+            console.log("Password is correct!");
+            return true;
+        } else {
+            console.error("Password is incorrect.");
+            return false;
+        }
+
+    } catch (error) {
+        console.error("Error checking login:", error);
+        return false;
+    }
 }
