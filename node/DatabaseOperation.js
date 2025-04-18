@@ -79,7 +79,7 @@ async function checkLoginInfo(connection, username, password) {
 
     try {
         const [rows] = await connection.execute(                        // Select query. This selects the column that matches 
-            'SELECT password FROM users WHERE username = ?', [username] // both the username and password provided and stores it in an array.
+            `SELECT password FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
         );
 
         if (rows.length === 0) {                 // Checks if the array is empty. if empty, the username has been
@@ -113,20 +113,20 @@ const registerQueryEmail = "exampleEmail@email.com";
 const registerQueryUsername = "exampleUsername";
 const registerQueryPassword = "examplePassword";
 
+// register user FIRST, everything can't be tested in one exection (without timeout or something similar)
 registerUserToDB(connection, registerQueryEmail, registerQueryUsername, registerQueryPassword);
 
 const testPrime = 7;
 const falseTestPrime = 4;
-const testUsername = "exampleUsername";
+// const testUsername = "exampleUsername";
+const testUsername = registerQueryUsername;
 const testIsPrimeTrue = true;
 const testIsPrimeFalse = false;
 const testPerfectEven = "Even";
 const testPerfectNull = null;
 
-// storeResultsInDB(connection, testPrime, testUsername, testIsPrimeTrue, testPerfectEven);
+storeResultsInDB(connection, testPrime, testUsername, testIsPrimeTrue, testPerfectEven);
 storeResultsInDB(connection, falseTestPrime, testUsername, testIsPrimeFalse, testPerfectNull);
 
-
-checkLoginInfo(connection, testUsername, registerQueryPassword);
-
-// checkLoginInfo(connection, testUsername, "incorrectPassword");
+checkLoginInfo(connection, testUsername, registerQueryPassword); // Correct password
+checkLoginInfo(connection, testUsername, "incorrectPassword"); // Incorrect password
