@@ -117,3 +117,9 @@ storeResultsInDB(connection, testPrime, testUsername, testIsPrimeFalse, testPerf
 
 //#############################################################################################################
 // Database fetching
+
+
+
+async function test(connection, username, password) {
+    
+}
