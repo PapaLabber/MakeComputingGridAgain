@@ -2,16 +2,21 @@
 // these will essentially just be SQL queries with placeholders instead of example values
 
 // Imports
-const bcrypt = require('bcrypt');
-const mysql = require('mysql2/promise');
+import bcrypt from 'bcrypt';
+import mysql from 'mysql2/promise';
 
-// create a connection to DB
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'cs-25-sw-2-13@student.aau.dk',
-    password: 'GLz3@eKBVmQXhX3d',
-    database: 'cs_25_sw_2_13' // given DB name
-});
+// Create a connection to the database
+async function initializeConnection() {
+    return await mysql.createConnection({
+        host: 'localhost',
+        user: 'cs-25-sw-2-13@student.aau.dk',
+        password: 'GLz3@eKBVmQXhX3d',
+        database: 'cs_25_sw_2_13'
+    });
+}
+
+// Initialize the connection
+const connection = await initializeConnection();
 
 // Function to hash the password and insert a new user into the database
 async function registerUserToDB(connection, newUserEmail, newUserUsername, newUserPassword) { // Function is async, because it involves asynchronous operations,
