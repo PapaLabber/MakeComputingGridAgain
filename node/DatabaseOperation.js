@@ -120,6 +120,43 @@ storeResultsInDB(connection, testPrime, testUsername, testIsPrimeFalse, testPerf
 
 
 
-async function test(connection, username, password) {
+async function checkLoginInfo(connection, username, password) {
+    // Check if the username and password are provided
+    if (!username || !password) {
+        console.error("Username and password are required.");
+        return false;
+    }
+
+    try {
+        const query = 'SELECT password FROM users WHERE username=?'; // Might not work as a placeholder.
+        
+        connection.connect((err) => {
+            if (err) {
+                console.error('Error connecting to the database:', err); // very bad
+                return;
+            }
+            console.log('Connected to the database :>'); // very good
+
+            connection.query(query, [username], (err, result) => {
+                
+                if (err) {
+                    console.error("Error fetching database:", err);
+                } else {
+                    console.log(result);
+                    console.log("connection established!");
+                }
+            })
+        });
     
+        if (password === result) { // check if password is correct
+            console.log("Password is correct!"); // very good
+            return true; // Password is correct, let client side know user is good to go (more code here)
+        } else {
+            console.error("Password is incorrect! fat motherfucker"); // very bad
+            return false; // Password is incorrect, let client side know user is not good to go (more code here)
+        }
+        
+    } catch {
+        console.error("Error fetching database:", error);
+    }   
 }
