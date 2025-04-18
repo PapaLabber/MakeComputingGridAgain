@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (username) {
         // Fetch the user's tasks when the page loads
-        fetchUserTasks(username);
+        completedUserTasks(username);
     } else {
         alert('No user found! Please log in.');
     }
 
     // Function to fetch user tasks from the backend
-    function fetchUserTasks(username) {
+    function completedUserTasks(username) {
         fetch(`/api/users-tasks?username=${username}`)
             .then(response => {
                 if (!response.ok) {
@@ -23,8 +23,23 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Error fetching tasks:', error);
-                alert('Could not fetch your tasks. Please try again later.');
+                alert('Could not fetch your completed tasks. Please try again later.');
             });
+    // Function to distribute tasks when extension activated
+    }
+    function requestTasks(){
+        fetch('/api/requestTasks')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(newTask) //Give task to calculation file****!!!!
+        .catch(error => {
+            console.error('Error fetching tasks', error);
+            alert('Could not fetch any new tasks. Please try again later.');
+        })
     }
 
     // Function to display the fetched tasks

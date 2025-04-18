@@ -2,7 +2,7 @@
 const fs = require('fs');
 const csv = require('csv-parser');
 
-module.exports = { taskBrokerMain };
+module.exports = { taskBrokerMain, dequeue };
 
 
 // Make a linked list to hold tasks
@@ -102,6 +102,7 @@ function dequeue(mq, dq) {
         dq.tail = newdqNode; // Set the tail to the new node
     }
     console.log(`Task ${newdqNode.task.id} has been dequeued and is now stored in the dequeued list`);
+    return newdqNode.task;
 }
 
 // A function that marks a task as done/finished when it has computed it fully (acknowledge)

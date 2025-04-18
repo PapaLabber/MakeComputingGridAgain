@@ -2,6 +2,7 @@ import fs from 'fs'; // Import the 'fs' module for file system operations
 import path from 'path'; // Import the 'path' module for file path handling
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
+import { dequeue } from './TaskBroker.js'; // Import dequeue function
 
 const __filename = fileURLToPath(import.meta.url); // Get the current file path
 const __dirname = path.dirname(__filename); // Get the directory name of the current file
@@ -11,7 +12,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
     const url = new URL(req.url, `http://${hostname}:${PORT}`); // Parse the request URL
     const reqPath = url.pathname; // Extract the path from the URL
 
-    
+
     // Route handling
     if (method === 'GET' && reqPath === '/') {
         // Serve the landing page HTML file
@@ -122,7 +123,24 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
         // Find tasks for the given username
         const userTasks = tasks.filter(task => task.username === username);
         sendJsonResponse(res, 200, userTasks);
-    } else {
+        // ******** Taskbroker request **********
+    } else if (method === 'GET' && reqPath === '/api/requestTasks') {
+        // Get task from taskbroker
+        let newTask = dequeue();
+        if (newTask) {
+            sendJsonResponse(res, 200, {message: 'Task provided successfully'});
+        }
+        else (
+            sendJsonResponse(res, 400, {messsage: 'Could not provide task'});
+        )
+        return;
+        // Check if task is valid
+
+        // Send JSON response with task
+
+    }
+
+    else {
         // Serve static files from the "node/PublicResources" directory
         if (method === 'GET' && reqPath.startsWith('/')) {
             const staticFilePath = path.resolve(__dirname, 'PublicResources' + reqPath); // Resolve the file path
