@@ -2,16 +2,17 @@ import fs from 'fs'; // Import the 'fs' module for file system operations
 import path from 'path'; // Import the 'path' module for file path handling
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
-import { dequeue } from './TaskBroker.js'; // Import dequeue function
+import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
+
+export { handleRoutes };
 
 const __filename = fileURLToPath(import.meta.url); // Get the current file path
 const __dirname = path.dirname(__filename); // Get the directory name of the current file
 
-export function handleRoutes(req, res, hostname, PORT, users, tasks) {
+function handleRoutes(req, res, hostname, PORT, users, tasks) {
     const method = req.method; // Get the HTTP method (GET, POST, etc.)
     const url = new URL(req.url, `http://${hostname}:${PORT}`); // Parse the request URL
     const reqPath = url.pathname; // Extract the path from the URL
-
 
     // Route handling
     if (method === 'GET' && reqPath === '/') {
@@ -123,24 +124,51 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
         // Find tasks for the given username
         const userTasks = tasks.filter(task => task.username === username);
         sendJsonResponse(res, 200, userTasks);
-        // ******** Taskbroker request **********
-    } else if (method === 'GET' && reqPath === '/api/requestTasks') {
+
+    } else if (method === 'GET' && reqPath === '/api/requestTask') {    // ******** Taskbroker request **********
         // Get task from taskbroker
-        let newTask = dequeue();
-        if (newTask) {
-            sendJsonResponse(res, 200, {message: 'Task provided successfully'});
-        }
-        else (
-            sendJsonResponse(res, 400, {messsage: 'Could not provide task'});
-        )
-        return;
+        const newTask = dequeue(messageQueue, dqList);
+
         // Check if task is valid
+        if (!newTask) {
+            return sendJsonResponse(res, 400, { messsage: 'Could not provide task' });
+        }
 
         // Send JSON response with task
+        sendJsonResponse(res, 200, newTask);
 
-    }
+    } else if (method === 'POST' && reqPath === '/api/clientTaskDone') {
+        let body = '';
 
-    else {
+        // Collect the request body data
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+
+        req.on('end', () => {
+            try {
+                // Parse the request body as JSON
+                const { result } = JSON.parse(body);
+
+                // Validate the result
+                if (!result) {
+                    return sendJsonResponse(res, 400, { message: 'Result is required.' });
+                }
+
+                // Pass the result to a function in TaskBroker.js
+                const taskProcessed = acknowledge(dqList, result); // Call the function from TaskBroker.js
+
+                // Save result in DB
+                
+
+                // Respond with success
+                sendJsonResponse(res, 200, { message: 'Task result processed: ', taskProcessed });
+            } catch (error) {
+                console.error('Error processing task result:', error);
+                sendJsonResponse(res, 500, { message: 'Internal Server Error' });
+            }
+        });
+    } else {
         // Serve static files from the "node/PublicResources" directory
         if (method === 'GET' && reqPath.startsWith('/')) {
             const staticFilePath = path.resolve(__dirname, 'PublicResources' + reqPath); // Resolve the file path

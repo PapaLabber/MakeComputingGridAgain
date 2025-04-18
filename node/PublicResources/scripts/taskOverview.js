@@ -1,3 +1,5 @@
+import { json } from "express";
+
 document.addEventListener('DOMContentLoaded', function () {
     // Define the username (this could be dynamically set based on the logged-in user)
     const username = "test_user"; // Example: hardcoded username for testing
@@ -25,21 +27,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Error fetching tasks:', error);
                 alert('Could not fetch your completed tasks. Please try again later.');
             });
-    // Function to distribute tasks when extension activated
+
     }
-    function requestTasks(){
-        fetch('/api/requestTasks')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(newTask) //Give task to calculation file****!!!!
-        .catch(error => {
-            console.error('Error fetching tasks', error);
-            alert('Could not fetch any new tasks. Please try again later.');
-        })
+
+    // Function to distribute tasks when extension activated
+    function requestTask() {
+        fetch('/api/requestTask')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            //Give task to calculation file****!!!!
+            .then(newTask => {
+                if (!newTask || !newTask.taskData) {
+                    console.error('Invalid task received:', newTask);
+                    alert('No valid task received from the server.');
+                    return;
+                }
+
+                let result;
+                try {
+                    result = isMersennePrime(newTask.taskData);
+                    clientTaskDone(result);
+                } catch (error) {
+                    console.error('Error calculating Mersenne prime:', error);
+                    alert('An error occurred while processing the task.');
+                    return;
+                }               
+            })
+            .catch(error => {
+                console.error('Error fetching tasks', error);
+                alert('Could not fetch any new tasks. Please try again later.');
+            })
     }
 
     // Function to display the fetched tasks
@@ -66,3 +87,25 @@ document.addEventListener('DOMContentLoaded', function () {
         taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
     }
 });
+
+function clientTaskDone(result) {
+    fetch('/api/clientTaskDone', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ result })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+        })
+        .then(() => {
+            console.log('Task result successfully sent to the server.');
+        })
+        .catch(error => {
+            console.error('Error sending task result to the server:', error);
+            alert('Error in delivering task result.');
+        })
+}

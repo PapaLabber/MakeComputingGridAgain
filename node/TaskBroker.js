@@ -2,7 +2,7 @@
 const fs = require('fs');
 const csv = require('csv-parser');
 
-module.exports = { taskBrokerMain, dequeue };
+module.exports = { taskBrokerMain, dequeue, acknowledge, messageQueue, dqList };
 
 
 // Make a linked list to hold tasks
@@ -190,7 +190,7 @@ function removeNode(queue, targetNode) {
 
 //______________________________________________________________________________
 // *** TEST OF OTHER FUNCTIONS *** ///
-
+/*
 setTimeout(() => {
     console.log('Dequeue id 1, 2, 3:');
     dequeue(messageQueue, dqList);
@@ -215,3 +215,4 @@ setTimeout(() => {
 
 
 }, 1000); // timer of 1 sec used to let the queue fill up first
+*/
