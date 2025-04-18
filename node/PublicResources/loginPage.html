@@ -4,26 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-    <link rel="stylesheet" href="signup.css">
+    <link rel="stylesheet" href="loginPage.css">
 </head>
 <body>
     <div class="wrapper">
         <a href="landingPage.html"><h1>MCGA</h1></a>
         <h2>Sign In Here</h2>
-        <form id="userData">
+        <form id="loginForm">
             <div>
-                <input required type="text" name="username" id="username-input" placeholder="Username" value ="">
+                <input type="text" placeholder="Enter Username" id="login-username" required>
             </div>
             <div>
-                <input required type="text" name="email" id="email-input" placeholder="Email" value ="">
-            </div>
-            <div>
-                <input type="password" name="password" id="password-input" placeholder="Password" value ="">
+                <input type="password" placeholder="Enter Password" id="login-password" required>
             </div>
             <button type="submit">Sign In</button>
             <a href="landingPage.html" class="cancelbtn">Cancel</a>
         </form>
     </div>
-    <script src="scripts/signup.js"></script>
+    <script src="scripts/loginPage.js"></script>
 </body>
 </html>

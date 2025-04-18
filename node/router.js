@@ -11,6 +11,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
     const url = new URL(req.url, `http://${hostname}:${PORT}`); // Parse the request URL
     const reqPath = url.pathname; // Extract the path from the URL
 
+    
     // Route handling
     if (method === 'GET' && reqPath === '/') {
         // Serve the landing page HTML file
@@ -36,12 +37,12 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
             }
 
             // Check if the username is already taken
-            if (users.find(user => user.username === username)) {
+            if (users.find(user => user.username === username)) { // Change for database comms
                 return sendJsonResponse(res, 409, { message: 'Username already taken.' });
             }
 
             // Check if the email is already registered
-            if (users.find(user => user.email === email)) {
+            if (users.find(user => user.email === email)) { // Change for database comms
                 return sendJsonResponse(res, 409, { message: 'Email already registered.' });
             }
 
@@ -76,7 +77,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
             }
 
             // Check if the user exists and the password matches
-            const user = users.find(u => u.username === username && u.password === password);
+            const user = users.find(u => u.username === username && u.password === password); // Change for database comms
 
             if (user) {
                 sendJsonResponse(res, 200, { message: 'Login successful' });
@@ -93,7 +94,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
         }
 
         // Find the user by username
-        const user = users.find(u => u.username === username);
+        const user = users.find(u => u.username === username); // Change for database comms
         if (user) {
             // Get the user's tasks and calculate points
             const userTasks = tasks.filter(task => task.username === username);
