@@ -47,7 +47,7 @@ async function storeResultsInDB(connection, primeComputed, userName, resultIsPri
         if(!resultIsPrime) {
             console.log("Result is not prime");
             await connection.execute(
-                'INSERT INTO results (prime computed, username, result is prime, perfect even or odd) VALUES (?, ?, ?, ?)', values
+                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_perfect_even) VALUES (?, ?, ?, ?)', values
             );
             console.log("Result has successfully been stored in the database!");
             return false;
@@ -55,7 +55,7 @@ async function storeResultsInDB(connection, primeComputed, userName, resultIsPri
         } else {
             console.log("Result is prime and associated perfect number has been checked.");
             await connection.execute(
-                'INSERT INTO results (prime computed, username, result is prime, perfect even or odd) VALUES (?, ?, ?, ?)', values
+                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_perfect_even) VALUES (?, ?, ?, ?)', values
             );
             console.log("Result has successfully been stored in the database!");
             return true;
