@@ -72,11 +72,6 @@ async function storeResultsInDB(connection, primeComputed, userName, resultIsPri
 
 // Function that checks if the username and password given by a user on the login page matches something in the database.
 async function checkLoginInfo(connection, username, password) {
-    if (!username || !password) { // Check if the user has forgotten to write something in either field.
-        console.error("Username and password are required.");
-        return false;
-    }
-
     try {
         const [rows] = await connection.execute(                        // Select query. This selects the column that matches 
             `SELECT password FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
