@@ -156,7 +156,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 // Pass the result to a function in TaskBroker.js
-                const taskProcessed = acknowledge(dqList, result); // Call the function from TaskBroker.js
+                const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js
 
                 // Save result in DB
                 

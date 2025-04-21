@@ -1,8 +1,13 @@
 
-const fs = require('fs');
-const csv = require('csv-parser');
+// const fs = require('fs');
+//const csv = require('csv-parser');
 
-module.exports = { taskBrokerMain, dequeue, acknowledge, messageQueue, dqList };
+import fs from 'fs';
+import csvParser from 'csv-parser';
+
+// module.exports = { taskBrokerMain, dequeue, acknowledge, messageQueue, dqList };
+
+export { taskBrokerMain, dequeue, acknowledge, messageQueue, dqList };
 
 
 // Make a linked list to hold tasks
@@ -38,7 +43,7 @@ const dqList = new queue;
 
 function taskBrokerMain() {
     fs.createReadStream('./data/primes_1_to_1000.csv') // Replace 'data.csv' with your file path
-        .pipe(csv())
+        .pipe(csvParser())
         .on('data', (row) => {
             // Extract only the values from the row
             const values = Object.values(row); // Example: ['1', 'bla']

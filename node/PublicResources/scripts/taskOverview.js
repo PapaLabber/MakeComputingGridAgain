@@ -1,4 +1,4 @@
-import { json } from "express";
+import { isMersennePrime } from './llt.js'; // Import the isMersennePrime function from llt.js
 
 document.addEventListener('DOMContentLoaded', function () {
     // Define the username (this could be dynamically set based on the logged-in user)
@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Error fetching tasks:', error);
                 alert('Could not fetch your completed tasks. Please try again later.');
             });
-
     }
 
     // Function to distribute tasks when extension activated
@@ -49,19 +48,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 let result;
                 try {
-                    result = isMersennePrime(newTask.taskData);
+                    result = isMersennePrime(BigInt(newTask.taskData));
                     clientTaskDone(result);
                 } catch (error) {
                     console.error('Error calculating Mersenne prime:', error);
                     alert('An error occurred while processing the task.');
                     return;
-                }               
+                }
             })
             .catch(error => {
                 console.error('Error fetching tasks', error);
                 alert('Could not fetch any new tasks. Please try again later.');
-            })
+            });
     }
+
+    window.requestTask = requestTask;
 
     // Function to display the fetched tasks
     function displayTasks(tasks) {
@@ -107,5 +108,5 @@ function clientTaskDone(result) {
         .catch(error => {
             console.error('Error sending task result to the server:', error);
             alert('Error in delivering task result.');
-        })
+        });
 }
