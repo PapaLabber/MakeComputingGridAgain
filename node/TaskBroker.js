@@ -80,7 +80,7 @@ function dequeue(mq, dq) {
     }
 
     const newdqNode = new node(mq.head.task); // Make a node in dqList
-    newdqNode.experationTime = Date.now() + 60000; // Set an experation to signal time for requeue.
+    newdqNode.experationTime = Date.now() + 120000; // Set an experation to signal time for requeue.
 
     if (mq.head === mq.tail) { // If there is only one node in the message queue
         mq.head.task = null; // Set the head task to null to keep pointers
@@ -184,10 +184,22 @@ function removeNode(queue, targetNode) {
     }
 }
 
-
+// Function to check if a task has reached its experation.
+function checkExperationTime(dq, mq) {
+    if ((dq.head.timeStamp + 120000) === dq.head.experationTime) {
+        console.log(`${dq.head.id} has reached it's experation time and will be requeued`);
+        requeue(dq, mq, dq.head.id);
+        timer(dq, mq);
+        return true;
+    } else {
+        return false;
+    }
+}
 
 //______________________________________________________________________________
 // *** TEST OF OTHER FUNCTIONS *** ///
+
+
 
 setTimeout(() => {
     console.log('Dequeue id 1, 2, 3:');
