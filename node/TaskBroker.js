@@ -20,7 +20,6 @@ class node { // Nodes in the linked list
         this.prev = null; // Pointer to the previous task
         this.timeStamp; // Time when the task was created
     }
-
 }
 
 class queue { // The queue itself
