@@ -2,6 +2,7 @@ import http from 'http'; // Import the HTTP module
 import { handleRoutes } from './router.js'; // Import the router
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import path from 'path'; // Import the 'path' module for file path handling
+import { taskBrokerMain } from './TaskBroker.js'; // Import the task broker main function
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -14,6 +15,9 @@ const PORT = 3430;
 // In-memory storage for users and tasks
 const users = []; // Array to store user data
 const tasks = []; // Array to store task data
+
+//CALLING TASKBROKER ####################################################
+taskBrokerMain(); // Start the task broker
 
 // Helper function to send JSON responses
 export function sendJsonResponse(res, statusCode, data) {

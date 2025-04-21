@@ -1,3 +1,5 @@
+export { isMersennePrime };
+
 ////////// In JavaScript we don't have sqrt for BigInt - so here is implementation
 
 function newtonRaphsonMethod(n, x0) {
