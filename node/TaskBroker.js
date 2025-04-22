@@ -25,7 +25,6 @@ class node { // Nodes in the linked list
         this.prev = null; // Pointer to the previous task
         this.timeStamp; // Time when the task was created
     }
-
 }
 
 class queue { // The queue itself
@@ -86,7 +85,7 @@ function dequeue(mq, dq) {
     }
 
     const newdqNode = new node(mq.head.task); // Make a node in dqList
-    newdqNode.experationTime = Date.now() + 60000; // Set an experation to signal time for requeue.
+    newdqNode.experationTime = Date.now() + 120000; // Set an experation to signal time for requeue.
 
     if (mq.head === mq.tail) { // If there is only one node in the message queue
         mq.head.task = null; // Set the head task to null to keep pointers
@@ -191,7 +190,17 @@ function removeNode(queue, targetNode) {
     }
 }
 
-
+// Function to check if a task has reached its experation.
+function checkExperationTime(dq, mq) {
+    if ((dq.head.timeStamp + 120000) === dq.head.experationTime) { // Check if it has been 2 minutes since the task was added to the dq list.
+        console.log(`${dq.head.id} has reached it's experation time and will be requeued`); // Let the server know that it has been expired.
+        requeue(dq, mq, dq.head.id); // Requeue the task using the requeue function.
+        timer(dq, mq); // Check the new head if it has also been expired.
+        return true; // Return true if the first iteration of the recursion is true
+    } else { // If the head of the dq list hasn't been expired
+        return false; // Return false.
+    }
+}
 
 //______________________________________________________________________________
 // *** TEST OF OTHER FUNCTIONS *** ///

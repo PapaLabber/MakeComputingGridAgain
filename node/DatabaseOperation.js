@@ -1,0 +1,127 @@
+//Database pushing (not drugs)
+// these will essentially just be SQL queries with placeholders instead of example values
+
+// Imports
+import bcrypt from 'bcrypt';
+import mysql from 'mysql2/promise';
+
+// Create a connection to the database
+async function initializeConnection() {
+    return await mysql.createConnection({
+        host: 'localhost',
+        user: 'cs-25-sw-2-13@student.aau.dk',
+        password: 'GLz3@eKBVmQXhX3d',
+        database: 'cs_25_sw_2_13'
+    });
+}
+
+// Initialize the connection
+const connection = await initializeConnection();
+
+// Function to hash the password and insert a new user into the database
+async function registerUserToDB(connection, newUserEmail, newUserUsername, newUserPassword) { // Function is async, because it involves asynchronous operations,
+    try {                                                                                     // such as password hashing and database interactions
+        const hashedPassword = await bcrypt.hash(newUserPassword, 10); // Hash the password (asynchronous operation)
+        const values = [newUserEmail, newUserUsername, hashedPassword, 0]; // Use parameterized query. This will help prevent SQL injections.
+        
+        console.log("Registering user in the database...");
+        await connection.execute( // Insert query. This line is what does the SQL operations and stores the user in the database.
+            'INSERT INTO users (email, username, password, points) VALUES (?, ?, ?, ?)', values
+        );
+        console.log("User info has succesfully been stored in the Database!"); // Success.
+        
+    } catch (error) { // Error handling. Prevents application from crashing due to unhandled exceptions.
+        console.error("Error hashing password or executing query:", error);
+        return false;
+    }
+}
+
+// Function to store results in the database
+async function storeResultsInDB(connection, primeComputed, userName, resultIsPrime, perfectEvenOrOdd) {
+    try {
+        const values = [primeComputed, userName, resultIsPrime, perfectEvenOrOdd]; // Values being stored in the list.
+    
+        if(!resultIsPrime) { // Check if the result is prime or not.
+            console.log("Result is not prime");
+            
+            // Insert query. This stores the values in the database, setting perfect_even_or_odd 
+            // to be null, because the product of (2^{n-1})2^n-1 is not perfect.
+            await connection.execute( 
+                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, perfect_even_or_odd) VALUES (?, ?, ?, ?)', values
+            );
+            console.log("Result has successfully been stored in the database!");
+            return false;
+
+        } else { // The result is prime
+            console.log("Result is prime and associated perfect number has been checked.");
+            await connection.execute( 
+                // Insert query. This stores all the values in the database, 
+                // notably, the value of perfect_even_or_odd can be either 'Even' or 'Odd'.
+                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, perfect_even_or_odd) VALUES (?, ?, ?, ?)', values
+            ); // If the value of perfect_even_or_odd is 'Odd', the problem has been solved.
+            console.log("Result has successfully been stored in the database!"); 
+            return true; // Success
+        }
+    } catch (error) { // Error handling
+        console.error("Something went wrong:", error);
+        return false;
+    }
+}
+
+// Database fetching
+
+// Function that checks if the username and password given by a user on the login page matches something in the database.
+async function checkLoginInfo(connection, username, password) {
+    try {
+        const [rows] = await connection.execute(                        // Select query. This selects the column that matches 
+            `SELECT password FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
+        );
+
+        if (rows.length === 0) {                 // Checks if the array is empty. if empty, the username has been
+            console.error("User not found.");    // incorrectly types or it does not exist in the database.
+            return false;
+        }
+
+        const hashedPassword = rows[0].password; // Setting the password found in the database as the value of hashedPassword
+
+        const match = await bcrypt.compare(password, hashedPassword); // Compares the password provided to the password found in the database.
+        if (match) { // Checks if they are a match, if true, then the password is correct
+            console.log("Password is correct!");
+            return true;
+        } else { // Otherwise the password has been mistyped.
+            console.error("Password is incorrect.");
+            return false;
+        }
+
+    } catch (error) { // Error handling
+        console.error("Error checking login:", error);
+        return false;
+    }
+}
+
+
+
+
+// Example runs:
+
+const registerQueryEmail = "exampleEmail@email.com";
+const registerQueryUsername = "exampleUsername";
+const registerQueryPassword = "examplePassword";
+
+// register user FIRST, everything can't be tested in one exection (without timeout or something similar)
+registerUserToDB(connection, registerQueryEmail, registerQueryUsername, registerQueryPassword);
+
+const testPrime = 7;
+const falseTestPrime = 4;
+// const testUsername = "exampleUsername";
+const testUsername = registerQueryUsername;
+const testIsPrimeTrue = true;
+const testIsPrimeFalse = false;
+const testPerfectEven = "Even";
+const testPerfectNull = null;
+
+storeResultsInDB(connection, testPrime, testUsername, testIsPrimeTrue, testPerfectEven);
+storeResultsInDB(connection, falseTestPrime, testUsername, testIsPrimeFalse, testPerfectNull);
+
+checkLoginInfo(connection, testUsername, registerQueryPassword); // Correct password
+checkLoginInfo(connection, testUsername, "incorrectPassword"); // Incorrect password
