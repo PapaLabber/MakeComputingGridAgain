@@ -48,7 +48,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 let result;
                 try {
+                    // calc: primeComputed (data sent to client)
+                    
+                    // calc: userName (client id)
+
+                    // calc: resultIsPrime (from isPrime function)
+                    
+                    // calc: perfectEvenOrOdd ()
+
                     result = isMersennePrime(BigInt(newTask.taskData));
+                    
+                    
                     clientTaskDone(result);
                 } catch (error) {
                     console.error('Error calculating Mersenne prime:', error);

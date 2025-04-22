@@ -1,4 +1,4 @@
-export { isMersennePrime };
+export { isPrime, isMersennePrime };
 
 ////////// In JavaScript we don't have sqrt for BigInt - so here is implementation
 
@@ -21,8 +21,6 @@ function sqrt(value) {
     return newtonRaphsonMethod(value, 1n);
 }
 
-////////// End of sqrt implementation
-
 function isPrime(p) {
     if (p == 2n) {
         return true;
@@ -38,25 +36,29 @@ function isPrime(p) {
     }
 }
 
-// NU PRØVER VI NOGET ANDET DUYMT HIHIHIHIHIHIHIHI
-
-/* DET VAR NOGET LORT HAHAHAHAHHAHAHA
-
-function isMersennePrime(p) {
-    if (p == 2n) {
-        return true;
-    } else {
-        var m_p = (1n << p) - 1n;
-        var s = 4n;
-        for (var i = 3n; i <= p; i++) {
-            s = modMultiply(s, s, m_p) - 2n;
-            if (s < 0n) s += m_p;
-        }
-        return s === 0n;
+function isPerfectNumber(n) {
+    if (n <= 0n) {
+        return false;
     }
+    let sum = 1n;
+    for (let i = 2n; i <= sqrt(n); i++) {
+        if (n % i === 0n) {
+            sum += i;
+            if (i !== n / i) {
+                sum += n / i;
+            }
+        }
+    }
+    return sum === n;
 }
 
-*/
+function isEven(n) {
+    return n % 2n === 0n;
+}
+
+function isOdd(n) {
+    return n % 2n !== 0n;
+}
 
 function isMersennePrime(p) {
     if (p == 2n) {

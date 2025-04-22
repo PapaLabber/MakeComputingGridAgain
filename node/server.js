@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import path from 'path'; // Import the 'path' module for file path handling
 import { taskBrokerMain } from './TaskBroker.js'; // Import the task broker main function
 
-export {startServer};
+export {startServer, sendJsonResponse};
 
 // Define the hostname and port for the server
 const hostname = '127.0.0.1';
@@ -15,7 +15,7 @@ const users = []; // Array to store user data
 const tasks = []; // Array to store task data
 
 // Helper function to send JSON responses
-export function sendJsonResponse(res, statusCode, data) {
+function sendJsonResponse(res, statusCode, data) {
     res.writeHead(statusCode, { 'Content-Type': 'application/json' }); // Set the response header to JSON
     res.end(JSON.stringify(data)); // Send the JSON response
 }

@@ -3,6 +3,7 @@ import path from 'path'; // Import the 'path' module for file path handling
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
+import { storeResultsInDB, dbConnection } from './DatabaseOperation.js';
 
 export { handleRoutes };
 
@@ -66,7 +67,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     }
                     // Find tasks for the given username
                     const userTasks = tasks.filter(task => task.username === username);
-                    sendJsonResponse(res, 200, userTasks);
+                    return sendJsonResponse(res, 200, userTasks);
                 }
 
                 // Get a new task from the taskbroker
@@ -79,7 +80,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     }
 
                     // Send JSON response with task
-                    sendJsonResponse(res, 200, newTask);
+                    return sendJsonResponse(res, 200, newTask);
                 }
 
                 // Serve static files from the "node/PublicResources" directory
@@ -175,27 +176,27 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js
 
                             // Save result in DB
-
+                            const dataSavedToDB = storeResultsInDB(dbConnection, primeComputed, userName, resultIsPrime, perfectEvenOrOdd); 
 
                             // Respond with success
-                            sendJsonResponse(res, 200, { message: 'Task result processed: ', taskProcessed });
+                            return sendJsonResponse(res, 200, { message: 'Task result processed: ', taskProcessed });
                         } catch (error) {
                             console.error('Error processing task result:', error);
-                            sendJsonResponse(res, 500, { message: 'Internal Server Error' });
+                            return sendJsonResponse(res, 500, { message: 'Internal Server Error' });
                         }
                     });
                 }
 
                 default: {
                     // Handle unknown routes
-                    sendJsonResponse(res, 404, { message: 'Route not found' });
+                    return sendJsonResponse(res, 404, { message: 'Route not found' });
                 }
             }
         }
 
         default: {
             // Handle unknown routes
-            sendJsonResponse(res, 404, { message: 'Route not found' });
+            return sendJsonResponse(res, 404, { message: 'Route not found' });
         }
     }
 }
