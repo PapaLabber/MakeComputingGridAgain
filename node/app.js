@@ -1,13 +1,13 @@
 // BACKBONE OF THE MCGA PROGRAM
 
-// imports
-const { taskBrokerMain } = require("./TaskBroker.js");
-
+// Imports
+import http from 'http';
+import { handleRoutes } from './router.js';
+import { taskBrokerMain } from './TaskBroker.js';
+import { startServer } from './server.js';
 
 // Server setup
-
-
-// Router control
+startServer();
 
 
 // Taskbroker
