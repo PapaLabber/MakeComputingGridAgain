@@ -3,7 +3,8 @@ import path from 'path'; // Import the 'path' module for file path handling
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { storeResultsInDB, dbConnection } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection } from './DatabaseOperation.js';
+
 
 export { handleRoutes };
 
@@ -125,7 +126,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
             switch (reqPath) {
                 // Handle user registration
                 case "/register": {
-                    return registerUser(req, res, users);
+                    return registerUser(req, res, users); // Helper function
                 }
 
                 case "/login": {
@@ -143,9 +144,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                         }
 
                         // Check if the user exists and the password matches
-                        const user = users.find(u => u.username === username && u.password === password); // Change for database comms
-
-                        if (user) {
+                        if (checkLoginInfo(dbConnection,username, password)) {
                             sendJsonResponse(res, 200, { message: 'Login successful' });
                         } else {
                             sendJsonResponse(res, 401, { message: 'Invalid username or password.' });
@@ -232,8 +231,12 @@ function registerUser(req, res, users) {
             return sendJsonResponse(res, 400, { message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.' });
         }
         // Add the new user to the in-memory storage
-        users.push({ username, email, password }); //       ###### TODO Make into try catch with DB query #######
-        return sendJsonResponse(res, 201, { message: 'User successfully registered' });
+        if (registerUserToDB(dbConnection, username, email, password)) {
+            return sendJsonResponse(res, 201, { message: 'User successfully registered' });
+        } else {
+            return sendJsonResponse(res, 500, { message: 'User could not be registered. Internal server error.' });
+        }
+
     });
 }
 

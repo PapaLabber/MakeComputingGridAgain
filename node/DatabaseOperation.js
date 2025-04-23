@@ -1,5 +1,7 @@
 //Database pushing (not drugs)
 // these will essentially just be SQL queries with placeholders instead of example values
+// Export
+export{registerUserToDB, storeResultsInDB, checkLoginInfo};
 
 // Imports
 import bcrypt from 'bcrypt';
@@ -39,9 +41,9 @@ async function registerUserToDB(dbConnection, newUserEmail, newUserUsername, new
 }
 
 // Function to store results in the database
-async function storeResultsInDB(dbConnection, primeComputed, userName, resultIsPrime, perfectEvenOrOdd) {
+async function storeResultsInDB(dbConnection, primeComputed, userName, resultIsPrime, isEven) {
     try {
-        const values = [primeComputed, userName, resultIsPrime, perfectEvenOrOdd]; // Values being stored in the list.
+        const values = [primeComputed, userName, resultIsPrime, isEven]; // Values being stored in the list.
     
         if(!resultIsPrime) { // Check if the result is prime or not.
             console.log("Result is not prime");
@@ -49,7 +51,7 @@ async function storeResultsInDB(dbConnection, primeComputed, userName, resultIsP
             // Insert query. This stores the values in the database, setting perfect_even_or_odd 
             // to be null, because the product of (2^{n-1})2^n-1 is not perfect.
             await dbConnection.execute( 
-                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, perfect_even_or_odd) VALUES (?, ?, ?, ?)', values
+                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_even) VALUES (?, ?, ?, ?)', values
             );
             console.log("Result has successfully been stored in the database!");
             return false;
@@ -100,8 +102,6 @@ async function checkLoginInfo(dbConnection, username, password) {
         return false;
     }
 }
-
-
 
 
 // Example runs:
