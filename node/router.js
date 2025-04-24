@@ -1,15 +1,19 @@
 import fs from 'fs'; // Import the 'fs' module for file system operations
 import path from 'path'; // Import the 'path' module for file path handling
+import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and verification
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
 import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection } from './DatabaseOperation.js';
 
 
+
 export { handleRoutes };
 
 const __filename = fileURLToPath(import.meta.url); // Get the current file path
 const __dirname = path.dirname(__filename); // Get the directory name of the current file
+
+const SECRET_KEY = 'your_secret_key'; // Replace with a secure key
 
 function handleRoutes(req, res, hostname, PORT, users, tasks) {
     const method = req.method; // Get the HTTP method (GET, POST, etc.)
@@ -135,7 +139,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     req.on('data', chunk => {
                         body += chunk.toString(); // Collect the request body data
                     });
-                    req.on('end', () => {
+                    req.on('end', async () => {
                         const { username, password } = JSON.parse(body); // Parse the JSON body
 
                         // Validate input fields
@@ -143,11 +147,22 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             return sendJsonResponse(res, 400, { message: 'Username and password are required.' });
                         }
 
-                        // Check if the user exists and the password matches
-                        if (checkLoginInfo(dbConnection,username, password)) {
-                            sendJsonResponse(res, 200, { message: 'Login successful' });
-                        } else {
-                            sendJsonResponse(res, 401, { message: 'Invalid username or password.' });
+                        try {
+                            // Check if the user exists and the password matches
+                            const isValidUser = await checkLoginInfo(dbConnection, username, password);
+
+                            if (isValidUser) {
+                                // Generate a JWT
+                                const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+
+                                // Send the token to the client
+                                return sendJsonResponse(res, 200, { message: 'Login successful', token });
+                            } else {
+                                return sendJsonResponse(res, 401, { message: 'Invalid username or password.' });
+                            }
+                        } catch (error) {
+                            console.error('Error during login:', error);
+                            return sendJsonResponse(res, 500, { message: 'Internal server error.' });
                         }
                     });
                     return;
@@ -184,6 +199,14 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             return sendJsonResponse(res, 500, { message: 'Internal Server Error' });
                         }
                     });
+                }
+
+                case "/api/protected": {
+                    authenticateToken(req, res, () => {
+                        // Handle the protected route
+                        sendJsonResponse(res, 200, { message: 'You have access to this protected route.' });
+                    });
+                    return;
                 }
 
                 default: {
@@ -237,6 +260,25 @@ function registerUser(req, res, users) {
             return sendJsonResponse(res, 500, { message: 'User could not be registered. Internal server error.' });
         }
 
+    });
+}
+
+// Helper function to authenticate token
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return sendJsonResponse(res, 401, { message: 'Access denied. No token provided.' });
+    }
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) {
+            return sendJsonResponse(res, 403, { message: 'Invalid token.' });
+        }
+
+        req.user = user; // Attach the user to the request
+        next();
     });
 }
 

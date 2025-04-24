@@ -1,13 +1,11 @@
 //Database pushing (not drugs)
 // these will essentially just be SQL queries with placeholders instead of example values
 // Export
-export{registerUserToDB, storeResultsInDB, checkLoginInfo};
+export{registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection};
 
 // Imports
 import bcrypt from 'bcrypt';
 import mysql from 'mysql2/promise';
-
-export { storeResultsInDB, dbConnection };
 
 // Create a connection to the database
 async function initializeConnection() {
@@ -18,6 +16,7 @@ async function initializeConnection() {
         database: 'cs_25_sw_2_13'
     });
 }
+
 
 // Initialize the connection
 const dbConnection = await initializeConnection();
@@ -77,8 +76,8 @@ async function storeResultsInDB(dbConnection, primeComputed, userName, resultIsP
 // Function that checks if the username and password given by a user on the login page matches something in the database.
 async function checkLoginInfo(dbConnection, username, password) {
     try {
-        const [rows] = await dbConnection.execute(                        // Select query. This selects the column that matches 
-            `SELECT password FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
+                const [rows] = await dbConnection.execute(                        // Select query. This selects the column that matches
+            `SELECT password FROM users WHERE username = ?`,             [username] // both the username and password provided and stores it in an array.
         );
 
         if (rows.length === 0) {                 // Checks if the array is empty. if empty, the username has been
@@ -88,8 +87,9 @@ async function checkLoginInfo(dbConnection, username, password) {
 
         const hashedPassword = rows[0].password; // Setting the password found in the database as the value of hashedPassword
 
-        const match = await bcrypt.compare(password, hashedPassword); // Compares the password provided to the password found in the database.
-        if (match) { // Checks if they are a match, if true, then the password is correct
+        // Compare the provided password with the hashed password
+        const match = await bcrypt.compare(password, hashedPassword);
+        if (match) {
             console.log("Password is correct!");
             return true;
         } else { // Otherwise the password has been mistyped.
@@ -102,7 +102,6 @@ async function checkLoginInfo(dbConnection, username, password) {
         return false;
     }
 }
-
 
 // Example runs:
 

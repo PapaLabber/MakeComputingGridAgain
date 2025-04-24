@@ -18,21 +18,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === 'Login successful') {
-                        alert('Welcome back!');
-                        window.location.href = 'userProfile.html';
-                    } else {
-                        alert('Login failed: ' + data.message);
-                    }
+                body: JSON.stringify({
+                    username: username,
+                    password: password
                 })
-                .catch(error => {
-                    console.error('Login error:', error);
-                    alert('An error occurred. Please try again later.');
-                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    // Store the token in the database or use it for session management
+                    alert('Login successful!');
+                    // Redirect to a protected page
+                    window.location.href = '/userProfile.html';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error. Please try again later.');
+            });
         });
     }
 });
