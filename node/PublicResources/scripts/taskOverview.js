@@ -74,7 +74,7 @@ function clientTaskDone(result) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ result })
+        body: JSON.stringify({ result, taskId: result.taskID }) // Include taskId in the request body
     })
         .then(response => {
             if (!response.ok) {

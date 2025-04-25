@@ -181,27 +181,30 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     req.on('end', () => {
                         try {
                             // Parse the request body as JSON
-                            const { result } = JSON.parse(body);
-                            console.log('Task result processed:'); // Log the processed task result
+                            const { result, taskId } = JSON.parse(body); // Ensure taskId is included in the request
+                            console.log('Task result processed:', result); // Log the processed task result
                             
                             // Validate the result
-                            if (!result) {
-                                return sendJsonResponse(res, 400, { message: 'Result is required.' });
+                            if (!result || !taskId) {
+                                return sendJsonResponse(res, 400, { message: 'Result and taskId are required.' });
                             }
 
-                            // Pass the result to a function in TaskBroker.js
+                            // Call the acknowledge function to mark the task as completed
                             const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js
 
-                            // Save result in DB
-                            // const dataSavedToDB = storeResultsInDB(dbConnection, primeComputed, userName, resultIsPrime, perfectEvenOrOdd); 
-
-                            // Respond with success
-                            return sendJsonResponse(res, 200, { message: 'Task result processed: ', taskProcessed });
+                            if (taskProcessed) {
+                                console.log(`Task ${taskId} acknowledged successfully.`);
+                                return sendJsonResponse(res, 200, { message: `Task ${taskId} acknowledged successfully.` });
+                            } else {
+                                console.log(`Task ${taskId} not found in dequeued list.`);
+                                return sendJsonResponse(res, 404, { message: `Task ${taskId} not found in dequeued list.` });
+                            }
                         } catch (error) {
                             console.error('Error processing task result:', error);
                             return sendJsonResponse(res, 500, { message: 'Internal Server Error' });
                         }
                     });
+                    return;
                 }
 
                 case "/node/api/protected": {

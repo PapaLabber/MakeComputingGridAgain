@@ -204,7 +204,6 @@ function checkExperationTime(dq, mq) {
 
 //______________________________________________________________________________
 // *** TEST OF OTHER FUNCTIONS *** ///
-/*
 setTimeout(() => {
     console.log('Dequeue id 1, 2, 3:');
     dequeue(messageQueue, dqList);
@@ -229,4 +228,3 @@ setTimeout(() => {
 
 
 }, 1000); // timer of 1 sec used to let the queue fill up first
-*/
