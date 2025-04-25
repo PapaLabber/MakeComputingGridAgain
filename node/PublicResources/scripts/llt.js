@@ -1,4 +1,4 @@
-export { isPrime, isMersennePrime };
+export { realLLT };
 
 // since JS doesn't support sqrt for BigInt, we use:
 function newtonRaphsonMethod(n, x0) {    // Newton-Raphson method for square root approximation
@@ -93,7 +93,10 @@ function realLLT(testedExponent) {
 
     return resultObject; // return result object
 }
+/*
 
 // testing different exponents
 realLLT(testedExponentTrueMP);  // call the function with the true exponent
 realLLT(testedExponentFalseMP); // call the function with the false exponent
+
+*/

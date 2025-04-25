@@ -77,6 +77,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                 // Get a new task from the taskbroker
                 case "/api/requestTask": {
+                    console.log("(router) Task requested by client."); // Log the request for a new task
                     const newTask = dequeue(messageQueue, dqList);
 
                     // Check if task is valid
@@ -190,7 +191,8 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js
 
                             // Save result in DB
-                            const dataSavedToDB = storeResultsInDB(dbConnection, primeComputed, userName, resultIsPrime, perfectEvenOrOdd); 
+                            // const dataSavedToDB = storeResultsInDB(dbConnection, primeComputed, userName, resultIsPrime, perfectEvenOrOdd); 
+                            console.log('Task result processed:', taskProcessed); // Log the processed task result
 
                             // Respond with success
                             return sendJsonResponse(res, 200, { message: 'Task result processed: ', taskProcessed });
