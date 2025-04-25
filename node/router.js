@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection } from './DatabaseOperation.js';
+// import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection } from './DatabaseOperation.js';
 
 
 
@@ -31,14 +31,14 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 // Serve the CSS file for the landing page
-                case "/landingPage.css": {
+                case "/node/landingPage.css": {
                     const cssFilePath = path.resolve('node/PublicResources/landingPage.css'); // Resolve the CSS file path
                     serveFile(res, cssFilePath, 'text/css'); // Serve the CSS file with the correct content type
                     return; // Leave function when finished
                 }
 
                 // Get user profile
-                case "/getUserProfile": {
+                case "/node/getUserProfile": {
                     const username = url.searchParams.get('username'); // Extract the username from query parameters
                     if (!username) {
                         return sendJsonResponse(res, 400, { message: 'Username is required.' });
@@ -65,7 +65,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 // Get completed user tasks
-                case "/api/users-tasks": {
+                case "/node/api/users-tasks": {
                     const username = url.searchParams.get('username'); // Extract the username from query parameters
                     if (!username) {
                         return sendJsonResponse(res, 400, { message: 'Username is required' });
@@ -76,7 +76,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 // Get a new task from the taskbroker
-                case "/api/requestTask": {
+                case "/node/api/requestTask": {
                     console.log("(router) Task requested by client."); // Log the request for a new task
                     const newTask = dequeue(messageQueue, dqList);
 
@@ -130,11 +130,11 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
         case "POST": {
             switch (reqPath) {
                 // Handle user registration
-                case "/register": {
+                case "/node/register": {
                     return registerUser(req, res, users); // Helper function
                 }
 
-                case "/login": {
+                case "/node/login": {
                     // Handle user login
                     let body = '';
                     req.on('data', chunk => {
@@ -150,17 +150,17 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                         try {
                             // Check if the user exists and the password matches
-                            const isValidUser = await checkLoginInfo(dbConnection, username, password);
+                            // const isValidUser = await checkLoginInfo(dbConnection, username, password);
 
-                            if (isValidUser) {
-                                // Generate a JWT
-                                const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+                            // if (isValidUser) {
+                            //     // Generate a JWT
+                            //     const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
 
-                                // Send the token to the client
-                                return sendJsonResponse(res, 200, { message: 'Login successful', token });
-                            } else {
-                                return sendJsonResponse(res, 401, { message: 'Invalid username or password.' });
-                            }
+                            //     // Send the token to the client
+                            //     return sendJsonResponse(res, 200, { message: 'Login successful', token });
+                            // } else {
+                            //     return sendJsonResponse(res, 401, { message: 'Invalid username or password.' });
+                            // }
                         } catch (error) {
                             console.error('Error during login:', error);
                             return sendJsonResponse(res, 500, { message: 'Internal server error.' });
@@ -169,19 +169,21 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     return;
                 }
 
-                case "/api/clientTaskDone": {
+                case "/node/api/clientTaskDone": {
                     let body = '';
-
+                    console.log('clientTaskDone received in server'); 
+                    
                     // Collect the request body data
                     req.on('data', chunk => {
                         body += chunk.toString();
                     });
-
+                    
                     req.on('end', () => {
                         try {
                             // Parse the request body as JSON
                             const { result } = JSON.parse(body);
-
+                            console.log('Task result processed:'); // Log the processed task result
+                            
                             // Validate the result
                             if (!result) {
                                 return sendJsonResponse(res, 400, { message: 'Result is required.' });
@@ -192,7 +194,6 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                             // Save result in DB
                             // const dataSavedToDB = storeResultsInDB(dbConnection, primeComputed, userName, resultIsPrime, perfectEvenOrOdd); 
-                            console.log('Task result processed:', taskProcessed); // Log the processed task result
 
                             // Respond with success
                             return sendJsonResponse(res, 200, { message: 'Task result processed: ', taskProcessed });
@@ -203,7 +204,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     });
                 }
 
-                case "/api/protected": {
+                case "/node/api/protected": {
                     authenticateToken(req, res, () => {
                         // Handle the protected route
                         sendJsonResponse(res, 200, { message: 'You have access to this protected route.' });
@@ -256,11 +257,11 @@ function registerUser(req, res, users) {
             return sendJsonResponse(res, 400, { message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.' });
         }
         // Add the new user to the in-memory storage
-        if (registerUserToDB(dbConnection, username, email, password)) {
-            return sendJsonResponse(res, 201, { message: 'User successfully registered' });
-        } else {
-            return sendJsonResponse(res, 500, { message: 'User could not be registered. Internal server error.' });
-        }
+        // if (registerUserToDB(dbConnection, username, email, password)) {
+        //     return sendJsonResponse(res, 201, { message: 'User successfully registered' });
+        // } else {
+        //     return sendJsonResponse(res, 500, { message: 'User could not be registered. Internal server error.' });
+        // }
 
     });
 }

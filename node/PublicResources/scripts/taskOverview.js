@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function clientTaskDone(result) {
-    fetch('/api/clientTaskDone', {
+    fetch('/node/api/clientTaskDone', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
