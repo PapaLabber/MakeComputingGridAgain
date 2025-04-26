@@ -171,7 +171,6 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                 case "/node/api/clientTaskDone": {
                     let body = '';
-                    console.log('clientTaskDone received in server'); 
                     
                     // Collect the request body data
                     req.on('data', chunk => {

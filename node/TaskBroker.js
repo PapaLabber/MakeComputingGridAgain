@@ -202,29 +202,29 @@ function checkExperationTime(dq, mq) {
     }
 }
 
-//______________________________________________________________________________
-// *** TEST OF OTHER FUNCTIONS *** ///
-setTimeout(() => {
-    console.log('Dequeue id 1, 2, 3:');
-    dequeue(messageQueue, dqList);
-    dequeue(messageQueue, dqList);
-    dequeue(messageQueue, dqList);
-    printQueue(messageQueue);
-    printQueue(dqList);
-    console.log('___________');
+// //______________________________________________________________________________
+// // *** TEST OF OTHER FUNCTIONS *** ///
+// setTimeout(() => {
+//     console.log('Dequeue id 1, 2, 3:');
+//     dequeue(messageQueue, dqList);
+//     dequeue(messageQueue, dqList);
+//     dequeue(messageQueue, dqList);
+//     printQueue(messageQueue);
+//     printQueue(dqList);
+//     console.log('___________');
 
-    console.log('Ackowledge:');
-    acknowledge(dqList, '2');
-    printQueue(dqList);
-    console.log('___________');
+//     console.log('Ackowledge:');
+//     acknowledge(dqList, '2');
+//     printQueue(dqList);
+//     console.log('___________');
 
-    console.log('Requeue:');
-    requeue(dqList, messageQueue, '3');
-    printQueue(dqList);
-    console.log('___________');
+//     console.log('Requeue:');
+//     requeue(dqList, messageQueue, '3');
+//     printQueue(dqList);
+//     console.log('___________');
 
-    console.log('print message queue again:');
-    printQueue(messageQueue);
+//     console.log('print message queue again:');
+//     printQueue(messageQueue);
 
 
-}, 1000); // timer of 1 sec used to let the queue fill up first
+// }, 1000); // timer of 1 sec used to let the queue fill up first

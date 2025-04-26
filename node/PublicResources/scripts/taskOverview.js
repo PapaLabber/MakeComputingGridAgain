@@ -3,8 +3,7 @@ export { requestTask };
 
 const requestTaskButton = document.getElementById('request-task-btn');
 requestTaskButton.addEventListener('click', function () {
-    requestTask(); // Call the function to request a new task
-    console.log("works (taskoverview.js)"); // Log to check if the button is working
+    requestTask();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -17,30 +16,27 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         alert('No user found! Please log in.');
     }
-    
-    
-    
+
     // Function to fetch user tasks from the backend
     function completedUserTasks(username) {
-            fetch(`/api/users-tasks?username=${username}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json(); // Parse the response as JSON
-                })
-                .then(tasks => {
-                    displayTasks(tasks);
-                })
-                .catch(error => {
-                    console.error('Error fetching tasks:', error);
-                    alert('Could not fetch your completed tasks. Please try again later.');
-                });
-        }
+        fetch(`/api/users-tasks?username=${username}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json(); // Parse the response as JSON
+            })
+            .then(tasks => {
+                displayTasks(tasks);
+            })
+            .catch(error => {
+                console.error('Error fetching tasks:', error);
+                alert('Could not fetch your completed tasks. Please try again later.');
+            });
+    }
 
     // Function to distribute tasks when extension activated
-    
-
+    // used for anything???
     window.requestTask = requestTask;
 
     // Function to display the fetched tasks
@@ -68,28 +64,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function clientTaskDone(result) {
-    fetch('/node/api/clientTaskDone', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ result, taskId: result.taskID }) // Include taskId in the request body
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-        })
-        .then(() => {
-            console.log('Task result successfully sent to the server.');
-        })
-        .catch(error => {
-            console.error('Error sending task result to the server:', error);
-            alert('Error in delivering task result.');
-        });
-}
-
 function requestTask() {
     fetch('/node/api/requestTask')
         .then(response => {
@@ -98,29 +72,55 @@ function requestTask() {
             }
             return response.json();
         })
-        //Give task to calculation file****!!!!
         .then(newTask => {
             if (!newTask || !newTask.taskData) {
                 console.error('Invalid task received:', newTask);
                 alert('No valid task received from the server.');
-                return;
+                return false;
             }
 
-            let result;
-            console.log('(taskOverview) New task received:', newTask.taskData); // Log the received task data
+            console.log('(taskOverview) New task received:', newTask.taskData);
+
             try {
-                result = realLLT(BigInt(newTask.taskData));
+                const result = realLLT(BigInt(newTask.taskData));
                 result.taskID = newTask.id; // Add task ID to the result object
-                // insert remaining column data into object (which is to be inserted into DB) 
-                clientTaskDone(result);
+                clientTaskDone(result); // Call clientTaskDone
+                return true;
             } catch (error) {
                 console.error('Error calculating Mersenne prime:', error);
                 alert('An error occurred while processing the task.');
-                return;
+                return false;
             }
         })
         .catch(error => {
-            console.error('Error fetching tasks', error);
+            console.error('Error fetching tasks:', error);
             alert('Could not fetch any new tasks. Please try again later.');
+            return false;
+        });
+}
+
+function clientTaskDone(result) {
+    // Convert BigInt to string before sending
+    result.exponent = result.exponent.toString();
+
+    fetch('/node/api/clientTaskDone', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ result, taskId: result.taskID }),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Result successfully sent to the server:', data);
+        })
+        .catch(error => {
+            console.error('Error sending task result to the server:', error);
+            alert('Error in delivering task result.');
         });
 }
