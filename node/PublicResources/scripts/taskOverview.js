@@ -64,8 +64,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+
 function requestTask() {
-    fetch('/node/api/requestTask')
+    fetch(`/node/api/requestTask`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -118,6 +119,9 @@ function clientTaskDone(result) {
         })
         .then(data => {
             console.log('Result successfully sent to the server:', data);
+            console.log('Requesting the next task...');
+            requestTask();
+
         })
         .catch(error => {
             console.error('Error sending task result to the server:', error);
