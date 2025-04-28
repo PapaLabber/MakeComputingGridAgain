@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function requestTask() {
-    fetch(`/node0/api/requestTask`)
+    fetch(`/node0/requestTask`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
