@@ -1,6 +1,13 @@
 import { realLLT } from './llt.js'; // Import the isMersennePrime function from llt.js
 export { requestTask };
 
+const aau_port = true;
+let baseURL = "";
+
+if (aau_port)
+    baseURL = `${window.location.origin}/node0`;
+else baseURL = `${window.location.origin}`;
+
 const requestTaskButton = document.getElementById('request-task-btn');
 requestTaskButton.addEventListener('click', function () {
     requestTask();
@@ -19,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to fetch user tasks from the backend
     function completedUserTasks(username) {
-        fetch(`/api/users-tasks?username=${username}`)
+        fetch(`${baseURL}/node/users-tasks?username=${username}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -66,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function requestTask() {
-    fetch(`/node/api/requestTask`)
+    fetch(`${baseURL}/node/requestTask`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -104,7 +111,7 @@ function clientTaskDone(result) {
     // Convert BigInt to string before sending
     result.exponent = result.exponent.toString();
 
-    fetch('/node/api/clientTaskDone', {
+    fetch(`${baseURL}/node/clientTaskDone`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

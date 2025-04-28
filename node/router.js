@@ -65,7 +65,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 // Get completed user tasks
-                case "/node/api/users-tasks": {
+                case "/node/users-tasks": {
                     const username = url.searchParams.get('username'); // Extract the username from query parameters
                     if (!username) {
                         return sendJsonResponse(res, 400, { message: 'Username is required' });
@@ -76,7 +76,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 // Get a new task from the taskbroker
-                case "/node/api/requestTask": {
+                case "/node/requestTask": {
                     console.log("(router) Task requested by client."); // Log the request for a new task
                     const newTask = dequeue(messageQueue, dqList);
 
@@ -169,7 +169,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     return;
                 }
 
-                case "/node/api/clientTaskDone": {
+                case "/node/clientTaskDone": {
                     let body = '';
                     
                     // Collect the request body data
@@ -206,7 +206,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     return;
                 }
 
-                case "/node/api/protected": {
+                case "/node/protected": {
                     authenticateToken(req, res, () => {
                         // Handle the protected route
                         sendJsonResponse(res, 200, { message: 'You have access to this protected route.' });
