@@ -1,30 +1,40 @@
-import { realLLT } from './llt.js'; // Import the isMersennePrime function from llt.js
+// Import the realLLT function for Mersenne prime calculations
+import { realLLT } from './llt.js';
 export { requestTask };
 
-const aau_port = true;
+// Configuration for deployment
+const aau_port = true; // Set to false for local deployment
 let baseURL = "";
 
-if (aau_port)
+if (aau_port) {
+    // Use Apache URL translation for AAU deployment
     baseURL = `${window.location.origin}/node0`;
-else baseURL = `${window.location.origin}`;
+} else {
+    // Use standard URL for local deployment
+    baseURL = `${window.location.origin}`;
+}
 
+// Add event listener to the "Request Task" button
 const requestTaskButton = document.getElementById('request-task-btn');
 requestTaskButton.addEventListener('click', function () {
-    requestTask();
+    requestTask(); // Trigger task request when button is clicked
 });
 
+// Execute when the DOM is fully loaded
+// Fetch and display user tasks if a username is available
+// Otherwise, alert the user to log in
+
 document.addEventListener('DOMContentLoaded', function () {
-    // Define the username (this could be dynamically set based on the logged-in user)
     const username = "test_user"; // Example: hardcoded username for testing
 
     if (username) {
-        // Fetch the user's tasks when the page loads
+        // Fetch completed tasks for the user
         completedUserTasks(username);
     } else {
         alert('No user found! Please log in.');
     }
 
-    // Function to fetch user tasks from the backend
+    // Fetch completed tasks for a specific user
     function completedUserTasks(username) {
         fetch(`${baseURL}/node/users-tasks?username=${username}`)
             .then(response => {
@@ -34,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json(); // Parse the response as JSON
             })
             .then(tasks => {
-                displayTasks(tasks);
+                displayTasks(tasks); // Display the fetched tasks
             })
             .catch(error => {
                 console.error('Error fetching tasks:', error);
@@ -42,43 +52,42 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Function to distribute tasks when extension activated
-    // used for anything???
+    // Expose the requestTask function globally for external use
     window.requestTask = requestTask;
 
-    // Function to display the fetched tasks
+    // Display tasks in the UI
     function displayTasks(tasks) {
         const taskContainer = document.getElementById('task-container');
         taskContainer.innerHTML = ''; // Clear any previous content
 
-        // Filter tasks by status
+        // Filter tasks by their status
         const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
         const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
 
-        // Display completed tasks
+        // Generate HTML for completed tasks
         const completedList = completedTasks.length
             ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
             : '<p>No completed tasks yet!</p>';
 
-        // Display current task
+        // Generate HTML for the current task
         const currentTaskDisplay = currentTask
             ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
             : '<p>No current task in progress.</p>';
 
-        // Update the page with the fetched data
+        // Update the task container with the generated HTML
         taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
         taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
     }
 });
 
-
+// Request a new task from the server
 function requestTask() {
     fetch(`${baseURL}/node/requestTask`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.json();
+            return response.json(); // Parse the response as JSON
         })
         .then(newTask => {
             if (!newTask || !newTask.taskData) {
@@ -90,9 +99,9 @@ function requestTask() {
             console.log('(taskOverview) New task received:', newTask.taskData);
 
             try {
-                const result = realLLT(BigInt(newTask.taskData));
+                const result = realLLT(BigInt(newTask.taskData)); // Perform Mersenne prime calculation
                 result.taskID = newTask.id; // Add task ID to the result object
-                clientTaskDone(result); // Call clientTaskDone
+                clientTaskDone(result); // Send the result back to the server
                 return true;
             } catch (error) {
                 console.error('Error calculating Mersenne prime:', error);
@@ -107,8 +116,9 @@ function requestTask() {
         });
 }
 
+// Send the completed task result to the server
 function clientTaskDone(result) {
-    // Convert BigInt to string before sending
+    // Convert BigInt properties to strings before sending
     result.exponent = result.exponent.toString();
 
     fetch(`${baseURL}/node/clientTaskDone`, {
@@ -116,19 +126,18 @@ function clientTaskDone(result) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ result, taskId: result.taskID }),
+        body: JSON.stringify({ result, taskId: result.taskID }), // Include task ID in the request body
     })
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.json();
+            return response.json(); // Parse the server response as JSON
         })
         .then(data => {
             console.log('Result successfully sent to the server:', data);
             console.log('Requesting the next task...');
-            requestTask();
-
+            requestTask(); // Automatically request the next task
         })
         .catch(error => {
             console.error('Error sending task result to the server:', error);
