@@ -150,17 +150,17 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                         try {
                             // Check if the user exists and the password matches
-                            // const isValidUser = await checkLoginInfo(dbConnection, username, password);
+                            const isValidUser = await checkLoginInfo(dbConnection, username, password);
 
-                            // if (isValidUser) {
-                            //     // Generate a JWT
-                            //     const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+                            if (isValidUser) {
+                                // Generate a JWT
+                                const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
 
-                            //     // Send the token to the client
-                            //     return sendJsonResponse(res, 200, { message: 'Login successful', token });
-                            // } else {
-                            //     return sendJsonResponse(res, 401, { message: 'Invalid username or password.' });
-                            // }
+                                // Send the token to the client
+                                return sendJsonResponse(res, 200, { message: 'Login successful', token });
+                            } else {
+                                return sendJsonResponse(res, 401, { message: 'Invalid username or password.' });
+                            }
                         } catch (error) {
                             console.error('Error during login:', error);
                             return sendJsonResponse(res, 500, { message: 'Internal server error.' });
@@ -259,11 +259,11 @@ function registerUser(req, res, users) {
             return sendJsonResponse(res, 400, { message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.' });
         }
         // Add the new user to the in-memory storage
-        // if (registerUserToDB(dbConnection, username, email, password)) {
-        //     return sendJsonResponse(res, 201, { message: 'User successfully registered' });
-        // } else {
-        //     return sendJsonResponse(res, 500, { message: 'User could not be registered. Internal server error.' });
-        // }
+        if (registerUserToDB(dbConnection, username, email, password)) {
+            return sendJsonResponse(res, 201, { message: 'User successfully registered' });
+        } else {
+            return sendJsonResponse(res, 500, { message: 'User could not be registered. Internal server error.' });
+        }
 
     });
 }

@@ -1,3 +1,7 @@
+// TODO: Add comments
+
+import { baseURL } from './taskOverview';
+
 document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
 
@@ -13,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            fetch('/login', {
+            fetch(`${baseURL}/node/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,9 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.token) {
-                    // Store the token in the database or use it for session management
                     alert('Login successful!');
-                    // Redirect to a protected page
                     window.location.href = '/userProfile.html';
                 } else {
                     alert('Error: ' + data.message);

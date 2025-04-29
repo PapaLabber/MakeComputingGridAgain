@@ -1,3 +1,6 @@
+import { baseURL } from './taskOverview';
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('userData');
     if (form) {
@@ -16,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Send the data to the back-end server using fetch
-            fetch('/register', {
+            fetch(`${baseURL}/node/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

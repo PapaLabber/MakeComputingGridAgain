@@ -1,6 +1,6 @@
 // Import the realLLT function for Mersenne prime calculations
 import { realLLT } from './llt.js';
-export { requestTask };
+export { requestTask, baseURL };
 
 // Configuration for deployment
 const aau_port = true; // Set to false for local deployment
