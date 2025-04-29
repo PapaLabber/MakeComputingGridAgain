@@ -41,7 +41,7 @@ const dqList = new queue;
 
 
 function taskBrokerMain() {
-    fs.createReadStream('./data/primes_1_to_1000.csv') // Replace 'data.csv' with your file path
+    fs.createReadStream('./data/task_list_with_plain_ids_1_to_5000.csv') // Replace 'data.csv' with your file path
         .pipe(csvParser())
         .on('data', (row) => {
             // Extract only the values from the row
@@ -54,7 +54,7 @@ function taskBrokerMain() {
         })
         .on('end', () => {
             console.log('CSV file successfully processed.');
-            printQueue(messageQueue);
+            //printQueue(messageQueue);
         });
 }
 
@@ -79,8 +79,8 @@ function enqueue(queue, task) {
 
 // Make a function that removes a task from the list (dequeue)
 function dequeue(mq, dq) {
-    if (!mq.head) { // If queue empty
-        console.log("Cannot dequeue - Queue is empty");
+    if (!mq.head.task) { // If queue empty
+        console.log("Cannot dequeue - Message Queue is empty");
         return null;
     }
 
@@ -105,14 +105,16 @@ function dequeue(mq, dq) {
         newdqNode.prev = dq.tail; // Set the previous of the new node to the tail
         dq.tail = newdqNode; // Set the tail to the new node
     }
+        
     console.log(`Task ${newdqNode.task.id} has been dequeued and is now stored in the dequeued list`);
     return newdqNode.task;
+
 }
 
 // A function that marks a task as done/finished when it has computed it fully (acknowledge)
 // The function takes two parametres. The queue itself and the ID of the task we are looking for.
 function acknowledge(queue, taskId) {
-    if (!queue.head) { // If queue empty
+    if (!queue.head.task) { // If queue empty
         console.log("Dequeue list is empty");
         return null;
     }
@@ -135,6 +137,11 @@ function acknowledge(queue, taskId) {
 // Make a function that re-adds unfinished tasks, that have already been started, but not finished
 // to the back of the list again (requeue)
 function requeue(dq, mq, targetId) {
+    if (!dq.head.task) { // If queue empty
+        console.log("Dequeue list is empty");
+        return null;
+    }
+
     let targetNode = dq.head; // Start at the head of the dequeued list
     while (targetNode) {
         if (targetNode.task.id === targetId) { // Check if current task ID is the same as the ID we are looking for
@@ -158,7 +165,7 @@ function requeue(dq, mq, targetId) {
 
 // Print the linked list
 function printQueue(queue) {
-    if (!queue.head) { // If queue empty
+    if (!queue.head.task) { // If queue empty
         console.log("Nothing to print - List is empty");
         return null;
     }
@@ -202,31 +209,29 @@ function checkExperationTime(dq, mq) {
     }
 }
 
-//______________________________________________________________________________
-// *** TEST OF OTHER FUNCTIONS *** ///
-/*
-setTimeout(() => {
-    console.log('Dequeue id 1, 2, 3:');
-    dequeue(messageQueue, dqList);
-    dequeue(messageQueue, dqList);
-    dequeue(messageQueue, dqList);
-    printQueue(messageQueue);
-    printQueue(dqList);
-    console.log('___________');
+// //______________________________________________________________________________
+// // *** TEST OF OTHER FUNCTIONS *** ///
+// setTimeout(() => {
+//     console.log('Dequeue id 1, 2, 3:');
+//     dequeue(messageQueue, dqList);
+//     dequeue(messageQueue, dqList);
+//     dequeue(messageQueue, dqList);
+//     printQueue(messageQueue);
+//     printQueue(dqList);
+//     console.log('___________');
 
-    console.log('Ackowledge:');
-    acknowledge(dqList, '2');
-    printQueue(dqList);
-    console.log('___________');
+//     console.log('Ackowledge:');
+//     acknowledge(dqList, '2');
+//     printQueue(dqList);
+//     console.log('___________');
 
-    console.log('Requeue:');
-    requeue(dqList, messageQueue, '3');
-    printQueue(dqList);
-    console.log('___________');
+//     console.log('Requeue:');
+//     requeue(dqList, messageQueue, '3');
+//     printQueue(dqList);
+//     console.log('___________');
 
-    console.log('print message queue again:');
-    printQueue(messageQueue);
+//     console.log('print message queue again:');
+//     printQueue(messageQueue);
 
 
-}, 1000); // timer of 1 sec used to let the queue fill up first
-*/
+// }, 1000); // timer of 1 sec used to let the queue fill up first

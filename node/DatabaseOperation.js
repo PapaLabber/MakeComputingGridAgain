@@ -47,7 +47,7 @@ async function storeResultsInDB(dbConnection, primeComputed, userName, resultIsP
         if(!resultIsPrime) { // Check if the result is prime or not.
             console.log("Result is not prime");
             
-            // Insert query. This stores the values in the database, setting perfect_even_or_odd 
+            // Insert query. This stores the values in the database, setting is_even 
             // to be null, because the product of (2^{n-1})2^n-1 is not perfect.
             await dbConnection.execute( 
                 'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_even) VALUES (?, ?, ?, ?)', values
@@ -59,9 +59,9 @@ async function storeResultsInDB(dbConnection, primeComputed, userName, resultIsP
             console.log("Result is prime and associated perfect number has been checked.");
             await dbConnection.execute( 
                 // Insert query. This stores all the values in the database, 
-                // notably, the value of perfect_even_or_odd can be either 'Even' or 'Odd'.
-                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, perfect_even_or_odd) VALUES (?, ?, ?, ?)', values
-            ); // If the value of perfect_even_or_odd is 'Odd', the problem has been solved.
+                // notably, the value of is_even can be either 'Even' or 'Odd'.
+                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_even) VALUES (?, ?, ?, ?)', values
+            ); // If the value of is_even is 'Odd', the problem has been solved.
             console.log("Result has successfully been stored in the database!"); 
             return true; // Success
         }
@@ -105,24 +105,24 @@ async function checkLoginInfo(dbConnection, username, password) {
 
 // Example runs:
 
-const registerQueryEmail = "exampleEmail@email.com";
-const registerQueryUsername = "exampleUsername";
-const registerQueryPassword = "examplePassword";
+// const registerQueryEmail = "exampleEmail@email.com";
+// const registerQueryUsername = "exampleUsername";
+// const registerQueryPassword = "examplePassword";
 
-// register user FIRST, everything can't be tested in one exection (without timeout or something similar)
-registerUserToDB(dbConnection, registerQueryEmail, registerQueryUsername, registerQueryPassword);
+// // register user FIRST, everything can't be tested in one exection (without timeout or something similar)
+// registerUserToDB(dbConnection, registerQueryEmail, registerQueryUsername, registerQueryPassword);
 
-const testPrime = 7;
-const falseTestPrime = 4;
-// const testUsername = "exampleUsername";
-const testUsername = registerQueryUsername;
-const testIsPrimeTrue = true;
-const testIsPrimeFalse = false;
-const testPerfectEven = "Even";
-const testPerfectNull = null;
+// const testPrime = 7;
+// const falseTestPrime = 4;
+// // const testUsername = "exampleUsername";
+// const testUsername = registerQueryUsername;
+// const testIsPrimeTrue = true;
+// const testIsPrimeFalse = false;
+// const testPerfectEven = "Even";
+// const testPerfectNull = null;
 
-storeResultsInDB(dbConnection, testPrime, testUsername, testIsPrimeTrue, testPerfectEven);
-storeResultsInDB(dbConnection, falseTestPrime, testUsername, testIsPrimeFalse, testPerfectNull);
+// storeResultsInDB(dbConnection, testPrime, testUsername, testIsPrimeTrue, testPerfectEven);
+// storeResultsInDB(dbConnection, falseTestPrime, testUsername, testIsPrimeFalse, testPerfectNull);
 
-checkLoginInfo(dbConnection, testUsername, registerQueryPassword); // Correct password
-checkLoginInfo(dbConnection, testUsername, "incorrectPassword"); // Incorrect password
+// checkLoginInfo(dbConnection, testUsername, registerQueryPassword); // Correct password
+// checkLoginInfo(dbConnection, testUsername, "incorrectPassword"); // Incorrect password
