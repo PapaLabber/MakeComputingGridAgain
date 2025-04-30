@@ -39,7 +39,13 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                 // Get user profile
                 case "/node/getUserProfile": {
-                    return authenticateToken(req, res);
+                    authenticateToken(req, res, () => {
+                        return sendJsonResponse(res, 200, {
+                            message: 'Token is valid. User is authorized.',
+                            user: req.user // invlude user details if needed
+                    });
+                });
+                return;
                 }
 
                 // Get completed user tasks
@@ -247,26 +253,32 @@ function registerUser(req, res, users) {
 }
 
 // Helper function to authenticate token
-function authenticateToken(req, res) {
+function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
+        console.log("check 1");
         return sendJsonResponse(res, 401, { message: 'Access denied. No token provided.' });
     }
 
     jwt.verify(token, SECRET_KEY, (err, user) => {
         if (err) {
+            console.error("Check error: JWT verification error:", err);
             if (err.name === 'TokenExpiredError') {
+                console.log("check 2");
                 return sendJsonResponse(res, 403, { message: 'Token has expired.' });
             } else if (err.name === 'JsonWebTokenError') {
+                console.log("check 3");
                 return sendJsonResponse(res, 403, { message: 'Invalid token.' });
             } else {
+                console.log("check 4");
                 return sendJsonResponse(res, 403, { message: 'Token verification failed.' });
             }
         }
 
         req.user = user; // Attach the user to the request
+        next();
     });
 }
 
