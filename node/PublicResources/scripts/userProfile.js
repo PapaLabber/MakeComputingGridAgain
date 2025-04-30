@@ -1,10 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // Define the username (this could be dynamically set based on the logged-in user)
-    const username = "test_user"; // Example: hardcoded username for testing
+    const username = "blabla"; // Example: hardcoded username for testing
 
     // Fetch the user profile data from the server
-    fetch(`${baseURL}/node/getUserProfile?username=${username}`)
+    fetch(`${baseURL}/node/getUserProfile?username=${username}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Include the JWT
+            'Content-Type': 'application/json',
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
