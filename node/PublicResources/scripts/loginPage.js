@@ -26,19 +26,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     password: password
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.token) {
-                    alert('Login successful!');
-                    window.location.href = '/userProfile.html';
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('There was an error. Please try again later.');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        alert('Login successful!');
+                        // Save the JWT in localStorage (or sessionStorage)
+                        localStorage.setItem('jwt', data.token);
+
+                        window.location.href = `${baseURL}/userProfile.html`;
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error. Please try again later.');
+                });
         });
     }
 });

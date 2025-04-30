@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-// import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection } from './DatabaseOperation.js';
 
 
 
@@ -39,29 +39,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                 // Get user profile
                 case "/node/getUserProfile": {
-                    const username = url.searchParams.get('username'); // Extract the username from query parameters
-                    if (!username) {
-                        return sendJsonResponse(res, 400, { message: 'Username is required.' });
-                    }
-                    // Find the user by username
-                    const user = users.find(u => u.username === username); // Change for database comms
-                    if (user) {
-                        // Get the user's tasks and calculate points
-                        const userTasks = tasks.filter(task => task.username === username);
-                        const completedTasks = userTasks.filter(task => task.status === 'Completed');
-                        const points = completedTasks.length * 10; // Example: 10 points per completed task
-                        // Respond with the user profile
-                        sendJsonResponse(res, 200, {
-                            username: user.username,
-                            email: user.email,
-                            points: points,
-                            tasks: userTasks
-                        });
-                        return;
-                    } else {
-                        sendJsonResponse(res, 404, { message: 'User not found.' });
-                        return;
-                    }
+                    return authenticateToken(req, res);
                 }
 
                 // Get completed user tasks
@@ -259,7 +237,7 @@ function registerUser(req, res, users) {
             return sendJsonResponse(res, 400, { message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number.' });
         }
         // Add the new user to the in-memory storage
-        if (registerUserToDB(dbConnection, username, email, password)) {
+        if (registerUserToDB(dbConnection, email, username, password)) {
             return sendJsonResponse(res, 201, { message: 'User successfully registered' });
         } else {
             return sendJsonResponse(res, 500, { message: 'User could not be registered. Internal server error.' });
@@ -269,7 +247,7 @@ function registerUser(req, res, users) {
 }
 
 // Helper function to authenticate token
-function authenticateToken(req, res, next) {
+function authenticateToken(req, res) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -279,11 +257,16 @@ function authenticateToken(req, res, next) {
 
     jwt.verify(token, SECRET_KEY, (err, user) => {
         if (err) {
-            return sendJsonResponse(res, 403, { message: 'Invalid token.' });
+            if (err.name === 'TokenExpiredError') {
+                return sendJsonResponse(res, 403, { message: 'Token has expired.' });
+            } else if (err.name === 'JsonWebTokenError') {
+                return sendJsonResponse(res, 403, { message: 'Invalid token.' });
+            } else {
+                return sendJsonResponse(res, 403, { message: 'Token verification failed.' });
+            }
         }
 
         req.user = user; // Attach the user to the request
-        next();
     });
 }
 

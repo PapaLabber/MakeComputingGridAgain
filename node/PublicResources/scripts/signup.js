@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.message === 'User successfully registered') {
                     alert('Sign-up successful!');
                     // Optionally, redirect to a login page or another page
-                    window.location.href = '/loginPage.html';
+                    window.location.href = `${baseURL}/loginPage.html`;
                 } else {
                     alert('Error: ' + data.message);
                 }
