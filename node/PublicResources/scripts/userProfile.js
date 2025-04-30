@@ -1,5 +1,3 @@
-import { baseURL } from './taskOverview';
-
 document.addEventListener('DOMContentLoaded', function () {
 
     // Define the username (this could be dynamically set based on the logged-in user)

@@ -1,18 +1,7 @@
 // Import the realLLT function for Mersenne prime calculations
 import { realLLT } from './llt.js';
-export { requestTask, baseURL };
+export { requestTask };
 
-// Configuration for deployment
-const aau_port = true; // Set to false for local deployment
-let baseURL = "";
-
-if (aau_port) {
-    // Use Apache URL translation for AAU deployment
-    baseURL = `${window.location.origin}/node0`;
-} else {
-    // Use standard URL for local deployment
-    baseURL = `${window.location.origin}`;
-}
 
 // Add event listener to the "Request Task" button
 const requestTaskButton = document.getElementById('request-task-btn');
