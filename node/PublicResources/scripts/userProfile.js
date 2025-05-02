@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data) {
                 console.log("login success :)");
                 // Display the user profile information on the page
-                document.getElementById('username').textContent = `Username: ${data.username}`;
+                document.getElementById('username').textContent = `Hello ${data.username}`;
                 // document.getElementById('email').textContent = `Email: ${data.email}`;
-                document.getElementById('points').textContent = `Points: ${data.points}`;
+                document.getElementById('points').textContent = `CURRENT POINTS ${data.points}`;
                 
                 // // Optionally display tasks
                 // const tasksList = document.getElementById('tasks');
