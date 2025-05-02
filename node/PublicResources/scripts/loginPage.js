@@ -1,8 +1,4 @@
 // TODO: Add comments
-const username = document.getElementById('login-username').value;
-const password = document.getElementById('login-password').value;
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
 
@@ -10,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
         loginForm.addEventListener('submit', function (event) {
             event.preventDefault();
 
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
 
             if (!username || !password) {
                 alert('Please enter both username and password.');
