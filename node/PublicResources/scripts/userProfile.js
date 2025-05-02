@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Define the username (this could be dynamically set based on the logged-in user)
 
-    // Fetch the user profile data from the server
-    fetch(`${baseURL}/node/getUserProfile`, {
+    const username = localStorage.getItem('username'); // Retrieve the username
+   // Fetch the user profile data from the server
+    fetch(`${baseURL}/node/getUserProfile?username=${username}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Include the JWT
@@ -21,9 +22,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data) {
                 console.log("login success :)");
                 // Display the user profile information on the page
-                document.getElementById('username').textContent = `Hello ${data.username}`;
+                const usernameElement = document.getElementById('username');
+                usernameElement.textContent = `Hello ${data.username}`;
                 // document.getElementById('email').textContent = `Email: ${data.email}`;
-                document.getElementById('points').textContent = `CURRENT POINTS ${data.points}`;
+                const pointsElement = document.getElementById('points');
+                pointsElement.textContent = `CURRENT POINTS ${data.points}`;
                 
                 // // Optionally display tasks
                 // const tasksList = document.getElementById('tasks');

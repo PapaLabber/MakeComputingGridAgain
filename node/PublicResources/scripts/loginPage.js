@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         alert('Login successful!');
                         // Save the JWT in localStorage (or sessionStorage)
                         localStorage.setItem('jwt', data.token);
+                        localStorage.setItem('username', username); // Save the username
 
                         window.location.href = `${baseURL}/userProfile.html`;
                     } else {

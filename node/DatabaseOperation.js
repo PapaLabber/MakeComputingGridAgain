@@ -114,13 +114,13 @@ async function getUserProfile(dbConnection, username) {
             `SELECT * FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
         );
 
-        if (rows.length === 0) {                 // Checks if the array is empty. if empty, the username has been
-            console.error("User data not found.");    // incorrectly types or it does not exist in the database.
-            return false;
-        } else {
+        if (rows.length > 0) {                 // Checks if the array is empty. if empty, the username has been
             console.log("User data found!");
             console.log(rows[0]); // Log the user data
             return rows[0]; // Return the user data
+        } else {
+            console.error("User data not found.");    // incorrectly types or it does not exist in the database.
+            return false;
         }
 
     } catch (error) { // Error handling
