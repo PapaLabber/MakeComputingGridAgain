@@ -1,5 +1,5 @@
 // TODO: Add comments
-export const username = document.getElementById('login-username').value;
+const username = document.getElementById('login-username').value;
 const password = document.getElementById('login-password').value;
 
 
