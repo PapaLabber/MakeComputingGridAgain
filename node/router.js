@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection, getUserProfile } from './DatabaseOperation.js';
 
 
 
@@ -39,13 +39,35 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                 // Get user profile
                 case "/node/getUserProfile": {
-                    authenticateToken(req, res, () => {
-                        return sendJsonResponse(res, 200, {
-                            message: 'Token is valid. User is authorized.',
-                            user: req.user // invlude user details if needed
+                    authenticateToken(req, res, async () => {
+                        // Extract the username from the query parameters
+                        const username = url.searchParams.get('username');
+                
+                        if (!username) {
+                            return sendJsonResponse(res, 400, { message: 'Username is required' });
+                        }
+                
+                        try {
+                            // Fetch the user profile from the database
+                            const userData = await getUserProfile(dbConnection, username);
+                
+                            if (!userData) {
+                                return sendJsonResponse(res, 404, { message: 'User not found' });
+                            }
+                
+                            // Send the user profile data as a response
+                            return sendJsonResponse(res, 200, {
+                                message: 'Token is valid. User is authorized.',
+                                username: userData.username,
+                                points: userData.points,
+                                email: userData.email, // Include additional fields if needed
+                            });
+                        } catch (error) {
+                            console.error('Error fetching user profile:', error);
+                            return sendJsonResponse(res, 500, { message: 'Internal server error' });
+                        }
                     });
-                });
-                return;
+                    return;
                 }
 
                 // Get completed user tasks
