@@ -83,7 +83,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                 // Get a new task from the taskbroker
                 case "/node/requestTask": {
-                    console.log("(router) Task requested by client."); // Log the request for a new task
+                    console.log("Task requested by client."); // Log the request for a new task
                     const newTask = dequeue(messageQueue, dqList);
 
                     // Check if task is valid

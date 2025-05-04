@@ -67,11 +67,13 @@ console.log("-------------------------"); // log separator
 function realLLT(testedExponent) {
     let timer = Date.now(); // start timer
 
+    const username = localStorage.getItem('username');
+
     const resultObject = {        // object to store the result of the test
         exponent: testedExponent, // store exponent in result object
         isMersennePrime: null,    // store if m_p is a mersenne prime in result object
         perfectIsEven: null,      // store perfect number even/odd in result object
-        username: null,           // store username in result object
+        username: username,           // store username in result object
         taskID: null              // store task ID in result object
     };
     
