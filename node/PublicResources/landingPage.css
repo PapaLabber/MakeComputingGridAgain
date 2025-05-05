@@ -25,6 +25,7 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   min-width: 160px;
   z-index: 10;
   left: 100px;
+  top: 50px;  
 }
 
 /* Show the dropdown on hover */
