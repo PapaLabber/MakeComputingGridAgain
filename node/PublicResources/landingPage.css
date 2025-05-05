@@ -25,7 +25,7 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   color: var(--text-color); /* Use text color for the text */
   min-width: 160px;
   z-index: 10;
-  left: 25%; /* Center horizontally */
+  left: 20%; /* Center horizontally */
   transform: translateX(-50%);
   top: 100%; /* Position below the parent */
   margin-top: 5px;
