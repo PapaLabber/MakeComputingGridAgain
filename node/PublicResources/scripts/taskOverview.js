@@ -109,7 +109,7 @@ function requestTask() {
 function clientTaskDone(result) {
     // Convert BigInt properties to strings before sending
     result.exponent = result.exponent.toString();
-
+console.log(result.exponent + "CHECK CHECK CHECK CHECK CHECK");
     fetch(`${baseURL}/node/clientTaskDone`, {
         method: 'POST',
         headers: {
