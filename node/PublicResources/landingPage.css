@@ -55,3 +55,8 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   background-color: var(--accent-color); /* Highlight with accent color on hover */
   color: var(--base-color); /* White text on hover */
 }
+
+/* Style the dropdown hover container */
+.w3-dropdown-hover {
+  position: relative; /* Make the dropdown menu align relative to this container */
+}
