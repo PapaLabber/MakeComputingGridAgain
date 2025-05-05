@@ -1,9 +1,7 @@
-
-// const fs = require('fs');
-//const csv = require('csv-parser');
-
 import fs from 'fs';
 import csvParser from 'csv-parser';
+import { storeResultsInDB, dbConnection } from './DatabaseOperation';
+import { realLLT } from './PublicResources/scripts/llt';
 
 // module.exports = { taskBrokerMain, dequeue, acknowledge, messageQueue, dqList };
 
@@ -33,7 +31,8 @@ class queue { // The queue itself
         this.tail; // The back node in the queue
     }
 }
-
+// Make username accessible.
+const username = localStorage.getItem('username');
 
 // Initialize message queue for task distribution
 const messageQueue = new queue;
@@ -122,7 +121,9 @@ function acknowledge(queue, taskId) {
     let targetNode = queue.head;
     while (targetNode) {
         if (targetNode.task.id === taskId) { // Check if current task ID is the same as the ID we are looking for
-            removeNode(queue, targetNode)
+            resultObject = realLLT(targetNode.task);
+            storeResultsInDB(dbConnection, targetNode.task, username, resultObject.isMersennePrime, resultObject.perfectIsEven);
+            removeNode(queue, targetNode);
             console.log(`Task ${taskId} has been acknowledged and deleted from the list.`)
             return true; // Return if the ID's are the same
         } else {

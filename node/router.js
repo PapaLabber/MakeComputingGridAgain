@@ -194,6 +194,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                                 return sendJsonResponse(res, 400, { message: 'Result and taskId are required.' });
                             }
 
+
                             // Call the acknowledge function to mark the task as completed
                             const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js
 
