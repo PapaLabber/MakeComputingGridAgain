@@ -31,7 +31,7 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   color: var(--text-color); /* Use text color for the text */
   min-width: 160px;
   z-index: 10;
-  left: 10%; /* Align dropdown with the parent */
+  left: 5%; /* Align dropdown with the parent */
   top: 100%; /* Position below the parent */
 }
 
