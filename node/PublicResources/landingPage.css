@@ -20,7 +20,7 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 /* Style the dropdown content */
 .w3-dropdown-content {
   display: none;
-  color: white;
+  color: rgb(139, 40, 40);
   position: absolute;
   background-color: var(--base-color);
   min-width: 160px;
