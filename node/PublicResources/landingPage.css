@@ -16,3 +16,23 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 }
 
 .button1 {border-radius: 50px;}
+
+/* Style the dropdown content */
+.w3-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--base-color);
+  min-width: 160px;
+  z-index: 1;
+}
+
+/* Show the dropdown on hover */
+.w3-dropdown-hover:hover .w3-dropdown-content {
+  display: block;
+}
+
+/* Style the dropdown links */
+.w3-dropdown-content .w3-bar-item {
+  padding: 10px;
+  text-align: left;
+}
