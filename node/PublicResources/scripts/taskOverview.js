@@ -14,6 +14,7 @@ requestTaskButton.addEventListener('click', function () {
 // Otherwise, alert the user to log in
 
 document.addEventListener('DOMContentLoaded', function () {
+    const username = "test_user"; // Example: hardcoded username for testing
 
     if (username) {
         // Fetch completed tasks for the user
