@@ -24,9 +24,10 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   background-color: var(--base-color);
   min-width: 160px;
   z-index: 10;
-  left: 0; /* Aligns the dropdown to the left edge of the parent */
-  top: 100%; /* Positions the dropdown directly below the parent */
-  margin-top: 5px; /* Adds a small gap between the parent and the dropdown */
+  left: 50%; /* Start at the horizontal center of the parent */
+  transform: translateX(-50%); /* Center the dropdown horizontally */
+  top: 100%; /* Position the dropdown below the parent */
+  margin-top: 5px; /* Add a small gap between the parent and the dropdown */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds a subtle shadow for better visibility */
   border-radius: 5px; /* Optional: Rounds the corners of the dropdown */
 }
