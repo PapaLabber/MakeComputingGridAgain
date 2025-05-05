@@ -1,3 +1,9 @@
+:root {
+  --accent-color: #556b2f;
+  --base-color: white;
+  --text-color: #2E2B41;
+  --input-color: #F3F0FF;
+}
 h1,h2 {font-family: "Silkscreen", sans-serif}
 body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .w3-bar,button {font-family: "Silkscreen", sans-serif}
@@ -30,7 +36,6 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   top: 100%; /* Position below the parent */
   margin-top: 5px;
   border-radius: 5px; /* Rounded corners */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow */
 }
 
 /* Show the dropdown on hover */
