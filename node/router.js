@@ -194,7 +194,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                                 return sendJsonResponse(res, 400, { message: 'Result and taskId are required.' });
                             }
 
-                            const resultObject = realLLT(data.result);
+                            const resultObject = realLLT(result);
                             console.log(resultObject);
 
                             // Call the acknowledge function to mark the task as completed
