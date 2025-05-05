@@ -1,7 +1,5 @@
 import fs from 'fs';
 import csvParser from 'csv-parser';
-import { storeResultsInDB, dbConnection } from './DatabaseOperation.js';
-import { realLLT } from './PublicResources/scripts/llt.js';
 
 // module.exports = { taskBrokerMain, dequeue, acknowledge, messageQueue, dqList };
 
@@ -31,8 +29,6 @@ class queue { // The queue itself
         this.tail; // The back node in the queue
     }
 }
-// Make username accessible.
-const username = localStorage.getItem('username');
 
 // Initialize message queue for task distribution
 const messageQueue = new queue;
@@ -112,7 +108,7 @@ function dequeue(mq, dq) {
 
 // A function that marks a task as done/finished when it has computed it fully (acknowledge)
 // The function takes two parametres. The queue itself and the ID of the task we are looking for.
-async function acknowledge(queue, taskId) {
+function acknowledge(queue, taskId) {
     if (!queue.head.task) { // If queue empty
         console.log("Dequeue list is empty");
         return null;
@@ -121,8 +117,6 @@ async function acknowledge(queue, taskId) {
     let targetNode = queue.head;
     while (targetNode) {
         if (targetNode.task.id === taskId) { // Check if current task ID is the same as the ID we are looking for
-            resultObject = realLLT(targetNode.task);
-            await storeResultsInDB(dbConnection, targetNode.task, username, resultObject.isMersennePrime, resultObject.perfectIsEven);
             removeNode(queue, targetNode);
             console.log(`Task ${taskId} has been acknowledged and deleted from the list.`)
             return true; // Return if the ID's are the same

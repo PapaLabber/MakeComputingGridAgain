@@ -5,7 +5,7 @@ import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
 import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection, getUserProfile } from './DatabaseOperation.js';
-
+import { realLLT } from './PublicResources/scripts/llt.js';
 
 
 export { handleRoutes };
@@ -194,6 +194,8 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                                 return sendJsonResponse(res, 400, { message: 'Result and taskId are required.' });
                             }
 
+                            const resultObject = realLLT(data.result);
+                            console.log(resultObject);
 
                             // Call the acknowledge function to mark the task as completed
                             const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js
