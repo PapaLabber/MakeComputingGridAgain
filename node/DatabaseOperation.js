@@ -1,7 +1,7 @@
 //Database pushing (not drugs)
 // these will essentially just be SQL queries with placeholders instead of example values
 // Export
-export { registerUserToDB, storeResultsInDB, checkLoginInfo, getUserProfile, dbConnection };
+export { registerUserToDB, storeResultsInDB, checkLoginInfo, getUserProfile, pointAdder, dbConnection };
 
 // Imports
 import bcrypt from 'bcrypt';
@@ -128,6 +128,21 @@ async function getUserProfile(dbConnection, username) {
         return false;
     }
 }
+
+async function pointAdder(dbConnection, username, points) {
+    try {
+        let pointIncrement = points; // Updates the users points based on what the result of the computation does.
+        await dbConnection.execute(
+            `UPDATE users SET points ? WHERE username = ?`, points, username // SQL query that updates the values in the DB
+        );
+        return true;
+    } catch (error) { // Error handling
+        console.error("Error adding points:", error);
+        return false;
+    }
+
+}
+
 
 // Example runs:
 

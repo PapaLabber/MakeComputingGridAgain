@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection, getUserProfile } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection, getUserProfile, pointAdder } from './DatabaseOperation.js';
 import { realLLT } from './PublicResources/scripts/llt.js';
 
 
@@ -194,8 +194,9 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                                 return sendJsonResponse(res, 400, { message: 'Result and taskId are required.' });
                             }
 
-                            // Store results computed in the database
+                            // Store results computed in the database and add points to the user
                             storeResultsInDB(dbConnection, result.exponent, result.username, result.isMersennePrime, result.perfectIsEven);
+                            pointAdder(dbConnection, result.username, result.points);
 
                             // Call the acknowledge function to mark the task as completed
                             const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js
