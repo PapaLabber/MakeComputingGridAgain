@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loginForm.addEventListener('submit', function (event) {
             event.preventDefault();
 
+            // Storing what the user inputs in constants
             const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
 
@@ -28,9 +29,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     if (data.token) {
                         alert('Login successful!');
-                        // Save the JWT in localStorage (or sessionStorage)
+                        // Save the JWT and username in localStorage
                         localStorage.setItem('jwt', data.token);
-                        localStorage.setItem('username', username); // Save the username
+                        localStorage.setItem('username', username); 
 
                         window.location.href = `${baseURL}/userProfile.html`;
                     } else {

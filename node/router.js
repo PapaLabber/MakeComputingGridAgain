@@ -194,6 +194,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                                 return sendJsonResponse(res, 400, { message: 'Result and taskId are required.' });
                             }
 
+                            // Store results computed in the database
                             storeResultsInDB(dbConnection, result.exponent, result.username, result.isMersennePrime, result.perfectIsEven);
 
                             // Call the acknowledge function to mark the task as completed
