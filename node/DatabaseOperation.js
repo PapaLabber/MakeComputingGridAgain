@@ -131,16 +131,15 @@ async function getUserProfile(dbConnection, username) {
 
 async function pointAdder(dbConnection, username, points) {
     try {
-        let pointIncrement = points; // Updates the users points based on what the result of the computation does.
+        let pointIncrementer =+ points; // Updates the users points based on what the result of the computation is.
         await dbConnection.execute(
-            `UPDATE users SET points ? WHERE username = ?`, points, username // SQL query that updates the values in the DB
+            `UPDATE users SET points = points + ? WHERE username = ?`, [pointIncrementer, username] // SQL query that updates the values in the DB
         );
         return true;
     } catch (error) { // Error handling
         console.error("Error adding points:", error);
         return false;
     }
-
 }
 
 
