@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "A simple Chrome extension.",
   "action": {
-    "default_popup": "node/Extension/Popup.html",
+    "default_popup": "Popup.html",
     "default_icon": "icon.png"
   },
   "permissions": [
