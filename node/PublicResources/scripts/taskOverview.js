@@ -2,18 +2,20 @@
 import { realLLT } from './llt.js';
 export { requestTask };
 
-
-// Add event listener to the "Request Task" button
-const requestTaskButton = document.getElementById('request-task-btn');
-requestTaskButton.addEventListener('click', function () {
-    requestTask(); // Trigger task request when button is clicked
-});
-
 // Execute when the DOM is fully loaded
 // Fetch and display user tasks if a username is available
 // Otherwise, alert the user to log in
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Add event listener to the "Request Task" button
+    const requestTaskButton = document.getElementById('request-task-btn');
+    if (requestTaskButton) {
+        requestTaskButton.addEventListener('click', function () {
+            requestTask(); // Trigger task request when button is clicked
+        });
+    } else {
+        console.error('Button with ID "request-task-btn" not found.');
+    }
     const username = "test_user"; // Example: hardcoded username for testing
 
     if (username) {
