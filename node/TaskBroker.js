@@ -9,7 +9,7 @@ export class task {
     }
 }
 
-class node { // Nodes in the linked list
+export class node { // Nodes in the linked list
     constructor(task) {
         this.task = task; // Current task
         this.next = null; // Pointer to the next task
@@ -18,7 +18,7 @@ class node { // Nodes in the linked list
     }
 }
 
-class queue { // The queue itself
+export class queue { // The queue itself
     constructor() {
         this.head; // The front node in the queue
         this.tail; // The back node in the queue

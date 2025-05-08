@@ -1,46 +1,39 @@
 // In this testing environment we follow the AAA principle: Arrange, Act, Assert. 
 
 import { describe, test, it, expect } from "vitest";
-import { enqueue, messageQueue, task } from "../node/TaskBroker";
+import { dequeue, dqList, enqueue, messageQueue, queue, task } from "../node/TaskBroker";
 
 describe("enqueue", () => {
-    it("should return a confirmation that the messagequeue got a new task", () => {
+    it("should confirm that enqueue adds a node at the tail of messageQueue", () => {
         // Arrange
         const _task = new task(123, 321); 
+        const _messageQueue = new queue;
 
         // Act
-        enqueue(messageQueue, _task);
+        enqueue(_messageQueue, _task);
 
         // Assert
-        expect(messageQueue.tail.task.id).toBe(123);
-        expect(messageQueue.tail.task.taskData).toBe(321);
+        expect(_messageQueue.tail.task.id).toBe(123);
+        expect(_messageQueue.tail.task.taskData).toBe(321);
     })
 })
 
+describe("dequeue", () => {
+    it("should confirm that the head of messageQueue is removed and stored as the tail of dqList", () => {
+        // Arrange
+        const _task1 = new task(123, 321);
+        const _task2 = new task(234, 432);
+        const _messageQueue = new queue;
+        const _dqList = new queue;
 
-// //______________________________________________________________________________
-// // *** TEST OF OTHER FUNCTIONS *** ///
-// setTimeout(() => {
-//     console.log('Dequeue id 1, 2, 3:');
-//     dequeue(messageQueue, dqList);
-//     dequeue(messageQueue, dqList);
-//     dequeue(messageQueue, dqList);
-//     printQueue(messageQueue);
-//     printQueue(dqList);
-//     console.log('___________');
+        // Act
+        enqueue(_messageQueue, _task1); 
+        enqueue(_messageQueue, _task2);
+        expect(_messageQueue.head.task.id).toBe(123); // head of messageQueue should be 123
+        dequeue(_messageQueue, _dqList);            
 
-//     console.log('Ackowledge:');
-//     acknowledge(dqList, '2');
-//     printQueue(dqList);
-//     console.log('___________');
-
-//     console.log('Requeue:');
-//     requeue(dqList, messageQueue, '3');
-//     printQueue(dqList);
-//     console.log('___________');
-
-//     console.log('print message queue again:');
-//     printQueue(messageQueue);
-
-
-// }, 1000); // timer of 1 sec used to let the queue fill up first
+        // Assert
+        expect(_messageQueue.head.task.id).toBe(234); // head of messageQueue should be 234
+        expect(_dqList.tail.task.id).toBe(123); // tail of dqList should be 123
+    })
+})
