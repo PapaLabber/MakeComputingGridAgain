@@ -1,5 +1,6 @@
 // Import the realLLT function for Mersenne prime calculations
 import { realLLT } from './llt.js';
+import { baseURL } from './config.js';
 export { requestTask };
 
 // Execute when the DOM is fully loaded
