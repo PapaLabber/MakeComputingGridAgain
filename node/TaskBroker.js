@@ -1,13 +1,8 @@
 import fs from 'fs';
 import csvParser from 'csv-parser';
 
-// module.exports = { taskBrokerMain, dequeue, acknowledge, messageQueue, dqList };
-
-export { taskBrokerMain, dequeue, acknowledge, messageQueue, dqList };
-
-
 // Make a linked list to hold tasks
-class task {
+export class task {
     constructor(id, taskData) {
         this.id = id; // Task id
         this.taskData = taskData; // The task data
@@ -31,11 +26,11 @@ class queue { // The queue itself
 }
 
 // Initialize message queue for task distribution
-const messageQueue = new queue;
-const dqList = new queue;
+export const messageQueue = new queue;
+export const dqList = new queue;
 
 
-function taskBrokerMain() {
+export function taskBrokerMain() {
     fs.createReadStream('./data/task_list_with_plain_ids_1_to_5000.csv') // Replace 'data.csv' with your file path
         .pipe(csvParser())
         .on('data', (row) => {
@@ -53,13 +48,8 @@ function taskBrokerMain() {
         });
 }
 
-
-/*#########################################################*/
-
-
-
 // Make a function that adds tasks to the linked list (enqueue)
-function enqueue(queue, task) {
+export function enqueue(queue, task) {
     const newNode = new node(task); // Create a new node with the task
 
     if (!queue.head) { // If queue empty
@@ -73,7 +63,7 @@ function enqueue(queue, task) {
 }
 
 // Make a function that removes a task from the list (dequeue)
-function dequeue(mq, dq) {
+export function dequeue(mq, dq) {
     if (!mq.head.task) { // If queue empty
         console.log("Cannot dequeue - Message Queue is empty");
         return null;
@@ -108,7 +98,7 @@ function dequeue(mq, dq) {
 
 // A function that marks a task as done/finished when it has computed it fully (acknowledge)
 // The function takes two parametres. The queue itself and the ID of the task we are looking for.
-function acknowledge(queue, taskId) {
+export function acknowledge(queue, taskId) {
     if (!queue.head.task) { // If queue empty
         console.log("Dequeue list is empty");
         return null;
@@ -131,7 +121,7 @@ function acknowledge(queue, taskId) {
 
 // Make a function that re-adds unfinished tasks, that have already been started, but not finished
 // to the back of the list again (requeue)
-function requeue(dq, mq, targetId) {
+export function requeue(dq, mq, targetId) {
     if (!dq.head.task) { // If queue empty
         console.log("Dequeue list is empty");
         return null;
@@ -203,30 +193,3 @@ function checkExperationTime(dq, mq) {
         return false; // Return false.
     }
 }
-
-// //______________________________________________________________________________
-// // *** TEST OF OTHER FUNCTIONS *** ///
-// setTimeout(() => {
-//     console.log('Dequeue id 1, 2, 3:');
-//     dequeue(messageQueue, dqList);
-//     dequeue(messageQueue, dqList);
-//     dequeue(messageQueue, dqList);
-//     printQueue(messageQueue);
-//     printQueue(dqList);
-//     console.log('___________');
-
-//     console.log('Ackowledge:');
-//     acknowledge(dqList, '2');
-//     printQueue(dqList);
-//     console.log('___________');
-
-//     console.log('Requeue:');
-//     requeue(dqList, messageQueue, '3');
-//     printQueue(dqList);
-//     console.log('___________');
-
-//     console.log('print message queue again:');
-//     printQueue(messageQueue);
-
-
-// }, 1000); // timer of 1 sec used to let the queue fill up first
