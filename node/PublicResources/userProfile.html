@@ -43,7 +43,8 @@
     <!-- Header -->
     <header class="w3-container w3-teal w3-center" style="padding:80px 16px">
       <!--Need to add customizable user greeting-->
-      <h2 class="w3-margin w3-jumbo w3-text-black"><b id="username">Hello user!</b></h2> <!-- "user" has to be a placeholder for username -->
+      <h2 class="w3-margin w3-jumbo w3-text-black"><b id="username">Hello user!</b></h2>
+      <!-- "user" has to be a placeholder for username -->
       <h2 class="w3-large">Check your profile settings below</h2>
     </header>
 
@@ -61,20 +62,74 @@
               class="button button2 w3-button w3-black w3-hover-opacity w3-padding-large w3-xxlarge w3-margin-top">Settings</button>
           </a>
 
-          <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
-            <button
+          <a>
+            <button onclick="document.getElementById('id01').style.display='block'"
               class="button button3 w3-button w3-black w3-hover-opacity w3-padding-large w3-xxlarge w3-margin-top">Rewards</button>
+
+            <div id="id01" class="w3-modal">
+              <div class="w3-modal-content">
+                <div class="w3-container">
+                  <span onclick="document.getElementById('id01').style.display='none'"
+                    class="w3-button w3-display-topright">&times;</span>
+                    <h2 class="w3-center w3-padding-64 w3-text-teal">Rewards</h2>
+                    <div class="w3-content">
+                      <div class="w3-row-padding w3-center">
+                        <div class="w3-third">
+                          <img src="images/Pink_Panda.jpg" class="uniform-image" alt="Forest">
+                          <h3>Audi RS7</h3>
+                          <p>A whole car for your efforts.</p>
+                          <p><b>PRICE:</b> 35,000,000</p>
+                          <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-medium w3-margin-top">Claim</button>
+                        </div>
+                        <div class="w3-third">
+                          <img src="images/books.jpg" class="uniform-image" alt="Forest" >
+                          <h3>15% Discount</h3>
+                          <p>Factum Books are expensive.</p>
+                          <p><b>PRICE:</b> 50,000</p>
+                          <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-medium w3-margin-top">Claim</button>
+                        </div>
+                        <div class="w3-third">
+                          <img src="images/soviet-rice-cooker.jpg" class="uniform-image" alt="Forest">
+                          <h3>Soviet Rice Cooker</h3>
+                          <p>Cook rice to perfection.</p>
+                          <p><b>PRICE:</b> 100,000</p>
+                          <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-medium w3-margin-top">Claim</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
           </a>
         </div>
       </div>
     </div>
 
+    <!-- div with current points -->
     <div class="w3-crow-padding w3-padding-64 w3-container w3-center">
       <div class="w3-content">
-        <h2 id="points">CURRENT POINTS: 1.000.000</h2> <!-- "1.000.000" has to be a placeholder for username -->
+        <h2 id="points">CURRENT POINTS: 0</h2> <!-- "1.000.000" has to be a placeholder for username -->
         <i class="	fa fa-diamond w3-padding-64 w3-text-teal w3-opacity"></i>
       </div>
     </div>
+
+    <!-- div with completed tasks -->
+    <div class="w3-container w3-padding-64 w3-center">
+      <h2>Completed Tasks</h2>
+      <table class="w3-table-all w3-centered w3-large">
+          <thead>
+              <tr>
+                  <th>Exponent</th>
+                  <th>Is Mersenne Prime</th>
+                  <th>Is Even</th>
+                  <th>Points</th>
+              </tr>
+          </thead>
+          <tbody id="completedTasksTable">
+              <!-- Rows will be dynamically added here -->
+          </tbody>
+      </table>
+  </div>
 
     <script>
       // Used to toggle the menu on small screens when clicking on the menu button

@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection, getUserProfile, pointAdder } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection, getUserProfile, pointAdder, getUserResults } from './DatabaseOperation.js';
 import { realLLT } from './PublicResources/scripts/llt.js';
 
 
@@ -71,14 +71,46 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 // Get completed user tasks
-                case "/node/users-tasks": {
-                    const username = url.searchParams.get('username'); // Extract the username from query parameters
-                    if (!username) {
-                        return sendJsonResponse(res, 400, { message: 'Username is required' });
-                    }
-                    // Find tasks for the given username
-                    const userTasks = tasks.filter(task => task.username === username);
-                    return sendJsonResponse(res, 200, userTasks);
+                // case "/node/userCompletedTasks": {
+                //     const username = url.searchParams.get('username'); // Extract the username from query parameters
+                //     if (!username) {
+                //         return sendJsonResponse(res, 400, { message: 'Username is required' });
+                //     }
+                //     // Find tasks for the given username
+                //     // const userTasks = tasks.filter(task => task.username === username);
+
+                //     const userCompletedTasks = getUserResults(dbConnection, username); // Fetch tasks from the database
+
+                //     if (!userCompletedTasks) {
+                //         return sendJsonResponse(res, 404, { message: 'No tasks found for this user' });
+                //     }
+
+                //     return sendJsonResponse(res, 200, userCompletedTasks);
+                // }
+
+                case "/node/userCompletedTasks": {
+                    authenticateToken(req, res, async () => {
+                        const username = url.searchParams.get('username'); // Extract the username from query parameters
+                
+                        if (!username) {
+                            return sendJsonResponse(res, 400, { message: 'Username is required' });
+                        }
+                
+                        try {
+                            // Fetch completed tasks for the user from the database
+                            const userCompletedTasks = await getUserResults(dbConnection, username);
+                
+                            if (!userCompletedTasks || userCompletedTasks.length === 0) {
+                                return sendJsonResponse(res, 404, { message: 'No tasks found for this user' });
+                            }
+                
+                            return sendJsonResponse(res, 200, userCompletedTasks); // Send tasks as JSON response
+                        } catch (error) {
+                            console.error('Error fetching user tasks:', error);
+                            return sendJsonResponse(res, 500, { message: 'Internal server error' });
+                        }
+                    });
+                    return;
                 }
 
                 // Get a new task from the taskbroker

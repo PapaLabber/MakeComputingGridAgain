@@ -17,3 +17,11 @@ body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   .button1 {border-radius: 50px;}
   .button2 {border-radius: 50px;}
   .button3 {border-radius: 50px;}
+
+  .uniform-image {
+    width: 100%;        /* full width of their div */
+    height: 150px;       /* some height */
+    object-fit: cover;   /* crop and scale */
+    border-radius: 12px; /* round corners */
+    display: block;      /* Optional: remove extra space below images */
+  }

@@ -1,7 +1,7 @@
 //Database pushing (not drugs)
 // these will essentially just be SQL queries with placeholders instead of example values
 // Export
-export { registerUserToDB, storeResultsInDB, checkLoginInfo, getUserProfile, pointAdder, dbConnection };
+export { registerUserToDB, storeResultsInDB, checkLoginInfo, getUserProfile, pointAdder, getUserResults, dbConnection };
 
 // Imports
 import bcrypt from 'bcrypt';
@@ -142,6 +142,27 @@ async function pointAdder(dbConnection, username, points) {
     }
 }
 
+async function getUserResults(dbConnection, username) {
+    try {
+        const [rows] = await dbConnection.execute(
+            `SELECT exponent, is_mersenne_prime, is_even, points 
+             FROM results 
+             WHERE found_by_user = ?`, 
+            [username]
+        );
+
+        if (rows.length > 0) {
+            console.log("User results found:", rows);
+            return rows; // Return all tasks
+        } else {
+            console.log("No results found for the user.");
+            return [];
+        }
+    } catch (error) {
+        console.error("Error fetching user results:", error);
+        return [];
+    }
+}
 
 // Example runs:
 
