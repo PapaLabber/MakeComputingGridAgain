@@ -18,14 +18,14 @@ if (requestTaskButton) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const username = "test_user"; // Example: hardcoded username for testing
+    // const username = "test_user"; // Example: hardcoded username for testing
 
-    if (username) {
-        // Fetch completed tasks for the user
-        completedUserTasks(username);
-    } else {
-        alert('No user found! Please log in.');
-    }
+    // if (username) {
+    //     // Fetch completed tasks for the user
+    //     completedUserTasks(username);
+    // } else {
+    //     alert('No user found! Please log in.');
+    // }
 
     // Fetch completed tasks for a specific user
     
