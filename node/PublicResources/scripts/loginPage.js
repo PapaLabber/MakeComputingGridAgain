@@ -1,3 +1,5 @@
+import { baseURL } from './baseURL.js';
+
 // TODO: Add comments
 document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
