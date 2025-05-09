@@ -7,17 +7,23 @@ export { requestTask };
 // Fetch and display user tasks if a username is available
 // Otherwise, alert the user to log in
 
-// Add event listener to the "Request Task" button
-const requestTaskButton = document.getElementById('request-task-btn');
-if (requestTaskButton) {
-    requestTaskButton.addEventListener('click', function () {
-        requestTask(); // Trigger task request when button is clicked
-    });
+const username = localStorage.getItem('username');
+if (!username) {
+    alert('No user found! Please log in to the website.');
 } else {
-    console.error('Button with ID "request-task-btn" not found.');
+    console.log('Username retrieved:', username);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    const requestTaskButton = document.getElementById('request-task-btn');
+    if (requestTaskButton) {
+        console.log('Request Task button found. Adding event listener.');
+        requestTaskButton.addEventListener('click', function () {
+            requestTask(username); // Trigger task request when button is clicked
+        });
+    } else {
+        console.log('Request Task button not found. Skipping event listener.');
+    }
     // const username = "test_user"; // Example: hardcoded username for testing
 
     // if (username) {
@@ -75,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Request a new task from the server
-function requestTask() {
-    fetch(`${baseURL}/node/requestTask`)
+function requestTask(username) {
+    fetch(`${baseURL}/node/requestTask?username=${username}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -120,7 +126,7 @@ function clientTaskDone(result) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ result, taskId: result.taskID }), // Include task ID in the request body
+        body: JSON.stringify({ result, taskId: result.taskID, username }), // Include task ID in the request body
     })
         .then(response => {
             if (!response.ok) {
