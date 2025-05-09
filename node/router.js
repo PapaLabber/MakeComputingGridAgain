@@ -160,25 +160,25 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                         body += chunk.toString(); // Collect the request body data
                     });
                     req.on('end', async () => {
-                        const { username, password } = JSON.parse(body); // Parse the JSON body
+                        const { email } = JSON.parse(body); // Parse the JSON body
 
                         // Validate input fields
-                        if (!username || !password) {
-                            return sendJsonResponse(res, 400, { message: 'Username and password are required.' });
+                        if (!email) {
+                            return sendJsonResponse(res, 400, { message: 'User is not logged in' });
                         }
 
                         try {
                             // Check if the user exists and the password matches
-                            const isValidUser = await checkLoginInfo(dbConnection, username, password);
+                            const newUser = await registerUser(dbConnection, email);
 
-                            if (isValidUser) {
+                            if (newUser) {
                                 // Generate a JWT
-                                const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+                                const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
 
                                 // Send the token to the client
                                 return sendJsonResponse(res, 200, { message: 'Login successful', token });
                             } else {
-                                return sendJsonResponse(res, 401, { message: 'Invalid username or password.' });
+                                return sendJsonResponse(res, 401, { message: 'User is not logged in' });
                             }
                         } catch (error) {
                             console.error('Error during login:', error);
