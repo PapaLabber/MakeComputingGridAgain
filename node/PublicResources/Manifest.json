@@ -1,11 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "My First Extension",
-  "version": "1.0",
-  "description": "A simple Chrome extension.",
+  "name": "MCGA",
+  "version": "3.0",
+  "description": "MCGA Chrome Extension for computing primes",
   "action": {
     "default_popup": "Popup.html",
-    "default_icon": "icon.png"
+    "default_icon": "2620477.png"
+  },
+  "icons": {
+    "16": "2620477.png",
+    "48": "2620477.png",
+    "128": "2620477.png"
   },
   "permissions": [
     "storage",
