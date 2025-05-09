@@ -1,3 +1,5 @@
+export { baseURL };
+
 // Configuration for deployment
 let baseURL = "";
 
@@ -12,5 +14,3 @@ if (chrome && chrome.runtime && chrome.runtime.id) {
     // AAU deployment
     baseURL = `${window.location.origin}/node0`;
 }
-
-export { baseURL };
