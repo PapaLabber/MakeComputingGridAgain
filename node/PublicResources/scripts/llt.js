@@ -67,7 +67,14 @@ console.log("-------------------------"); // log separator
 function realLLT(testedExponent) {
     let timer = Date.now(); // start timer
 
-    const email = localStorage.getItem('email');
+    chrome.storage.local.get(['email'], function (result) {
+        const email = result.email;
+        if (email) {
+            console.log('Email retrieved from chrome.storage:', email);
+        } else {
+            console.error('No email found in chrome.storage.');
+        }
+    });
 
     const resultObject = {        // object to store the result of the test
         exponent: testedExponent, // store exponent in result object

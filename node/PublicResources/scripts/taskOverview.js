@@ -7,7 +7,14 @@ export { requestTask };
 // Fetch and display user tasks if a username is available
 // Otherwise, alert the user to log in
 
-const email = localStorage.getItem('email');
+chrome.storage.local.get(['email'], function (result) {
+    const email = result.email;
+    if (email) {
+        console.log('Email retrieved from chrome.storage:', email);
+    } else {
+        console.error('No email found in chrome.storage.');
+    }
+});
 if (!email) {
     alert('No user found! Please log in to your browser.');
 } else {

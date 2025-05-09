@@ -23,9 +23,9 @@ async function initializeConnection() {
 const dbConnection = await initializeConnection();
 
 // Function to hash the password and insert a new user into the database
-async function registerUserToDB(dbConnection, newUserEmail) { // Function is async, because it involves asynchronous operations,
+async function registerUserToDB(dbConnection, userEmail) { // Function is async, because it involves asynchronous operations,
     try {                                                                                     // such as password hashing and database interactions
-        const values = [newUserEmail, 0]; // Use parameterized query. This will help prevent SQL injections.
+        const values = [userEmail, 0]; // Use parameterized query. This will help prevent SQL injections.
 
         console.log("Registering user in the database...");
         await dbConnection.execute( // Insert query. This line is what does the SQL operations and stores the user in the database.

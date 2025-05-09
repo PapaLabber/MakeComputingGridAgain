@@ -1,7 +1,14 @@
 import { baseURL } from "./config.js"
 
 document.addEventListener('DOMContentLoaded', function () {
-    const email = localStorage.getItem('email');
+    chrome.storage.local.get(['email'], function (result) {
+        const email = result.email;
+        if (email) {
+            console.log('Email retrieved from chrome.storage:', email);
+        } else {
+            console.error('No email found in chrome.storage.');
+        }
+    });
     console.log(email);
         if(email) {
             console.log('Logged-in email:', email);
