@@ -2,6 +2,7 @@ import { baseURL } from "./config.js"
 
 document.addEventListener('DOMContentLoaded', function () {
     const email = localStorage.getItem('email');
+    console.log(email);
         if(email) {
             console.log('Logged-in email:', email);
             
