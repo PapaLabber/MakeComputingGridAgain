@@ -31,10 +31,14 @@ async function registerUserToDB(dbConnection, userEmail) { // Function is async,
         await dbConnection.execute( // Insert query. This line is what does the SQL operations and stores the user in the database.
             'INSERT INTO users (email, points) VALUES (?, ?)', values
         );
-        console.log("User info has succesfully been stored in the Database!"); // Success.
-
+        console.log("User info has successfully been stored in the Database!"); // Success.
+        return true;
     } catch (error) { // Error handling. Prevents application from crashing due to unhandled exceptions.
-        console.error("Error hashing password or executing query:", error);
+        if (error.code === 'ER_DUP_ENTRY') {
+            console.error("User already exists in the database.");
+            return false;
+        }
+        console.error("Error inserting user into the database:", error);
         return false;
     }
 }
@@ -112,7 +116,7 @@ async function getUserResults(dbConnection, userEmail) {
             `SELECT exponent, is_mersenne_prime, is_even, points 
              FROM results 
              WHERE found_by_user = ?`, 
-            [username]
+            [userEmail]
         );
 
         if (rows.length > 0) {

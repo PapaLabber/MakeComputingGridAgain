@@ -5,15 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = result.email;
         if (email) {
             console.log('Email retrieved from chrome.storage:', email);
-        } else {
-            console.error('No email found in chrome.storage.');
-        }
-    });
-    console.log(email);
-        if(email) {
-            console.log('Logged-in email:', email);
-            
-            fetch(`${baseURL}/node/login`,{
+
+            // Proceed with login
+            fetch(`${baseURL}/node/login`, {
                 method: `POST`,
                 headers: {
                     'Content-Type': 'application/json',
@@ -33,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.error("Error during login:", error);
                 });
         } else {
-            console.error("No email found. Ensure the user is logged in to the browser");
+            console.error("No email found in chrome.storage.");
         }
+    });
 });
