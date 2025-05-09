@@ -8,7 +8,7 @@ export { requestTask };
 // Otherwise, alert the user to log in
 
 const email = localStorage.getItem('email');
-if (!username) {
+if (!email) {
     alert('No user found! Please log in to your browser.');
 } else {
     console.log('email retrieved:', email);
