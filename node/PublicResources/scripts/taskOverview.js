@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (requestTaskButton) {
         console.log('Request Task button found. Adding event listener.');
         requestTaskButton.addEventListener('click', function () {
-            requestTask(email); // Trigger task request when button is clicked
+            requestTask(); // Trigger task request when button is clicked
         });
     } else {
         console.log('Request Task button not found. Skipping event listener.');
@@ -83,8 +83,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // }
 
 // Request a new task from the server
-function requestTask(email) {
-    fetch(`${baseURL}/node/requestTask?email=${email}`)
+function requestTask() {
+    fetch(`${baseURL}/node/requestTask`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
