@@ -24,61 +24,63 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         console.log('Request Task button not found. Skipping event listener.');
     }
-    // const username = "test_user"; // Example: hardcoded username for testing
-
-    // if (username) {
-    //     // Fetch completed tasks for the user
-    //     completedUserTasks(username);
-    // } else {
-    //     alert('No user found! Please log in.');
-    // }
-
-    // Fetch completed tasks for a specific user
-    
-    // function completedUserTasks(username) {
-    //     fetch(`${baseURL}/node/users-tasks?username=${username}`)
-    //         .then(response => {
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP error! Status: ${response.status}`);
-    //             }
-    //             return response.json(); // Parse the response as JSON
-    //         })
-    //         .then(tasks => {
-    //             displayTasks(tasks); // Display the fetched tasks
-    //         })
-    //         .catch(error => {
-    //             console.error('Error fetching tasks:', error);
-    //             alert('Could not fetch your completed tasks. Please try again later.');
-    //         });
-    // }
-
-    // Expose the requestTask function globally for external use
     window.requestTask = requestTask;
-
-    // Display tasks in the UI
-    // function displayTasks(tasks) {
-    //     const taskContainer = document.getElementById('task-container');
-    //     taskContainer.innerHTML = ''; // Clear any previous content
-
-    //     // Filter tasks by their status
-    //     const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
-    //     const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
-
-    //     // Generate HTML for completed tasks
-    //     const completedList = completedTasks.length
-    //         ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
-    //         : '<p>No completed tasks yet!</p>';
-
-    //     // Generate HTML for the current task
-    //     const currentTaskDisplay = currentTask
-    //         ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
-    //         : '<p>No current task in progress.</p>';
-
-    //     // Update the task container with the generated HTML
-    //     taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
-    //     taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
-    // }
 });
+
+// const username = "test_user"; // Example: hardcoded username for testing
+
+// if (username) {
+//     // Fetch completed tasks for the user
+//     completedUserTasks(username);
+// } else {
+//     alert('No user found! Please log in.');
+// }
+
+// Fetch completed tasks for a specific user
+
+// function completedUserTasks(username) {
+//     fetch(`${baseURL}/node/users-tasks?username=${username}`)
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error(`HTTP error! Status: ${response.status}`);
+//             }
+//             return response.json(); // Parse the response as JSON
+//         })
+//         .then(tasks => {
+//             displayTasks(tasks); // Display the fetched tasks
+//         })
+//         .catch(error => {
+//             console.error('Error fetching tasks:', error);
+//             alert('Could not fetch your completed tasks. Please try again later.');
+//         });
+// }
+
+// Expose the requestTask function globally for external use
+
+
+// Display tasks in the UI
+// function displayTasks(tasks) {
+//     const taskContainer = document.getElementById('task-container');
+//     taskContainer.innerHTML = ''; // Clear any previous content
+
+//     // Filter tasks by their status
+//     const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
+//     const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
+
+//     // Generate HTML for completed tasks
+//     const completedList = completedTasks.length
+//         ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
+//         : '<p>No completed tasks yet!</p>';
+
+//     // Generate HTML for the current task
+//     const currentTaskDisplay = currentTask
+//         ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
+//         : '<p>No current task in progress.</p>';
+
+//     // Update the task container with the generated HTML
+//     taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
+//     taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
+// }
 
 // Request a new task from the server
 function requestTask(username) {
