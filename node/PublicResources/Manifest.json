@@ -13,6 +13,7 @@
     "128": "2620477.png"
   },
   "permissions": [
+    "identity",
     "storage",
     "activeTab",
     "scripting"
@@ -23,5 +24,11 @@
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
-  }
+  },
+"content_scripts": [
+    {
+        "matches": ["https://cs-25-sw-2-13.p2datsw.cs.aau.dk/*"], 
+        "js": ["scripts/landingPage.js"]
+    }
+]
 }

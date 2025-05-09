@@ -4,7 +4,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Define the username (this could be dynamically set based on the logged-in user)
 
-    const username = localStorage.getItem('username'); // Retrieve the username
+    chrome.storage.local.get(['email'], function (result) {
+        const email = result.email;
+        if (email) {
+            console.log('Email retrieved from chrome.storage:', email);
+        } else {
+            console.error('No email found in chrome.storage.');
+        }
+    });
    // Fetch the user profile data from the server
     fetch(`${baseURL}/node/getUserProfile?username=${username}`, {
         method: 'GET',

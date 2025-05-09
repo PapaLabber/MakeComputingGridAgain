@@ -8,7 +8,7 @@ const username = localStorage.getItem('username');
 if (!username) {
     alert('No user found! Please log in to the website.');
 } else {
-    console.log('Username retrieved:', username);
+    console.log('email retrieved:', email);
 }
 
 const state = {
@@ -134,8 +134,8 @@ function switchState(newState) {
 // }
 
 // Request a new task from the server
-function requestTask(username) {
-    fetch(`${baseURL}/node/requestTask?username=${username}`)
+function requestTask() {
+    fetch(`${baseURL}/node/requestTask`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -179,7 +179,7 @@ function clientTaskDone(result) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ result, taskId: result.taskID, username }), // Include task ID in the request body
+        body: JSON.stringify({ result, taskId: result.taskID, email }), // Include task ID in the request body
     })
         .then(response => {
             if (!response.ok) {

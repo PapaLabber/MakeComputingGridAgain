@@ -1,1 +1,0 @@
-// Handles received results
