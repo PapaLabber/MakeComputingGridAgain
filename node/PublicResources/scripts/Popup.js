@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if(userInfo.email) {
             console.log('Logged-in email:', userInfo.email);
 
+            // Store the email in localStorage
+            localStorage.setItem('email', userInfo.email);
+            
             fetch(`${baseURL}/node/login`,{
                 method: `POST`,
                 headers: {

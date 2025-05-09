@@ -7,11 +7,11 @@ export { requestTask };
 // Fetch and display user tasks if a username is available
 // Otherwise, alert the user to log in
 
-const username = localStorage.getItem('username');
+const email = localStorage.getItem('email');
 if (!username) {
-    alert('No user found! Please log in to the website.');
+    alert('No user found! Please log in to your browser.');
 } else {
-    console.log('Username retrieved:', username);
+    console.log('email retrieved:', email);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (requestTaskButton) {
         console.log('Request Task button found. Adding event listener.');
         requestTaskButton.addEventListener('click', function () {
-            requestTask(username); // Trigger task request when button is clicked
+            requestTask(email); // Trigger task request when button is clicked
         });
     } else {
         console.log('Request Task button not found. Skipping event listener.');
@@ -83,8 +83,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // }
 
 // Request a new task from the server
-function requestTask(username) {
-    fetch(`${baseURL}/node/requestTask?username=${username}`)
+function requestTask(email) {
+    fetch(`${baseURL}/node/requestTask?email=${email}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -128,7 +128,7 @@ function clientTaskDone(result) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ result, taskId: result.taskID, username }), // Include task ID in the request body
+        body: JSON.stringify({ result, taskId: result.taskID, email }), // Include task ID in the request body
     })
         .then(response => {
             if (!response.ok) {
