@@ -1,12 +1,13 @@
-import { baseURL } from "./config"
+import { baseURL } from "./config.js"
 
 document.addEventListener('DOMContentLoaded', function () {
     chrome.identity.getProfileUserInfo({accountStatus: 'ANY' }, function (userInfo){
+        console.log(userInfo);
         if(userInfo.email) {
             console.log('Logged-in email:', userInfo.email);
 
             // Store the email in localStorage
-            localStorage.setItem('email', userInfo.email);
+            localStorage.getItem('email');
             
             fetch(`${baseURL}/node/login`,{
                 method: `POST`,
