@@ -1,9 +1,8 @@
 // Import the realLLT function for Mersenne prime calculations
 import { realLLT } from './llt.js';
 import { baseURL } from './config.js';
-export { requestTask };
 
-
+// The Username from the local storage in the browser
 const username = localStorage.getItem('username');
 if (!username) {
     alert('No user found! Please log in to the website.');
@@ -11,16 +10,18 @@ if (!username) {
     console.log('email retrieved:', email);
 }
 
+// Prepare states for active calculation or idle
 const state = {
     IDLE: 'idle',
     ACTIVE: 'active'
 };
 let currentState = state.IDLE; // default state
 
+
+// Get the status of the activation button from the DOM 
 const requestTaskButton = document.getElementById('request-task-btn');
 
 document.addEventListener('DOMContentLoaded', function () {
-
     // Update the event listener to switch state
     if (requestTaskButton) {
         requestTaskButton.addEventListener('click', function () {
@@ -53,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (aboutUsButton) {
         aboutUsButton.addEventListener('click', function () {
-            location.href = 'https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/aboutUs.html';
+            location.href = 'https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/landingPage.html';
         });
     }
 });
@@ -78,63 +79,61 @@ function switchState(newState) {
     }
 }
 
-// const username = "test_user"; // Example: hardcoded username for testing
-
-// if (username) {
-//     // Fetch completed tasks for the user
-//     completedUserTasks(username);
-// } else {
-//     alert('No user found! Please log in.');
-// }
+if (username) {
+    // Fetch completed tasks for the user
+    completedUserTasks(username);
+} else {
+    alert('No user found! Please log in.');
+}
 
 // Fetch completed tasks for a specific user
 
-// function completedUserTasks(username) {
-//     fetch(`${baseURL}/node/users-tasks?username=${username}`)
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error(`HTTP error! Status: ${response.status}`);
-//             }
-//             return response.json(); // Parse the response as JSON
-//         })
-//         .then(tasks => {
-//             displayTasks(tasks); // Display the fetched tasks
-//         })
-//         .catch(error => {
-//             console.error('Error fetching tasks:', error);
-//             alert('Could not fetch your completed tasks. Please try again later.');
-//         });
-// }
+function completedUserTasks(username) {
+    fetch(`${baseURL}/node/users-tasks?username=${username}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse the response as JSON
+        })
+        .then(tasks => {
+            displayTasks(tasks); // Display the fetched tasks
+        })
+        .catch(error => {
+            console.error('Error fetching tasks:', error);
+            alert('Could not fetch your completed tasks. Please try again later.');
+        });
+}
 
 // Expose the requestTask function globally for external use
 
 
 // Display tasks in the UI
-// function displayTasks(tasks) {
-//     const taskContainer = document.getElementById('task-container');
-//     taskContainer.innerHTML = ''; // Clear any previous content
+function displayTasks(tasks) {
+    const taskContainer = document.getElementById('task-container');
+    taskContainer.innerHTML = ''; // Clear any previous content
 
-//     // Filter tasks by their status
-//     const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
-//     const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
+    // Filter tasks by their status
+    const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
+    const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
 
-//     // Generate HTML for completed tasks
-//     const completedList = completedTasks.length
-//         ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
-//         : '<p>No completed tasks yet!</p>';
+    // Generate HTML for completed tasks
+    const completedList = completedTasks.length
+        ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
+        : '<p>No completed tasks yet!</p>';
 
-//     // Generate HTML for the current task
-//     const currentTaskDisplay = currentTask
-//         ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
-//         : '<p>No current task in progress.</p>';
+    // Generate HTML for the current task
+    const currentTaskDisplay = currentTask
+        ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
+        : '<p>No current task in progress.</p>';
 
-//     // Update the task container with the generated HTML
-//     taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
-//     taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
-// }
+    // Update the task container with the generated HTML
+    taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
+    taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
+}
 
 // Request a new task from the server
-function requestTask() {
+export function requestTask() {
     fetch(`${baseURL}/node/requestTask`)
         .then(response => {
             if (!response.ok) {

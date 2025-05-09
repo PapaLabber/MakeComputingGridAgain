@@ -7,8 +7,7 @@
 h1,h2 {font-family: "Silkscreen", sans-serif}
 body,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .w3-bar,button {font-family: "Silkscreen", sans-serif}
-.fa-handshake-o,.fa-balance-scale {font-size:200px}
-
+.fa-handshake-o,.fa-balance-scale,.fa-address-card-o,.fa-cogs,.fa-cloud-download {font-size:200px}
 
 .button {
   border: none;
