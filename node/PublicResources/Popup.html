@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>MCGA</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Silkscreen">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="Popup.css">
+  <title>MCGA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Silkscreen">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="Popup.css">
 </head>
-<body>
+
+<body>  
   <h1>MCGA</h1>
   <div class="w3-center w3-padding-32">
     <p id="username-display">Hello, <span id="username">Guest</span>!</p>
-    <button id="request-task-btn" class="w3-button w3-teal w3-large">Start computing primes</button>
+    <button id="request-task-btn" class="w3-button w3-green w3-large" style="width: 100%;">Earn Points Now!</button><br>
+    <button id="user-profile-btn" class="w3-button w3-blue w3-large" style="width: 100%;">User Profile</button><br>
+    <button id="rewards-btn" class="w3-button w3-teal w3-large" style="width: 100%;">Rewards</button><br>
+    <button id="about-us-btn" class="w3-button w3-orange w3-large" style="width: 100%;">About Us</button><br>
   </div>
   <div class="w3-margin-top">
     <p class="section-title">🔢 Total Points: <span id="points">0</span></p>
@@ -24,12 +29,17 @@
     <p id="current-task">Loading current task...</p>
 
     <p class="section-title">🗂️ Task History</p>
-    <ul id="task-list" class="w3-ul"><li>Loading task history...</li></ul>
+    <ul id="task-list" class="w3-ul">
+      <li>Loading task history...</li>
+    </ul>
 
     <p class="section-title">🏆 Leaderboard</p>
-    <ol id="leaderboard-list" class="w3-ul"><li>Loading leaderboard...</li></ol>
+    <ol id="leaderboard-list" class="w3-ul">
+      <li>Loading leaderboard...</li>
+    </ol>
   </div>
   <script type="module" src="scripts/config.js"></script>
   <script src="scripts/taskOverview.js" type="module"></script>
 </body>
+
 </html>

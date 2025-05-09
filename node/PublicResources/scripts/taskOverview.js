@@ -3,9 +3,6 @@ import { realLLT } from './llt.js';
 import { baseURL } from './config.js';
 export { requestTask };
 
-// Execute when the DOM is fully loaded
-// Fetch and display user tasks if a username is available
-// Otherwise, alert the user to log in
 
 const username = localStorage.getItem('username');
 if (!username) {
@@ -14,18 +11,72 @@ if (!username) {
     console.log('Username retrieved:', username);
 }
 
+const state = {
+    IDLE: 'idle',
+    ACTIVE: 'active'
+};
+let currentState = state.IDLE; // default state
+
+const requestTaskButton = document.getElementById('request-task-btn');
+
 document.addEventListener('DOMContentLoaded', function () {
-    const requestTaskButton = document.getElementById('request-task-btn');
+
+    // Update the event listener to switch state
     if (requestTaskButton) {
-        console.log('Request Task button found. Adding event listener.');
         requestTaskButton.addEventListener('click', function () {
-            requestTask(username); // Trigger task request when button is clicked
+            if (currentState === state.IDLE) {
+                switchState(state.ACTIVE);
+            }
         });
     } else {
         console.log('Request Task button not found. Skipping event listener.');
     }
     window.requestTask = requestTask;
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const userProfileButton = document.getElementById('user-profile-btn');
+    const rewardsButton = document.getElementById('rewards-btn');
+    const aboutUsButton = document.getElementById('about-us-btn');
+
+    if (userProfileButton) {
+        userProfileButton.addEventListener('click', function () {
+            location.href = 'https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/userProfile.html';
+        });
+    }
+
+    if (rewardsButton) {
+        rewardsButton.addEventListener('click', function () {
+            location.href = 'https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/Rewards.html';
+        });
+    }
+
+    if (aboutUsButton) {
+        aboutUsButton.addEventListener('click', function () {
+            location.href = 'https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/aboutUs.html';
+        });
+    }
+});
+
+function switchState(newState) {
+    currentState = newState;
+    console.log(`State changed to: ${currentState}`);
+
+    if (currentState === state.ACTIVE) {
+        // Update button to indicate active state
+        requestTaskButton.textContent = 'Stop Earning...';
+        requestTaskButton.classList.remove('w3-green');
+        requestTaskButton.classList.add('w3-red');
+
+        // Start the task loop
+        requestTask(username);
+    } else if (currentState === state.IDLE) {
+        // Revert button to idle state
+        requestTaskButton.textContent = 'Earn Points Now!';
+        requestTaskButton.classList.remove('w3-red');
+        requestTaskButton.classList.add('w3-green');
+    }
+}
 
 // const username = "test_user"; // Example: hardcoded username for testing
 
@@ -138,8 +189,12 @@ function clientTaskDone(result) {
         })
         .then(data => {
             console.log('Result successfully sent to the server:', data);
-            console.log('Requesting the next task...');
-            requestTask(); // Automatically request the next task
+            if (currentState === state.ACTIVE) {
+                console.log('Requesting the next task...');
+                requestTask(username); // Only request the next task if the state is ACTIVE
+            }
+            else
+                console.log('Requesting tasks stopped.');
         })
         .catch(error => {
             console.error('Error sending task result to the server:', error);

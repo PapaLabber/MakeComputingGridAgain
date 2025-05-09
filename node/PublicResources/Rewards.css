@@ -1,0 +1,6 @@
+  .uniform-image {
+    width: 100%; /* Full width of their container */
+    height: 200px; /* Fixed height for uniformity */
+    object-fit: cover; /* Crop and scale the image to fit */
+    border-radius: 12px; /* Optional: rounded corners */
+  }
