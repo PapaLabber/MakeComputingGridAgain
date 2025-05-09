@@ -71,7 +71,7 @@
 
     <div class="w3-crow-padding w3-padding-64 w3-container w3-center">
       <div class="w3-content">
-        <h2 id="points">CURRENT POINTS: 1.000.000</h2 "1.000.000" has to be a placeholder for username -->
+        <h2 id="points">CURRENT POINTS: 1.000.000</h2 "1.000.000" has to be a placeholder for username 
        <!-- <i class="	fa fa-diamond w3-padding-64 w3-text-teal w3-opacity"></i>
       </div>
     </div>
@@ -105,7 +105,7 @@
   <style>
     body {
       font-family: 'Press Start 2P', cursive;
-      background-color: #4f8c80;
+      background-color: #009688;
       color: white;
       margin: 0;
       padding: 0;
@@ -124,7 +124,7 @@
     .nav-right span,
     .dropdown span,
     .dropdown-content a {
-      color: white;
+      color: #009688;
       text-decoration: none;
       margin-right: 20px;
     }
@@ -139,21 +139,20 @@
     .container {
       display: flex;
       justify-content: space-between;
-      padding: 40px;
+      padding: 60px;
     }
 
     .section {
-      width: 30%;
+      width: 40%;
+    }
+    .section:first-child {
+      margin-left: 130px;
     }
 
     .center-section {
       text-align: center;
     }
 
-    .diamond {
-      font-size: 150px;
-      color: white;
-    }
 
     button {
       background-color: black;
@@ -196,7 +195,7 @@
       display: block;
       padding: 10px;
     }
-    
+/* For smaller screen (mobiles) */
     @media (max-width: 768px) {
   nav {
     flex-direction: column;
@@ -220,10 +219,6 @@
     margin-bottom: 30px;
   }
 
-  .diamond {
-    font-size: 60px;
-  }
-
   button {
     font-size: 10px;
     padding: 10px 18px;
@@ -244,12 +239,11 @@
 
   <nav>
     <div class="nav-left">
-      <a href="#">HOME</a>
-      <a href="#">PROFILE</a>
-      <a href="#">ABOUT US</a>
+      <a href="landingPage.html">HOME</a>
+      <a href="aboutUs.html">ABOUT US</a>
     </div>
     <div class="nav-right">
-      <span>POINTS</span>
+      <span id="points">POINTS</span>
       <div class="dropdown">
         <span>SETTINGS</span>
         <div class="dropdown-content">
@@ -262,7 +256,7 @@
 
   <div class="container">
     <div class="section">
-      <h2>DISPLAY TASKS</h2>
+      <h2>COMPLETED TASKS</h2>
       <ul>
         <li>Task 1</li>
         <li>Task 2</li>
@@ -271,15 +265,9 @@
       </ul>
     </div>
 
-    <div class="section center-section">
-      <h2>HELLO USER</h2>
-      <p>POINTS: 240,000</p>
-      <div class="diamond">♦</div>
-    </div>
-
     <div class="section">
       <h2>REWARDS</h2>
-      <p>[ 🚚 Fat ]</p>
+      <img src="https://s3.eu-north-1.amazonaws.com/assets.boosted.dk/2021/10/22144957/maNSORY-RS7-700.jpeg" alt="RS7 MANSORY" style="width:250px;height:200px;">      
       <p>[ 🎟 Friis Kupon ]</p>
       <button>SEE ALL REWARDS</button>
     </div>
