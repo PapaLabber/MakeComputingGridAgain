@@ -1,7 +1,7 @@
 //Database pushing (not drugs)
 // these will essentially just be SQL queries with placeholders instead of example values
 // Export
-export { registerUserToDB, storeResultsInDB, checkLoginInfo, getUserProfile, pointAdder, getUserResults, dbConnection };
+export { registerUserToDB, storeResultsInDB, getUserProfile, pointAdder, getUserResults, dbConnection };
 
 // Imports
 import bcrypt from 'bcrypt';
@@ -23,14 +23,13 @@ async function initializeConnection() {
 const dbConnection = await initializeConnection();
 
 // Function to hash the password and insert a new user into the database
-async function registerUserToDB(dbConnection, newUserEmail, newUserUsername, newUserPassword) { // Function is async, because it involves asynchronous operations,
+async function registerUserToDB(dbConnection, newUserEmail) { // Function is async, because it involves asynchronous operations,
     try {                                                                                     // such as password hashing and database interactions
-        const hashedPassword = await bcrypt.hash(newUserPassword, 10); // Hash the password (asynchronous operation)
-        const values = [newUserEmail, newUserUsername, hashedPassword, 0]; // Use parameterized query. This will help prevent SQL injections.
+        const values = [newUserEmail, 0]; // Use parameterized query. This will help prevent SQL injections.
 
         console.log("Registering user in the database...");
         await dbConnection.execute( // Insert query. This line is what does the SQL operations and stores the user in the database.
-            'INSERT INTO users (email, username, password, points) VALUES (?, ?, ?, ?)', values
+            'INSERT INTO users (email, points) VALUES (?, ?)', values
         );
         console.log("User info has succesfully been stored in the Database!"); // Success.
 
@@ -41,9 +40,9 @@ async function registerUserToDB(dbConnection, newUserEmail, newUserUsername, new
 }
 
 // Function to store results in the database
-async function storeResultsInDB(dbConnection, primeComputed, userName, resultIsPrime, isEven) {
+async function storeResultsInDB(dbConnection, primeComputed, userEmail, resultIsPrime, isEven) {
     try {
-        const values = [primeComputed, userName, resultIsPrime, isEven]; // Values being stored in the list.
+        const values = [primeComputed, userEmail, resultIsPrime, isEven]; // Values being stored in the list.
 
         if (!resultIsPrime) { // Check if the result is prime or not.
             console.log("Result is not prime");
@@ -72,46 +71,11 @@ async function storeResultsInDB(dbConnection, primeComputed, userName, resultIsP
     }
 }
 
-// Database fetching
-
-// Function that checks if the username and password given by a user on the login page matches something in the database.
-async function checkLoginInfo(dbConnection, username, password) {
+// Function that fetches information about the userprofile to display it
+async function getUserProfile(dbConnection, userEmail) {
     try {
         const [rows] = await dbConnection.execute(              // Select query. This selects the column that matches
-            `SELECT password FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
-        );
-
-        if (rows.length === 0) {                 // Checks if the array is empty. if empty, the username has been
-            console.error("User not found.");    // incorrectly types or it does not exist in the database.
-            return null;
-        }
-
-        const hashedPassword = rows[0].password; // Setting the password found in the database as the value of hashedPassword
-
-        // Compare the provided password with the hashed password
-        const match = await bcrypt.compare(password, hashedPassword);
-        if (match) {
-            console.log("Password is correct!");
-
-            // // fetch user profile data
-            const userData = getUserProfile(dbConnection, username);
-
-            return userData; // Return the user data if the password is correct
-        } else { // Otherwise the password has been mistyped.
-            console.error("Password is incorrect.");
-            return null;
-        }
-
-    } catch (error) { // Error handling
-        console.error("Error checking login:", error);
-        return null;
-    }
-}
-
-async function getUserProfile(dbConnection, username) {
-    try {
-        const [rows] = await dbConnection.execute(              // Select query. This selects the column that matches
-            `SELECT * FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
+            `SELECT * FROM users WHERE email = ?`, [userEmail] // both the username and password provided and stores it in an array.
         );
 
         if (rows.length > 0) {                 // Checks if the array is empty. if empty, the username has been
@@ -129,11 +93,11 @@ async function getUserProfile(dbConnection, username) {
     }
 }
 
-async function pointAdder(dbConnection, username, points) {
+async function pointAdder(dbConnection, userEmail, points) {
     try {
         let pointIncrementer =+ points; // Updates the users points based on what the result of the computation is.
         await dbConnection.execute(
-            `UPDATE users SET points = points + ? WHERE username = ?`, [pointIncrementer, username] // SQL query that updates the values in the DB
+            `UPDATE users SET points = points + ? WHERE email = ?`, [pointIncrementer, userEmail] // SQL query that updates the values in the DB
         );
         return true;
     } catch (error) { // Error handling
@@ -142,7 +106,7 @@ async function pointAdder(dbConnection, username, points) {
     }
 }
 
-async function getUserResults(dbConnection, username) {
+async function getUserResults(dbConnection, userEmail) {
     try {
         const [rows] = await dbConnection.execute(
             `SELECT exponent, is_mersenne_prime, is_even, points 
@@ -163,27 +127,3 @@ async function getUserResults(dbConnection, username) {
         return [];
     }
 }
-
-// Example runs:
-
-// const registerQueryEmail = "exampleEmail@email.com";
-// const registerQueryUsername = "exampleUsername";
-// const registerQueryPassword = "examplePassword";
-
-// // register user FIRST, everything can't be tested in one exection (without timeout or something similar)
-// registerUserToDB(dbConnection, registerQueryEmail, registerQueryUsername, registerQueryPassword);
-
-// const testPrime = 7;
-// const falseTestPrime = 4;
-// // const testUsername = "exampleUsername";
-// const testUsername = registerQueryUsername;
-// const testIsPrimeTrue = true;
-// const testIsPrimeFalse = false;
-// const testPerfectEven = "Even";
-// const testPerfectNull = null;
-
-// storeResultsInDB(dbConnection, testPrime, testUsername, testIsPrimeTrue, testPerfectEven);
-// storeResultsInDB(dbConnection, falseTestPrime, testUsername, testIsPrimeFalse, testPerfectNull);
-
-// checkLoginInfo(dbConnection, testUsername, registerQueryPassword); // Correct password
-// checkLoginInfo(dbConnection, testUsername, "incorrectPassword"); // Incorrect password

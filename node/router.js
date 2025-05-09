@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, checkLoginInfo, dbConnection, getUserProfile, pointAdder, getUserResults } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, dbConnection, getUserProfile, pointAdder, getUserResults } from './DatabaseOperation.js';
 import { realLLT } from './PublicResources/scripts/llt.js';
 
 
@@ -41,7 +41,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 case "/node/getUserProfile": {
                     authenticateToken(req, res, async () => {
                         // Extract the username from the query parameters
-                        const username = url.searchParams.get('username');
+                        const username = url.searchParams.get('email');
                 
                         if (!username) {
                             return sendJsonResponse(res, 400, { message: 'Username is required' });
@@ -49,7 +49,7 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 
                         try {
                             // Fetch the user profile from the database
-                            const userData = await getUserProfile(dbConnection, username);
+                            const userData = await getUserProfile(dbConnection, email);
                 
                             if (!userData) {
                                 return sendJsonResponse(res, 404, { message: 'User not found' });
@@ -58,7 +58,6 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             // Send the user profile data as a response
                             return sendJsonResponse(res, 200, {
                                 message: 'Token is valid. User is authorized.',
-                                username: userData.username,
                                 points: userData.points,
                                 email: userData.email, // Include additional fields if needed
                             });
@@ -70,35 +69,17 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     return;
                 }
 
-                // Get completed user tasks
-                // case "/node/userCompletedTasks": {
-                //     const username = url.searchParams.get('username'); // Extract the username from query parameters
-                //     if (!username) {
-                //         return sendJsonResponse(res, 400, { message: 'Username is required' });
-                //     }
-                //     // Find tasks for the given username
-                //     // const userTasks = tasks.filter(task => task.username === username);
-
-                //     const userCompletedTasks = getUserResults(dbConnection, username); // Fetch tasks from the database
-
-                //     if (!userCompletedTasks) {
-                //         return sendJsonResponse(res, 404, { message: 'No tasks found for this user' });
-                //     }
-
-                //     return sendJsonResponse(res, 200, userCompletedTasks);
-                // }
-
                 case "/node/userCompletedTasks": {
                     authenticateToken(req, res, async () => {
-                        const username = url.searchParams.get('username'); // Extract the username from query parameters
+                        const username = url.searchParams.get('email'); // Extract the username from query parameters
                 
                         if (!username) {
-                            return sendJsonResponse(res, 400, { message: 'Username is required' });
+                            return sendJsonResponse(res, 400, { message: 'Email is required' });
                         }
                 
                         try {
                             // Fetch completed tasks for the user from the database
-                            const userCompletedTasks = await getUserResults(dbConnection, username);
+                            const userCompletedTasks = await getUserResults(dbConnection, email);
                 
                             if (!userCompletedTasks || userCompletedTasks.length === 0) {
                                 return sendJsonResponse(res, 404, { message: 'No tasks found for this user' });
@@ -227,8 +208,8 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             }
 
                             // Store results computed in the database and add points to the user
-                            storeResultsInDB(dbConnection, result.exponent, result.username, result.isMersennePrime, result.perfectIsEven);
-                            pointAdder(dbConnection, result.username, result.points);
+                            storeResultsInDB(dbConnection, result.exponent, result.email, result.isMersennePrime, result.perfectIsEven);
+                            pointAdder(dbConnection, result.email, result.points);
 
                             // Call the acknowledge function to mark the task as completed
                             const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js

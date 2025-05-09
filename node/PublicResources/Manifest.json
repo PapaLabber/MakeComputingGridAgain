@@ -13,6 +13,7 @@
     "128": "2620477.png"
   },
   "permissions": [
+    "identity",
     "storage",
     "activeTab",
     "scripting"
