@@ -1,4 +1,4 @@
-import { baseURL } from './baseURL.js';
+import { baseURL } from './config.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('userData');

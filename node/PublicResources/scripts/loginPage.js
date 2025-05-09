@@ -1,4 +1,4 @@
-import { baseURL } from './baseURL.js';
+import { baseURL } from './config.js';
 
 // TODO: Add comments
 document.addEventListener('DOMContentLoaded', function () {
