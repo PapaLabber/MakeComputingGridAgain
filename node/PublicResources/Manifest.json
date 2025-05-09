@@ -25,9 +25,9 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
-  "content_scripts": [
+"content_scripts": [
     {
-        "matches": ["https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/"], 
+        "matches": ["https://cs-25-sw-2-13.p2datsw.cs.aau.dk/*"], 
         "js": ["scripts/landingPage.js"]
     }
 ]
