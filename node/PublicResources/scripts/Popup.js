@@ -1,33 +1,28 @@
 import { baseURL } from "./config.js"
 
-document.addEventListener('DOMContentLoaded', function () {
-    chrome.storage.local.get(['email'], function (result) {
-        const email = result.email;
-        if (email) {
-            console.log('Email retrieved from chrome.storage:', email);
-
-            // Proceed with login
-            fetch(`${baseURL}/node/login`, {
-                method: `POST`,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email: email }),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status ${response.status}`);
+try {
+    document.addEventListener('DOMContentLoaded', function () {
+        // Listen for the email sent from landingPage.js
+        window.addEventListener('message', function (event) {
+            // Ensure the message is of the correct type
+            if (event.data && event.data.type === 'EMAIL') {
+                const email = event.data.email;
+                console.log('Email received via postMessage:', email);
+    
+                // Save the email in localStorage for the popup
+                localStorage.setItem('email', email);
+    
+                // Fetch user profile using the email
+                fetch(`${baseURL}/node/getEmail?email=${email}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Include the JWT
+                        'Content-Type': 'application/json',
                     }
-                    return response.json();
                 })
-                .then(data => {
-                    console.log("Login successful", data);
-                })
-                .catch(error => {
-                    console.error("Error during login:", error);
-                });
-        } else {
-            console.error("No email found in chrome.storage.");
-        }
-    });
-});
+            }}
+        )}
+    )
+} catch(err) {
+    console.error("Error getting email or fetching userprofile", err);
+}

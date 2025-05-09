@@ -108,6 +108,38 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     return sendJsonResponse(res, 200, newTask);
                 }
 
+                case "/node/getEmail": {
+                    authenticateToken(req, res, async () => {
+                        // Extract the username from the query parameters
+                        const email = url.searchParams.get('email');
+                
+                        if (!email) {
+                            return sendJsonResponse(res, 400, { message: 'Email is required to proceed. Enter it at the homepage.' });
+                        }
+                
+                        try {
+                            // Fetch the user profile from the database
+                            const userData = await getUserProfile(dbConnection, email);
+                
+                            if (!userData) {
+                                return sendJsonResponse(res, 404, { message: 'User not found' });
+                            }
+                
+                            // Send the user profile data as a response
+                            return sendJsonResponse(res, 200, {
+                                message: 'Token is valid. User is authorized.',
+                                points: userData.points,
+                                email: userData.email, // Include additional fields if needed
+                            });
+                        } catch (error) {
+                            console.error('Error fetching user profile:', error);
+                            return sendJsonResponse(res, 500, { message: 'Internal server error' });
+                        }
+                    });
+                    return;
+                }
+                
+
                 // Serve static files from the "node/PublicResources" directory
                 default: {
                     const staticFilePath = path.resolve(__dirname, 'PublicResources' + reqPath); // Resolve the file path
