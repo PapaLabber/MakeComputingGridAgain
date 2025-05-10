@@ -21,14 +21,14 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
             switch (reqPath) {
                 // Serve html landing page
                 case "/": {
-                    const filePath = path.resolve('node/PublicResources/webpages/landingPage.html'); // Resolve the HTML file path
+                    const filePath = path.resolve('./node/PublicResources/webpages/landingPage.html'); // Resolve the HTML file path
                     serveFile(res, filePath, 'text/html'); // Serve the HTML file with the correct content type
                     return; // Leave function when finished
                 }
 
                 // Serve the CSS file for the landing page
                 case "/node/landingPage.css": {
-                    const cssFilePath = path.resolve('node/PublicResources/webpages/landingPage.css'); // Resolve the CSS file path
+                    const cssFilePath = path.resolve('./node/PublicResources/webpages/landingPage.css'); // Resolve the CSS file path
                     serveFile(res, cssFilePath, 'text/css'); // Serve the CSS file with the correct content type
                     return; // Leave function when finished
                 }
@@ -136,9 +136,17 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
                 
 
-                // Serve static files from the "node/PublicResources/webpages" directory
+                // Serve static files from the "webpages" and "PublicResources" directories
                 default: {
-                    const staticFilePath = path.resolve(__dirname, 'PublicResources/webpages' + reqPath); // Resolve the file path
+                    // Determine the base directory based on the request path
+                    let baseDir;
+                    if (reqPath === '/extension.zip') {
+                        baseDir = path.resolve(__dirname, 'PublicResources'); // Serve from PublicResources for extension.zip
+                    } else {
+                        baseDir = path.resolve(__dirname, 'PublicResources/webpages'); // Serve from webpages for other files
+                    }
+
+                    const staticFilePath = path.join(baseDir, reqPath); // Resolve the file path
                     const ext = path.extname(staticFilePath); // Get the file extension
 
                     // Determine the content type based on the file extension
@@ -148,6 +156,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     else if (ext === '.js') contentType = 'application/javascript';
                     else if (ext === '.png') contentType = 'image/png';
                     else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+                    else if (ext === '.zip') contentType = 'application/zip';
 
                     // Serve the static file
                     fs.stat(staticFilePath, (err, stats) => {

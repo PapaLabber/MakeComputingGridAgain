@@ -1,4 +1,3 @@
-import { baseURL } from "../webpages/config.js"
 import { realLLT } from './llt.js';
 
 // The Username from the local storage in the browser
@@ -9,6 +8,7 @@ if (!username) {
     console.log('email retrieved:', email);
 }
 
+const baseURL = "https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0"
 
 // Login form
 document.addEventListener('DOMContentLoaded', function () {
@@ -136,19 +136,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (userProfileButton) {
         userProfileButton.addEventListener('click', function () {
-            location.href = 'https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/userProfile.html';
+            location.href = `${baseURL}/userProfile.html`;
         });
     }
 
     if (rewardsButton) {
         rewardsButton.addEventListener('click', function () {
-            location.href = 'https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/Rewards.html';
+            location.href = `${baseURL}/Rewards.html`;
         });
     }
 
     if (homeButton) {
         aboutUsButton.addEventListener('click', function () {
-            location.href = 'https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/landingPage.html';
+            location.href = `${baseURL}/landingPage.html`;
         });
     }
 });

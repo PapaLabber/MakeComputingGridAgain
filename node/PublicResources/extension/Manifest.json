@@ -28,7 +28,7 @@
 "content_scripts": [
     {
         "matches": ["https://cs-25-sw-2-13.p2datsw.cs.aau.dk/*"], 
-        "js": ["scripts/landingPage.js"]
+        "js": ["Popup.js"]
     }
 ]
 }
