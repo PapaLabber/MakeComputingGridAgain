@@ -13,15 +13,32 @@
   <link rel="stylesheet" href="Popup.css">
 </head>
 
-<body>  
+<body>
   <h1>MCGA</h1>
-  <div class="w3-center w3-padding-32">
-    <p id="username-display">Hello, <span id="username">Guest</span>!</p>
-    <button id="request-task-btn" class="w3-button w3-green w3-large" style="width: 100%;">Earn Points Now!</button><br>
-    <button id="user-profile-btn" class="w3-button w3-blue w3-large" style="width: 100%;">User Profile</button><br>
-    <button id="rewards-btn" class="w3-button w3-teal w3-large" style="width: 100%;">Rewards</button><br>
-    <button id="home-btn" class="w3-button w3-orange w3-large" style="width: 100%;">Home</button><br>
+  <!-- Login form -->
+  <div class="wrapper">
+    <a href="landingPage.html">
+      <h1>MCGA</h1>
+    </a>
+    <h2>Sign In Here</h2>
+    <form id="loginForm">
+      <div>
+        <input type="text" placeholder="Enter Username" id="login-username" required>
+      </div>
+      <div>
+        <input type="password" placeholder="Enter Password" id="login-password" required>
+      </div>
+      <button type="submit">Sign In</button>
+      <a href="landingPage.html" class="cancelbtn">Cancel</a>
+    </form>
   </div>
+
+  <!-- Placeholder for Buttons -->
+  <div id="button-container" class="w3-center w3-padding-32" style="display: none;">
+    <!-- Buttons will be injected here -->
+  </div>
+
+  <!-- Indicators -->
   <div class="w3-margin-top">
     <p class="section-title">🔢 Total Points: <span id="points">0</span></p>
 
@@ -38,9 +55,9 @@
       <li>Loading leaderboard...</li>
     </ol>
   </div>
-  <script type="module" src="scripts/config.js"></script>
-  <script src="scripts/taskOverview.js" type="module"></script>
-  <script src="scripts/Popup.js" type="module"></script>
+  <script type="module" src="../webpages/config.js"></script>
+  <script src="Popup.js" type="module"></script>
+
 </body>
 
 </html>

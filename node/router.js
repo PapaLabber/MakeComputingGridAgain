@@ -5,17 +5,13 @@ import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
 import { registerUserToDB, storeResultsInDB, dbConnection, getUserProfile, pointAdder, getUserResults } from './DatabaseOperation.js';
-import { realLLT } from './PublicResources/scripts/llt.js';
-
-
-export { handleRoutes };
 
 const __filename = fileURLToPath(import.meta.url); // Get the current file path
 const __dirname = path.dirname(__filename); // Get the directory name of the current file
 
 const SECRET_KEY = 'your_secret_key'; // Replace with a secure key
 
-function handleRoutes(req, res, hostname, PORT, users, tasks) {
+export function handleRoutes(req, res, hostname, PORT, users, tasks) {
     const method = req.method; // Get the HTTP method (GET, POST, etc.)
     const url = new URL(req.url, `http://${hostname}:${PORT}`); // Parse the request URL
     const reqPath = url.pathname; // Extract the path from the URL
@@ -25,14 +21,14 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
             switch (reqPath) {
                 // Serve html landing page
                 case "/": {
-                    const filePath = path.resolve('node/PublicResources/landingPage.html'); // Resolve the HTML file path
+                    const filePath = path.resolve('node/PublicResources/webpages/landingPage.html'); // Resolve the HTML file path
                     serveFile(res, filePath, 'text/html'); // Serve the HTML file with the correct content type
                     return; // Leave function when finished
                 }
 
                 // Serve the CSS file for the landing page
                 case "/node/landingPage.css": {
-                    const cssFilePath = path.resolve('node/PublicResources/landingPage.css'); // Resolve the CSS file path
+                    const cssFilePath = path.resolve('node/PublicResources/webpages/landingPage.css'); // Resolve the CSS file path
                     serveFile(res, cssFilePath, 'text/css'); // Serve the CSS file with the correct content type
                     return; // Leave function when finished
                 }
@@ -140,9 +136,9 @@ function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
                 
 
-                // Serve static files from the "node/PublicResources" directory
+                // Serve static files from the "node/PublicResources/webpages" directory
                 default: {
-                    const staticFilePath = path.resolve(__dirname, 'PublicResources' + reqPath); // Resolve the file path
+                    const staticFilePath = path.resolve(__dirname, 'PublicResources/webpages' + reqPath); // Resolve the file path
                     const ext = path.extname(staticFilePath); // Get the file extension
 
                     // Determine the content type based on the file extension

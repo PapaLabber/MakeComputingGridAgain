@@ -9,32 +9,100 @@ if (!username) {
     console.log('email retrieved:', email);
 }
 
-try {
-    document.addEventListener('DOMContentLoaded', function () {
-        // Listen for the email sent from landingPage.js
-        window.addEventListener('message', function (event) {
-            // Ensure the message is of the correct type
-            if (event.data && event.data.type === 'EMAIL') {
-                const email = event.data.email;
-                console.log('Email received via postMessage:', email);
-    
-                // Save the email in localStorage for the popup
-                localStorage.setItem('email', email);
-    
-                // Fetch user profile using the email
-                fetch(`${baseURL}/node/getEmail?email=${email}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Include the JWT
-                        'Content-Type': 'application/json',
+
+// Login form
+document.addEventListener('DOMContentLoaded', function () {
+    const loginForm = document.getElementById('loginForm');
+    const buttonContainer = document.getElementById('button-container');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                alert('Please enter both username and password.');
+                return;
+            }
+
+            // Send login request to the server
+            fetch(`${baseURL}/node/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        alert('Login successful!');
+
+                        // Save the JWT and username in localStorage
+                        localStorage.setItem('jwt', data.token);
+                        localStorage.setItem('username', username);
+
+                        // Hide the login form
+                        loginForm.style.display = 'none';
+
+                        // Show the button container
+                        buttonContainer.style.display = 'block';
+
+                        // Inject the buttons dynamically
+                        buttonContainer.innerHTML = `
+                            <p id="username-display">Hello, <span id="username">${username}</span>!</p>
+                            <button id="request-task-btn" class="w3-button w3-green w3-large" style="width: 100%;">Earn Points Now!</button><br>
+                            <button id="user-profile-btn" class="w3-button w3-blue w3-large" style="width: 100%;">User Profile</button><br>
+                            <button id="rewards-btn" class="w3-button w3-teal w3-large" style="width: 100%;">Rewards</button><br>
+                            <button id="home-btn" class="w3-button w3-orange w3-large" style="width: 100%;">Home</button><br>
+                        `;
+
+                        // Add event listeners for the buttons
+                        const requestTaskButton = document.getElementById('request-task-btn');
+                        const userProfileButton = document.getElementById('user-profile-btn');
+                        const rewardsButton = document.getElementById('rewards-btn');
+                        const homeButton = document.getElementById('home-btn');
+
+                        if (requestTaskButton) {
+                            requestTaskButton.addEventListener('click', function () {
+                                alert('Requesting task...');
+                                // Add your task request logic here
+                            });
+                        }
+
+                        if (userProfileButton) {
+                            userProfileButton.addEventListener('click', function () {
+                                location.href = `${baseURL}/userProfile.html`;
+                            });
+                        }
+
+                        if (rewardsButton) {
+                            rewardsButton.addEventListener('click', function () {
+                                location.href = `${baseURL}/Rewards.html`;
+                            });
+                        }
+
+                        if (homeButton) {
+                            homeButton.addEventListener('click', function () {
+                                location.href = `${baseURL}/landingPage.html`;
+                            });
+                        }
+                    } else {
+                        alert('Error: ' + data.message);
                     }
                 })
-            }}
-        )}
-    )
-} catch(err) {
-    console.error("Error getting email or fetching userprofile", err);
-}
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error. Please try again later.');
+                });
+        });
+    }
+});
 
 
 // Prepare states for active calculation or idle
@@ -43,7 +111,6 @@ const state = {
     ACTIVE: 'active'
 };
 let currentState = state.IDLE; // default state
-
 
 // Get the status of the activation button from the DOM 
 const requestTaskButton = document.getElementById('request-task-btn');
@@ -106,6 +173,7 @@ function switchState(newState) {
     }
 }
 
+// TODO: Still useful?
 if (username) {
     // Fetch completed tasks for the user
     completedUserTasks(username);
@@ -114,7 +182,6 @@ if (username) {
 }
 
 // Fetch completed tasks for a specific user
-
 function completedUserTasks(username) {
     fetch(`${baseURL}/node/users-tasks?username=${username}`)
         .then(response => {
@@ -132,32 +199,30 @@ function completedUserTasks(username) {
         });
 }
 
-// Expose the requestTask function globally for external use
 
+// // Display tasks in the UI
+// function displayTasks(tasks) {
+//     const taskContainer = document.getElementById('task-container');
+//     taskContainer.innerHTML = ''; // Clear any previous content
 
-// Display tasks in the UI
-function displayTasks(tasks) {
-    const taskContainer = document.getElementById('task-container');
-    taskContainer.innerHTML = ''; // Clear any previous content
+//     // Filter tasks by their status
+//     const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
+//     const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
 
-    // Filter tasks by their status
-    const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
-    const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
+//     // Generate HTML for completed tasks
+//     const completedList = completedTasks.length
+//         ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
+//         : '<p>No completed tasks yet!</p>';
 
-    // Generate HTML for completed tasks
-    const completedList = completedTasks.length
-        ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
-        : '<p>No completed tasks yet!</p>';
+//     // Generate HTML for the current task
+//     const currentTaskDisplay = currentTask
+//         ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
+//         : '<p>No current task in progress.</p>';
 
-    // Generate HTML for the current task
-    const currentTaskDisplay = currentTask
-        ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
-        : '<p>No current task in progress.</p>';
-
-    // Update the task container with the generated HTML
-    taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
-    taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
-}
+//     // Update the task container with the generated HTML
+//     taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
+//     taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
+// }
 
 // Request a new task from the server
 export function requestTask() {
@@ -229,49 +294,3 @@ function clientTaskDone(result) {
 }
 
 
-
-// ####################### Login functionality
-document.addEventListener('DOMContentLoaded', function () {
-    const loginForm = document.getElementById('loginForm');
-
-    if (loginForm) {
-        loginForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-
-            if (!username || !password) {
-                alert('Please enter both username and password.');
-                return;
-            }
-
-            fetch(`${baseURL}/node/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.token) {
-                        alert('Login successful!');
-                        // Save the JWT in localStorage (or sessionStorage)
-                        localStorage.setItem('jwt', data.token);
-                        localStorage.setItem('username', username); // Save the username
-
-                        window.location.href = `${baseURL}/userProfile.html`;
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('There was an error. Please try again later.');
-                });
-        });
-    }

@@ -1,8 +1,5 @@
 import http from 'http'; // Import the HTTP module
 import { handleRoutes } from './router.js'; // Import the router
-import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
-import path from 'path'; // Import the 'path' module for file path handling
-import { taskBrokerMain } from './TaskBroker.js'; // Import the task broker main function
 
 export {startServer, sendJsonResponse};
 
