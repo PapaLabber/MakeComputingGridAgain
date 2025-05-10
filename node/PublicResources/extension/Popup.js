@@ -1,6 +1,5 @@
-// Import the realLLT function for Mersenne prime calculations
+import { baseURL } from "../webpages/config.js"
 import { realLLT } from './llt.js';
-import { baseURL } from './config.js';
 
 // The Username from the local storage in the browser
 const username = localStorage.getItem('username');
@@ -9,6 +8,34 @@ if (!username) {
 } else {
     console.log('email retrieved:', email);
 }
+
+try {
+    document.addEventListener('DOMContentLoaded', function () {
+        // Listen for the email sent from landingPage.js
+        window.addEventListener('message', function (event) {
+            // Ensure the message is of the correct type
+            if (event.data && event.data.type === 'EMAIL') {
+                const email = event.data.email;
+                console.log('Email received via postMessage:', email);
+    
+                // Save the email in localStorage for the popup
+                localStorage.setItem('email', email);
+    
+                // Fetch user profile using the email
+                fetch(`${baseURL}/node/getEmail?email=${email}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Include the JWT
+                        'Content-Type': 'application/json',
+                    }
+                })
+            }}
+        )}
+    )
+} catch(err) {
+    console.error("Error getting email or fetching userprofile", err);
+}
+
 
 // Prepare states for active calculation or idle
 const state = {
