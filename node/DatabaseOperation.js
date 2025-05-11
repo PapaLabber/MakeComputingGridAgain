@@ -1,7 +1,7 @@
 //Database pushing (not drugs)
 // these will essentially just be SQL queries with placeholders instead of example values
 // Export
-export { registerUserToDB, storeResultsInDB, getUserProfile, pointAdder, getUserResults, dbConnection };
+export { registerUserToDB, storeResultsInDB, getUserProfile, pointAdder, getUserResults, checkLoginInfo, dbConnection };
 
 // Imports
 import bcrypt from 'bcrypt';

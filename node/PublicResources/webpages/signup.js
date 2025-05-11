@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('password-input').value;
             const repeatPassword = document.getElementById('repeat-password').value;
 
+            console.log(username);
+            console.log(password);
+
+
             // Validation checks...
             if (password !== repeatPassword) {
                 alert('Passwords do not match.');

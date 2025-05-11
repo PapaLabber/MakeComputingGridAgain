@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, dbConnection, getUserProfile, pointAdder, getUserResults } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, dbConnection, getUserProfile, pointAdder, getUserResults, checkLoginInfo } from './DatabaseOperation.js';
 
 const __filename = fileURLToPath(import.meta.url); // Get the current file path
 const __dirname = path.dirname(__filename); // Get the directory name of the current file
@@ -191,35 +191,46 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 case "/node/login": {
-                    // Handle user login
                     let body = '';
                     req.on('data', chunk => {
                         body += chunk.toString(); // Collect the request body data
                     });
+                
                     req.on('end', async () => {
-                        const { email } = JSON.parse(body); // Parse the JSON body
-
-                        // Validate input fields
-                        if (!email) {
-                            return sendJsonResponse(res, 400, { message: 'User is not logged in' });
+                        console.log('Request body received:', body); // Log the raw body for debugging
+                
+                        if (!body) {
+                            return sendJsonResponse(res, 400, { message: 'Request body is empty.' });
                         }
-
+                
                         try {
+                            const { username, password } = JSON.parse(body); // Parse the JSON body
+                            console.log('Parsed username:', username); // Log the parsed email
+                            console.log('Parsed password:', password);
+                
+                            // Validate input fields
+                            if (!username || !password) {
+                                return sendJsonResponse(res, 400, { message: 'Username and password is required.' });
+                            }
+                
                             // Check if the user exists and the password matches
-                            const newUser = await registerUser(dbConnection, email);
-
-                            if (newUser) {
-                                // Generate a JWT
-                                const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
+                            const user = await getUserProfile(dbConnection, username);
+                
+                            if (user) {
+                                const loggedIn = checkLoginInfo(dbConnection, username, password);
+                                if (loggedIn) {
+                                    // Generate a JWT
+                                const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
 
                                 // Send the token to the client
                                 return sendJsonResponse(res, 200, { message: 'Login successful', token });
+                                }
                             } else {
                                 return sendJsonResponse(res, 401, { message: 'User is not logged in' });
                             }
                         } catch (error) {
                             console.error('Error during login:', error);
-                            return sendJsonResponse(res, 500, { message: 'Internal server error.' });
+                            return sendJsonResponse(res, 400, { message: 'Invalid JSON format.' });
                         }
                     });
                     return;
