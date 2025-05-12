@@ -23,13 +23,15 @@ async function initializeConnection() {
 const dbConnection = await initializeConnection();
 
 // Function to hash the password and insert a new user into the database
-async function registerUserToDB(dbConnection, userEmail) { // Function is async, because it involves asynchronous operations,
+async function registerUserToDB(dbConnection, userEmail, username, password) { // Function is async, because it involves asynchronous operations,
     try {                                                                                     // such as password hashing and database interactions
-        const values = [userEmail, 0]; // Use parameterized query. This will help prevent SQL injections.
+        // Hash the password using bcrypt
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const values = [userEmail, username, hashedPassword, 0]; // Use parameterized query. This will help prevent SQL injections.
 
         console.log("Registering user in the database...");
         await dbConnection.execute( // Insert query. This line is what does the SQL operations and stores the user in the database.
-            'INSERT INTO users (email, points) VALUES (?, ?)', values
+            'INSERT INTO users (email, username, password, points) VALUES (?, ?, ?, ?)', values
         );
         console.log("User info has successfully been stored in the Database!"); // Success.
         return true;
@@ -76,10 +78,10 @@ async function storeResultsInDB(dbConnection, primeComputed, userEmail, resultIs
 }
 
 // Function that fetches information about the userprofile to display it
-async function getUserProfile(dbConnection, userEmail) {
+async function getUserProfile(dbConnection, username) {
     try {
         const [rows] = await dbConnection.execute(              // Select query. This selects the column that matches
-            `SELECT * FROM users WHERE email = ?`, [userEmail] // both the username and password provided and stores it in an array.
+            `SELECT * FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
         );
 
         if (rows.length > 0) {                 // Checks if the array is empty. if empty, the username has been

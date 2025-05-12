@@ -12,6 +12,10 @@ const __dirname = path.dirname(__filename); // Get the directory name of the cur
 const SECRET_KEY = 'your_secret_key'; // Replace with a secure key
 
 export function handleRoutes(req, res, hostname, PORT, users, tasks) {
+    res.setHeader('Access-Control-Allow-Origin', 'chrome-extension://gfcplmcfadkdfogebjbjngfoiecmpmln'); 
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
     const method = req.method; // Get the HTTP method (GET, POST, etc.)
     const url = new URL(req.url, `http://${hostname}:${PORT}`); // Parse the request URL
     const reqPath = url.pathname; // Extract the path from the URL

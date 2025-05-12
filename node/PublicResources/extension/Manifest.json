@@ -16,18 +16,21 @@
     "identity",
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "webRequest"
   ],
   "host_permissions": [
     "https://*/*",
-    "http://*/*"
+    "http://*/*",
+    "https://cs-25-sw-2-13.p2datsw.cs.aau.dk/*",
+    "http://cs-25-sw-2-13.p2datsw.cs.aau.dk/*"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
-"content_scripts": [
+"content_scripts": [ 
     {
-        "matches": ["https://cs-25-sw-2-13.p2datsw.cs.aau.dk/*"], 
+        "matches": ["https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0/*"], 
         "js": ["Popup.js"]
     }
 ]

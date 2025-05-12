@@ -5,10 +5,25 @@ const username = localStorage.getItem('username');
 if (!username) {
     alert('No user found! Please log in to the website.');
 } else {
-    console.log('email retrieved:', email);
+    console.log('username retrieved:', username);
 }
 
-const baseURL = "https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0"
+const baseURL = "https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0";
+
+// TODO: check om dom er loaded
+// TODO: hvis ja load login status: om der findes JWT og username i local storage
+// TODO: Hvis der ikke er noget i JWT og username, inject login form.
+// TODO:  - udfør login
+// TODO:  - ellers udfør buttons
+// TODO: Håndter status: active / idle
+// TODO: func: requestTask
+// TODO: func: clientTaskDone
+// TODO: func: completedUserTask
+// TODO: Håndter alle de dynamiske informationer i bunden.
+
+
+
+
 
 // Login form
 document.addEventListener('DOMContentLoaded', function () {
@@ -70,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         if (requestTaskButton) {
                             requestTaskButton.addEventListener('click', function () {
-                                alert('Requesting task...');
                                 // Add your task request logic here
                             });
                         }
@@ -173,7 +187,6 @@ function switchState(newState) {
     }
 }
 
-// TODO: Still useful?
 if (username) {
     // Fetch completed tasks for the user
     completedUserTasks(username);
