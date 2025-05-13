@@ -20,6 +20,8 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
     const url = new URL(req.url, `http://${hostname}:${PORT}`); // Parse the request URL
     const reqPath = url.pathname; // Extract the path from the URL
 
+    console.log('Request received:', method, reqPath); // Log the request method and path
+
     switch (method) {
         case "GET": {
             switch (reqPath) {
@@ -146,6 +148,8 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     let baseDir;
                     if (reqPath === '/extension.zip') {
                         baseDir = path.resolve(__dirname, 'PublicResources'); // Serve from PublicResources for extension.zip
+                    } else if (reqPath.startsWith('/images')) {
+                        baseDir = path.resolve(__dirname, 'PublicResources');
                     } else {
                         baseDir = path.resolve(__dirname, 'PublicResources/webpages'); // Serve from webpages for other files
                     }
@@ -220,13 +224,11 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             const isValidLogin = await checkLoginInfo(dbConnection, username, password);
 
                             if (isValidLogin) {
-                                console.log('DEBUG: User and password loaded correctly from DB:', username, password);
                                 // Generate a JWT
                                 const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
                                 // Send the token to the client
                                 return sendJsonResponse(res, 200, { message: 'Login successful', token, username });
                             } else {
-                                console.log('DEBUG: User and password NOT loaded correctly from DB:', username, password);
                                 return sendJsonResponse(res, 401, { message: 'User is not logged in' });
                             }
                         } catch (error) {

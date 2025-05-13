@@ -93,8 +93,6 @@ function handleLoginForm(username, loginFormContainer, buttonContainer, logoutCo
             .then(response => response.json())
             .then(data => {
                 if (data.token) {
-                    console.log('DEBUG: Login successful! (Client side):' + data.token);
-
                     // Save the JWT and username in localStorage
                     localStorage.setItem('jwt', data.token);
                     localStorage.setItem('username', data.username);
