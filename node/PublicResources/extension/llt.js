@@ -67,22 +67,14 @@ console.log("-------------------------"); // log separator
 function realLLT(testedExponent) {
     let timer = Date.now(); // start timer
 
-    chrome.storage.local.get(['email'], function (result) {
-        const email = result.email;
-        if (email) {
-            console.log('Email retrieved from chrome.storage:', email);
-        } else {
-            console.error('No email found in chrome.storage.');
-        }
-    });
+    const username = localStorage.getItem('username');
 
     const resultObject = {        // object to store the result of the test
         exponent: testedExponent, // store exponent in result object
         isMersennePrime: null,    // store if m_p is a mersenne prime in result object
         perfectIsEven: null,      // store perfect number even/odd in result object
-        email: email,             // store username in result object
-        taskID: null,             // store task ID in result object
-        points: 0                 // The amount of points the user has
+        username: username,           // store username in result object
+        taskID: null              // store task ID in result object
     };
     
     console.log(`Checking M_${testedExponent} :)`); // log checked exponent
@@ -96,15 +88,6 @@ function realLLT(testedExponent) {
         resultObject.perfectIsEven = isEven(calculatePerfectNumber(testedExponent)); // store even or odd in object and log
         console.log("Is perfect number for M_" + testedExponent + " even? : " + resultObject.perfectIsEven);
     }
-
-    if (resultObject.perfectIsEven === false) {         // If the resulting perfect number is odd, then the problem is solved and the user is awarded with 1.000.000.000 points
-        resultObject.points = 1000000000;
-    } else if (resultObject.isMersennePrime === true) { // If the result is a mersenne prime, but the perfect number is not odd, the user is awarded with 10.000 points
-        resultObject.points = 10000;
-    } else {                                            // If the result isn't prime the user is awarded with 10 points.
-        resultObject.points = 10;
-    }
-    
 
     console.log(`... Took: ${Date.now() - timer} ms`); // end timer
     console.log(`M_${testedExponent} checked :)`)      // log checked exponent
