@@ -3,8 +3,8 @@ import { baseURL } from './config.js';
 document.addEventListener('DOMContentLoaded', function () {
 
     // Define the username (this could be dynamically set based on the logged-in user)
-    chrome.storage.local.get(['email'], function (result) {
-        const email = result.email;
+    localStorage.getItem(['username'], function (result) {
+        const username = result.username;
         if (email) {
             console.log('Email retrieved from chrome.storage:', email);
         } else {

@@ -1,13 +1,5 @@
 import { realLLT } from './llt.js';
 
-// The Username from the local storage in the browser
-const username = localStorage.getItem('username');
-if (!username) {
-    alert('No user found! Please log in to the website.');
-} else {
-    console.log('username retrieved:', username);
-}
-
 const baseURL = "https://cs-25-sw-2-13.p2datsw.cs.aau.dk/node0";
 
 // State indicator calculation
@@ -32,21 +24,32 @@ let currentState = state.IDLE; // default state
 
 // Login form
 document.addEventListener('DOMContentLoaded', function () {
+    // The Username from the local storage in the browser
+    const username = localStorage.getItem('username');
+    if (!username) {
+        console.log('No user found! Please log in to the website.');
+    } else {
+        console.log('username retrieved:', username);
+        completedUserTasks(username);
+    }
+
     const loginFormContainer = document.getElementById('login-form-container');
     const buttonContainer = document.getElementById('button-container');
+    const logoutContainer = document.getElementById('logout-container');
 
     // Check if the user is already logged in
-    if (!localStorage.getItem('jwt') || !localStorage.getItem('username')) {
-        handleLoginForm(loginFormContainer, buttonContainer);
+    if (!localStorage.getItem('jwt') || !username) {
+        handleLoginForm(username, loginFormContainer, buttonContainer, logoutContainer);
     } else {
-        handleButtonContainer(loginFormContainer, buttonContainer);
+        handleButtonContainer(username, loginFormContainer, buttonContainer, logoutContainer);
     }
 });
 
 // function for login form handling
-function handleLoginForm(loginFormContainer, buttonContainer) {
+function handleLoginForm(username, loginFormContainer, buttonContainer, logoutContainer) {
     // Hide the buttons
     buttonContainer.style.display = 'none';
+    logoutContainer.style.display = 'none';
 
     // Show the login form
     loginFormContainer.style.display = 'block';
@@ -68,10 +71,10 @@ function handleLoginForm(loginFormContainer, buttonContainer) {
     loginFormContainer.addEventListener('submit', function (event) {
         event.preventDefault(); // TODO: necessary???
 
-        const username = document.getElementById('login-username').value;
-        const password = document.getElementById('login-password').value;
+        const formUsername = document.getElementById('login-username').value;
+        const formPassword = document.getElementById('login-password').value;
 
-        if (!username || !password) {
+        if (!formUsername || !formPassword) {
             alert('Please enter both username and password.');
             return;
         }
@@ -83,20 +86,20 @@ function handleLoginForm(loginFormContainer, buttonContainer) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                username: username,
-                password: password
+                username: formUsername,
+                password: formPassword
             })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.token) {
-                    alert('Login successful!');
+                    console.log('DEBUG: Login successful! (Client side):' + data.token);
 
                     // Save the JWT and username in localStorage
                     localStorage.setItem('jwt', data.token);
-                    localStorage.setItem('username', username);
+                    localStorage.setItem('username', data.username);
 
-                    handleButtonContainer(loginFormContainer, buttonContainer); // Call the function to handle button container
+                    handleButtonContainer(localStorage.getItem('username'), loginFormContainer, buttonContainer, logoutContainer); // Call the function to handle button container
 
                 } else {
                     alert('Error: ' + data.message);
@@ -111,7 +114,7 @@ function handleLoginForm(loginFormContainer, buttonContainer) {
 
 
 // function for button handling
-function handleButtonContainer(loginFormContainer, buttonContainer) {
+function handleButtonContainer(username, loginFormContainer, buttonContainer, logoutContainer) {
     // Hide the login form
     loginFormContainer.style.display = 'none';
 
@@ -135,37 +138,51 @@ function handleButtonContainer(loginFormContainer, buttonContainer) {
 
     if (requestTaskButton) {
         requestTaskButton.addEventListener('click', function () {
-            console.log('Requesting task...');
-            requestTask();
-
+            if (currentState === state.IDLE) {
+                switchState(state.ACTIVE, requestTaskButton);
+                console.log('Requesting task...');
+                requestTask();
+            } else {
+                switchState(state.IDLE, requestTaskButton);
+                console.log('Stopping task requests...');
+            }
         });
     }
     if (userProfileButton) {
         userProfileButton.addEventListener('click', function () {
-            location.href = `${baseURL}/userProfile.html`;
+            window.open(`${baseURL}/userProfile.html`, '_blank');
         });
     }
     if (rewardsButton) {
         rewardsButton.addEventListener('click', function () {
-            location.href = `${baseURL}/Rewards.html`;
+            window.open(`${baseURL}/Rewards.html`, '_blank');
         });
     }
     if (homeButton) {
         homeButton.addEventListener('click', function () {
-            location.href = `${baseURL}/landingPage.html`;
+            window.open(`${baseURL}/landingPage.html`, '_blank');
         });
     }
 
-    // Handle state of the request task button
-    if (requestTaskButton) {
-        requestTaskButton.addEventListener('click', function () {
-            if (currentState === state.IDLE) {
-                switchState(state.ACTIVE, requestTaskButton);
-            }
+    // Show the logout button container
+    logoutContainer.style.display = 'block';
+
+    // Inject the logout button dynamically
+    logoutContainer.innerHTML = `<button id="logout-btn" class="w3-button w3-red w3-small">Logout</button>`
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // Add event listener for the logout button
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function () {
+            // Clear the JWT and username from localStorage
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('username');
+
+            // Reload the page to show the login form again
+            location.reload();
         });
     }
 }
-
 
 function switchState(newState, requestTaskButton) {
     currentState = newState;
@@ -187,56 +204,6 @@ function switchState(newState, requestTaskButton) {
     }
 }
 
-if (username) {
-    // Fetch completed tasks for the user
-    completedUserTasks(username);
-} else {
-    alert('No user found! Please log in.');
-}
-
-// Fetch completed tasks for a specific user
-function completedUserTasks(username) {
-    fetch(`${baseURL}/node/users-tasks?username=${username}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json(); // Parse the response as JSON
-        })
-        .then(tasks => {
-            displayTasks(tasks); // Display the fetched tasks
-        })
-        .catch(error => {
-            console.error('Error fetching tasks:', error);
-            alert('Could not fetch your completed tasks. Please try again later.');
-        });
-}
-
-
-// // Display tasks in the UI
-// function displayTasks(tasks) {
-//     const taskContainer = document.getElementById('task-container');
-//     taskContainer.innerHTML = ''; // Clear any previous content
-
-//     // Filter tasks by their status
-//     const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
-//     const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
-
-//     // Generate HTML for completed tasks
-//     const completedList = completedTasks.length
-//         ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
-//         : '<p>No completed tasks yet!</p>';
-
-//     // Generate HTML for the current task
-//     const currentTaskDisplay = currentTask
-//         ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
-//         : '<p>No current task in progress.</p>';
-
-//     // Update the task container with the generated HTML
-//     taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
-//     taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
-// }
-
 // Request a new task from the server
 export function requestTask() {
     fetch(`${baseURL}/node/requestTask`)
@@ -249,7 +216,6 @@ export function requestTask() {
         .then(newTask => {
             if (!newTask || !newTask.taskData) {
                 console.error('Invalid task received:', newTask);
-                alert('No valid task received from the server.');
                 return false;
             }
 
@@ -262,13 +228,11 @@ export function requestTask() {
                 return true;
             } catch (error) {
                 console.error('Error calculating Mersenne prime:', error);
-                alert('An error occurred while processing the task.');
                 return false;
             }
         })
         .catch(error => {
             console.error('Error fetching tasks:', error);
-            alert('Could not fetch any new tasks. Please try again later.');
             return false;
         });
 }
@@ -277,13 +241,13 @@ export function requestTask() {
 function clientTaskDone(result) {
     // Convert BigInt properties to strings before sending
     result.exponent = result.exponent.toString();
-    console.log(result + "CHECK CHECK CHECK CHECK CHECK");
+    console.log(result);
     fetch(`${baseURL}/node/clientTaskDone`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ result, taskId: result.taskID, email }), // Include task ID in the request body
+        body: JSON.stringify({ result, taskId: result.taskID, username }), // Include task ID in the request body
     })
         .then(response => {
             if (!response.ok) {
@@ -302,8 +266,49 @@ function clientTaskDone(result) {
         })
         .catch(error => {
             console.error('Error sending task result to the server:', error);
-            alert('Error in delivering task result.');
         });
 }
+
+// Fetch completed tasks for a specific user
+function completedUserTasks(username) {
+    fetch(`${baseURL}/node/users-tasks?username=${username}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // Parse the response as JSON
+        })
+        .then(tasks => {
+            displayTasks(tasks); // Display the fetched tasks
+        })
+        .catch(error => {
+            console.error('Error fetching tasks:', error);
+        });
+}
+
+// Display tasks in the UI
+function displayTasks(tasks) {
+    const taskContainer = document.getElementById('task-container');
+    taskContainer.innerHTML = ''; // Clear any previous content
+
+    // Filter tasks by their status
+    const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
+    const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
+
+    // Generate HTML for completed tasks
+    const completedList = completedTasks.length
+        ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
+        : '<p>No completed tasks yet!</p>';
+
+    // Generate HTML for the current task
+    const currentTaskDisplay = currentTask
+        ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
+        : '<p>No current task in progress.</p>';
+
+    // Update the task container with the generated HTML
+    taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
+    taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
+}
+
 
 

@@ -1,5 +1,3 @@
-export { realLLT };
-
 // since JS doesn't support sqrt for BigInt, we use:
 function newtonRaphsonMethod(n, x0) {    // Newton-Raphson method for square root approximation
     const x1 = ((n / x0) + x0) >> 1n;    // division by 2 (using bitwise right shift)
@@ -64,7 +62,7 @@ let testedExponentFalseMP = 8n; // 8 gives not mersenne prime
 
 console.log("-------------------------"); // log separator
 
-function realLLT(testedExponent) {
+export function realLLT(testedExponent) {
     let timer = Date.now(); // start timer
 
     const username = localStorage.getItem('username');

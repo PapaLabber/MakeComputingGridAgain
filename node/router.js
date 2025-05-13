@@ -12,10 +12,10 @@ const __dirname = path.dirname(__filename); // Get the directory name of the cur
 const SECRET_KEY = 'your_secret_key'; // Replace with a secure key
 
 export function handleRoutes(req, res, hostname, PORT, users, tasks) {
-    res.setHeader('Access-Control-Allow-Origin', 'chrome-extension://gfcplmcfadkdfogebjbjngfoiecmpmln'); 
+    res.setHeader('Access-Control-Allow-Origin', 'chrome-extension://gfcplmcfadkdfogebjbjngfoiecmpmln');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
+
     const method = req.method; // Get the HTTP method (GET, POST, etc.)
     const url = new URL(req.url, `http://${hostname}:${PORT}`); // Parse the request URL
     const reqPath = url.pathname; // Extract the path from the URL
@@ -42,19 +42,19 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     authenticateToken(req, res, async () => {
                         // Extract the username from the query parameters
                         const username = url.searchParams.get('email');
-                
+
                         if (!username) {
                             return sendJsonResponse(res, 400, { message: 'Username is required' });
                         }
-                
+
                         try {
                             // Fetch the user profile from the database
                             const userData = await getUserProfile(dbConnection, email);
-                
+
                             if (!userData) {
                                 return sendJsonResponse(res, 404, { message: 'User not found' });
                             }
-                
+
                             // Send the user profile data as a response
                             return sendJsonResponse(res, 200, {
                                 message: 'Token is valid. User is authorized.',
@@ -72,19 +72,19 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 case "/node/userCompletedTasks": {
                     authenticateToken(req, res, async () => {
                         const username = url.searchParams.get('email'); // Extract the username from query parameters
-                
+
                         if (!username) {
                             return sendJsonResponse(res, 400, { message: 'Email is required' });
                         }
-                
+
                         try {
                             // Fetch completed tasks for the user from the database
                             const userCompletedTasks = await getUserResults(dbConnection, email);
-                
+
                             if (!userCompletedTasks || userCompletedTasks.length === 0) {
                                 return sendJsonResponse(res, 404, { message: 'No tasks found for this user' });
                             }
-                
+
                             return sendJsonResponse(res, 200, userCompletedTasks); // Send tasks as JSON response
                         } catch (error) {
                             console.error('Error fetching user tasks:', error);
@@ -112,19 +112,19 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     authenticateToken(req, res, async () => {
                         // Extract the username from the query parameters
                         const email = url.searchParams.get('email');
-                
+
                         if (!email) {
                             return sendJsonResponse(res, 400, { message: 'Email is required to proceed. Enter it at the homepage.' });
                         }
-                
+
                         try {
                             // Fetch the user profile from the database
                             const userData = await getUserProfile(dbConnection, email);
-                
+
                             if (!userData) {
                                 return sendJsonResponse(res, 404, { message: 'User not found' });
                             }
-                
+
                             // Send the user profile data as a response
                             return sendJsonResponse(res, 200, {
                                 message: 'Token is valid. User is authorized.',
@@ -138,7 +138,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     });
                     return;
                 }
-                
+
 
                 // Serve static files from the "webpages" and "PublicResources" directories
                 default: {
@@ -199,37 +199,34 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     req.on('data', chunk => {
                         body += chunk.toString(); // Collect the request body data
                     });
-                
+
                     req.on('end', async () => {
                         console.log('Request body received:', body); // Log the raw body for debugging
-                
+
                         if (!body) {
                             return sendJsonResponse(res, 400, { message: 'Request body is empty.' });
                         }
-                
+
                         try {
                             const { username, password } = JSON.parse(body); // Parse the JSON body
-                            console.log('Parsed username:', username); // Log the parsed email
+                            console.log('Parsed username:', username);
                             console.log('Parsed password:', password);
-                
+
                             // Validate input fields
                             if (!username || !password) {
                                 return sendJsonResponse(res, 400, { message: 'Username and password is required.' });
                             }
-                
-                            // Check if the user exists and the password matches
-                            const user = await getUserProfile(dbConnection, username);
-                
-                            if (user) {
-                                const loggedIn = checkLoginInfo(dbConnection, username, password);
-                                if (loggedIn) {
-                                    // Generate a JWT
-                                const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
+  
+                            const isValidLogin = await checkLoginInfo(dbConnection, username, password);
 
+                            if (isValidLogin) {
+                                console.log('DEBUG: User and password loaded correctly from DB:', username, password);
+                                // Generate a JWT
+                                const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: '1h' });
                                 // Send the token to the client
-                                return sendJsonResponse(res, 200, { message: 'Login successful', token });
-                                }
+                                return sendJsonResponse(res, 200, { message: 'Login successful', token, username });
                             } else {
+                                console.log('DEBUG: User and password NOT loaded correctly from DB:', username, password);
                                 return sendJsonResponse(res, 401, { message: 'User is not logged in' });
                             }
                         } catch (error) {
@@ -242,26 +239,26 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                 case "/node/clientTaskDone": {
                     let body = '';
-                    
+
                     // Collect the request body data
                     req.on('data', chunk => {
                         body += chunk.toString();
                     });
-                    
+
                     req.on('end', () => {
                         try {
                             // Parse the request body as JSON
                             const { result, taskId } = JSON.parse(body); // Ensure taskId is included in the request
                             console.log('Task result processed:', result); // Log the processed task result
-                            
+
                             // Validate the result
                             if (!result || !taskId) {
                                 return sendJsonResponse(res, 400, { message: 'Result and taskId are required.' });
                             }
 
                             // Store results computed in the database and add points to the user
-                            storeResultsInDB(dbConnection, result.exponent, result.email, result.isMersennePrime, result.perfectIsEven);
-                            pointAdder(dbConnection, result.email, result.points);
+                            storeResultsInDB(dbConnection, result.exponent, result.username, result.isMersennePrime, result.perfectIsEven);
+                            pointAdder(dbConnection, result.username, result.points);
 
                             // Call the acknowledge function to mark the task as completed
                             const taskProcessed = acknowledge(dqList, taskId); // Call the function from TaskBroker.js
