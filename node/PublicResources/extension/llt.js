@@ -71,8 +71,9 @@ export function realLLT(testedExponent) {
         exponent: testedExponent, // store exponent in result object
         isMersennePrime: null,    // store if m_p is a mersenne prime in result object
         perfectIsEven: null,      // store perfect number even/odd in result object
-        username: username,           // store username in result object
-        taskID: null              // store task ID in result object
+        username: username,       // store username in result object
+        taskID: null,             // store task ID in result object    
+        points: 0                 // store 0 in result object
     };
     
     console.log(`Checking M_${testedExponent} :)`); // log checked exponent
@@ -85,6 +86,14 @@ export function realLLT(testedExponent) {
     if (resultObject.isMersennePrime) {
         resultObject.perfectIsEven = isEven(calculatePerfectNumber(testedExponent)); // store even or odd in object and log
         console.log("Is perfect number for M_" + testedExponent + " even? : " + resultObject.perfectIsEven);
+    }
+    
+    if (resultObject.isMersennePrime) { // if m_p is a mersenne prime
+        resultObject.points = 10000; // if m_p is a mersenne prime, we give 10000 point
+    } else if (resultObject.perfectIsEven) { // if m_p is not a mersenne prime, but the perfect number is even
+        resultObject.points = 1000000; // if m_p is not a mersenne prime, but the perfect number is even, we give 5000 points
+    } else {
+        resultObject.points = 10; // if m_p is not a mersenne prime we give 10 points
     }
 
     console.log(`... Took: ${Date.now() - timer} ms`); // end timer

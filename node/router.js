@@ -71,17 +71,17 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     return;
                 }
 
-                case "/node/userCompletedTasks": {
+                case "/node/users-tasks": {
                     authenticateToken(req, res, async () => {
-                        const username = url.searchParams.get('email'); // Extract the username from query parameters
+                        const username = url.searchParams.get('username'); // Extract the username from query parameters
 
                         if (!username) {
-                            return sendJsonResponse(res, 400, { message: 'Email is required' });
+                            return sendJsonResponse(res, 400, { message: 'Username is required' });
                         }
 
                         try {
                             // Fetch completed tasks for the user from the database
-                            const userCompletedTasks = await getUserResults(dbConnection, email);
+                            const userCompletedTasks = await getUserResults(dbConnection, username);
 
                             if (!userCompletedTasks || userCompletedTasks.length === 0) {
                                 return sendJsonResponse(res, 404, { message: 'No tasks found for this user' });
@@ -109,38 +109,6 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     // Send JSON response with task
                     return sendJsonResponse(res, 200, newTask);
                 }
-
-                case "/node/getEmail": {
-                    authenticateToken(req, res, async () => {
-                        // Extract the username from the query parameters
-                        const email = url.searchParams.get('email');
-
-                        if (!email) {
-                            return sendJsonResponse(res, 400, { message: 'Email is required to proceed. Enter it at the homepage.' });
-                        }
-
-                        try {
-                            // Fetch the user profile from the database
-                            const userData = await getUserProfile(dbConnection, email);
-
-                            if (!userData) {
-                                return sendJsonResponse(res, 404, { message: 'User not found' });
-                            }
-
-                            // Send the user profile data as a response
-                            return sendJsonResponse(res, 200, {
-                                message: 'Token is valid. User is authorized.',
-                                points: userData.points,
-                                email: userData.email, // Include additional fields if needed
-                            });
-                        } catch (error) {
-                            console.error('Error fetching user profile:', error);
-                            return sendJsonResponse(res, 500, { message: 'Internal server error' });
-                        }
-                    });
-                    return;
-                }
-
 
                 // Serve static files from the "webpages" and "PublicResources" directories
                 default: {

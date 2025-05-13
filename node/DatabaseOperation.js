@@ -46,9 +46,9 @@ async function registerUserToDB(dbConnection, userEmail, username, password) { /
 }
 
 // Function to store results in the database
-async function storeResultsInDB(dbConnection, primeComputed, userEmail, resultIsPrime, isEven) {
+async function storeResultsInDB(dbConnection, primeComputed, username, resultIsPrime, isEven) {
     try {
-        const values = [primeComputed, userEmail, resultIsPrime, isEven]; // Values being stored in the list.
+        const values = [primeComputed, username, resultIsPrime, isEven]; // Values being stored in the list.
 
         if (!resultIsPrime) { // Check if the result is prime or not.
             console.log("Result is not prime");
@@ -99,11 +99,11 @@ async function getUserProfile(dbConnection, username) {
     }
 }
 
-async function pointAdder(dbConnection, userEmail, points) {
+async function pointAdder(dbConnection, username, points) {
     try {
         let pointIncrementer =+ points; // Updates the users points based on what the result of the computation is.
         await dbConnection.execute(
-            `UPDATE users SET points = points + ? WHERE email = ?`, [pointIncrementer, userEmail] // SQL query that updates the values in the DB
+            `UPDATE users SET points_worth = points_worth + ? WHERE username = ?`, [pointIncrementer, username] // SQL query that updates the values in the DB
         );
         return true;
     } catch (error) { // Error handling
@@ -112,17 +112,17 @@ async function pointAdder(dbConnection, userEmail, points) {
     }
 }
 
-async function getUserResults(dbConnection, userEmail) {
+async function getUserResults(dbConnection, username) {
     try {
         const [rows] = await dbConnection.execute(
-            `SELECT exponent, is_mersenne_prime, is_even, points 
+            `SELECT exponent, is_mersenne_prime, is_even, points_worth 
              FROM results 
              WHERE found_by_user = ?`, 
-            [userEmail]
+            [username]
         );
 
         if (rows.length > 0) {
-            console.log("User results found:", rows);
+            console.log("User results found:");
             return rows; // Return all tasks
         } else {
             console.log("No results found for the user.");

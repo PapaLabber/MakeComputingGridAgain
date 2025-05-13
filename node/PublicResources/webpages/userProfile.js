@@ -47,16 +47,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(tasks => {
+            usernameElement.textContent = `Hello ${localStorage.getItem('username')}`;
+            pointsElement.textContent = `CURRENT POINTS: ${localStorage.getItem('points')}`;
+            
+            // Populate the table with tasks
             tableBody.innerHTML = ''; // Clear existing rows
 
             if (tasks && tasks.length > 0) {
                 tasks.forEach(task => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${task.time}</td>
-                        <td>${task.task}</td>
-                        <td>${task.cpu}</td>
-                        <td>${task.points}</td>
+                        <td>${task.exponent}</td>
+                        <td>${task.is_mersenne_prime}</td>
+                        <td>${task.is_even}</td>
+                        <td>${task.points_worth}</td>
                     `;
                     tableBody.appendChild(row);
                 });

@@ -269,7 +269,12 @@ function clientTaskDone(result) {
 
 // Fetch completed tasks for a specific user
 function completedUserTasks(username) {
-    fetch(`${baseURL}/node/users-tasks?username=${username}`)
+    fetch(`${baseURL}/node/users-tasks?username=${username}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`
+        },
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -277,35 +282,47 @@ function completedUserTasks(username) {
             return response.json(); // Parse the response as JSON
         })
         .then(tasks => {
+            if (!tasks || !Array.isArray(tasks)) {
+                console.error('Invalid tasks data received:', tasks);
+                displayTasks([]); // Pass an empty array to avoid errors
+                return;
+            }
             displayTasks(tasks); // Display the fetched tasks
         })
         .catch(error => {
             console.error('Error fetching tasks:', error);
-        });
+        })
 }
 
 // Display tasks in the UI
 function displayTasks(tasks) {
     const taskContainer = document.getElementById('task-container');
-    taskContainer.innerHTML = ''; // Clear any previous content
+    // taskContainer.innerHTML = ''; // Clear any previous content
+
+        // Ensure tasks is an array
+    if (!Array.isArray(tasks)) {
+        console.error('Invalid tasks data:', tasks);
+        taskContainer.innerHTML = '<p>Error: Unable to load tasks.</p>';
+        return;
+    }
 
     // Filter tasks by their status
-    const completedTasks = tasks.filter(task => task.status.toLowerCase() === 'completed');
-    const currentTask = tasks.find(task => task.status.toLowerCase() === 'in progress');
+    const completedTasks = tasks.filter(task => task.status && task.status.toLowerCase() === 'completed');
+    const currentTask = tasks.find(task => task.status &&  task.status.toLowerCase() === 'in progress');
 
     // Generate HTML for completed tasks
     const completedList = completedTasks.length
-        ? '<ul>' + completedTasks.map(task => `<li>${task.task}</li>`).join('') + '</ul>'
+        ? '<ul>' + completedTasks.map(task => `<li>${task.exponent}</li>`).join('') + '</ul>'
         : '<p>No completed tasks yet!</p>';
 
     // Generate HTML for the current task
     const currentTaskDisplay = currentTask
-        ? `<p>Currently working on: <strong>${currentTask.task}</strong></p>`
+        ? `<p>Currently working on: <strong>${currentTask.exponent}</strong></p>`
         : '<p>No current task in progress.</p>';
 
     // Update the task container with the generated HTML
     taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
-    taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
+    taskContainer.innerHTML = `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
 }
 
 
