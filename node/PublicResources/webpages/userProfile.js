@@ -1,21 +1,15 @@
 import { baseURL } from './config.js';
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
+    const tableBody = document.querySelector('.w3-table-all tbody');
+    const usernameElement = document.getElementById('username');
+    const pointsElement = document.getElementById('points');
 
-    // Define the username (this could be dynamically set based on the logged-in user)
-    localStorage.getItem(['username'], function (result) {
-        const username = result.username;
-        if (email) {
-            console.log('Email retrieved from chrome.storage:', email);
-        } else {
-            console.error('No email found in chrome.storage.');
-        }
-    });
-   // Fetch the user profile data from the server
-    fetch(`${baseURL}/node/getUserProfile?username=${username}`, {
+    // Fetch user profile data
+    fetch(`${baseURL}/node/getUserProfile?username=${localStorage.getItem('username')}`, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Include the JWT
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
             'Content-Type': 'application/json',
         }
     })
@@ -23,41 +17,26 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.json(); // Parse the response as JSON
+            return response.json();
         })
         .then(data => {
             if (data) {
-                console.log("login success :)");
-                // Display the user profile information on the page
-                const usernameElement = document.getElementById('username');
                 usernameElement.textContent = `Hello ${data.username}`;
-                // document.getElementById('email').textContent = `Email: ${data.email}`;
-                const pointsElement = document.getElementById('points');
-                pointsElement.textContent = `CURRENT POINTS ${data.points}`;
-                
-                // // Optionally display tasks
-                // const tasksList = document.getElementById('tasks');
-                // tasksList.innerHTML = ""; // Clear any existing tasks
-                // data.tasks.forEach(task => {
-                //     const taskItem = document.createElement('li');
-                //     taskItem.textContent = `${task.task} - ${task.status}`;
-                //     tasksList.appendChild(taskItem);
-                // });
+                pointsElement.textContent = `CURRENT POINTS: ${data.points}`;
             } else {
-                console.log("User not found.");
-                alert('User profile could not be fetched.');
+                console.error('User profile data is empty.');
             }
         })
         .catch(error => {
             console.error('Error fetching user profile:', error);
-            alert('There was an error fetching the user profile.');
+            alert('Failed to fetch user profile.');
         });
 
-    // Fetch completed tasks for the user
-    fetch(`${baseURL}/node/userCompletedTasks?username=${username}`, {
+    // Fetch user tasks
+    fetch(`${baseURL}/node/userCompletedTasks?username=${localStorage.getItem('username')}`, {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Include the JWT
+            'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
             'Content-Type': 'application/json',
         }
     })
@@ -65,31 +44,28 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.json(); // Parse the response as JSON
+            return response.json();
         })
         .then(tasks => {
-            if (tasks && tasks.length > 0) {
-                console.log("User tasks fetched successfully:", tasks);
+            tableBody.innerHTML = ''; // Clear existing rows
 
-                // Populate the table with tasks
-                const tasksTable = document.getElementById('completedTasksTable');
+            if (tasks && tasks.length > 0) {
                 tasks.forEach(task => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${task.exponent}</td>
-                        <td>${task.is_mersenne_prime ? 'Yes' : 'No'}</td>
-                        <td>${task.is_even || 'N/A'}</td>
+                        <td>${task.time}</td>
+                        <td>${task.task}</td>
+                        <td>${task.cpu}</td>
                         <td>${task.points}</td>
                     `;
-                    tasksTable.appendChild(row);
+                    tableBody.appendChild(row);
                 });
             } else {
-                console.log("No tasks found for the user.");
-                alert('No completed tasks found.');
+                tableBody.innerHTML = '<tr><td colspan="4">No tasks found.</td></tr>';
             }
         })
         .catch(error => {
             console.error('Error fetching user tasks:', error);
-            alert('There was an error fetching the user tasks.');
+            tableBody.innerHTML = '<tr><td colspan="4">Failed to load tasks. Please try again later.</td></tr>';
         });
 });

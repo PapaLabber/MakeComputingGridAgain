@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -14,301 +14,50 @@
 </head>
 
 <body>
-
-   Navbar -->
-  <!--<div class="w3-top">
-    <div class="w3-bar w3-black w3-opacity w3-card w3-large w3-left-align">
-      <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-black"
-        href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-      <a href="landingPage.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Home</a>
-      <a href="userProfile.html" class="w3-bar-item w3-button w3-padding-large w3-white">Profile</a>
-      <a href="aboutUs.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">About Us</a>
-      <a href="loginPage.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Sign
-        In</a>
-      <a href="signup.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Create
-        Account</a>
-    </div>
-
-    Navbar on small screens -->
-    <!--<div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-      <a href="signup.html" class="w3-bar-item w3-button w3-padding-large">Create Account</a>
-      <a href="loginPage.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Sign
-        In</a>
-      <a href="landingPage.html" class="w3-bar-item w3-button w3-padding-large">Home</a>
-      <a href="aboutUs.html" class="w3-bar-item w3-button w3-padding-large">About Us</a>
-    </div>
-  </div>
-
   <div>
     <!-- Header -->
-    <header class="w3-container w3-teal w3-center" style="padding:80px 16px">
-      <!--Need to add customizable user greeting-->
+    <header class="w3-container w3-teal w3-center" style="padding:40px 16px">
+      <!--TODO: Need to add customizable user greeting-->
       <h2 class="w3-margin w3-jumbo w3-text-black"><b id="username">Hello user!</b></h2>
-      <!-- "user" has to be a placeholder for username -->
-      <h2 class="w3-large">Check your profile settings below</h2>
+
     </header>
 
-    <div class="w3-crow-padding w3-padding-64 w3-container w3-center">
+    <div class="w3-row-padding w3-padding-64 w3-container w3-center">
       <div class="w3-content">
-        <div class="w3-left-align">
-          <a href="tasks.html">
-            <button
-              class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-xxlarge w3-margin-top">Task
-              overview</button>
-          </a>
+        <a href="Rewards.html">
+          <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-large w3-margin-top">
+            See Rewards
+          </button>
+        </a>
 
-          <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
-            <button
-              class="button button2 w3-button w3-black w3-hover-opacity w3-padding-large w3-xxlarge w3-margin-top">Settings</button>
-          </a>
-
-          <a>
-            <button onclick="document.getElementById('id01').style.display='block'"
-              class="button button3 w3-button w3-black w3-hover-opacity w3-padding-large w3-xxlarge w3-margin-top">Rewards</button>
-
-            <!-- <div id="id01" class="w3-modal">
-              <div class="w3-modal-content">
-                <div class="w3-container">
-                  <span onclick="document.getElementById('id01').style.display='none'"
-                    class="w3-button w3-display-topright">&times;</span>
-                    <h2 class="w3-center w3-padding-64 w3-text-teal">Rewards</h2>
-                    <div class="w3-content">
-                      <div class="w3-row-padding w3-center">
-                        <div class="w3-third">
-                          <img src="images/Pink_Panda.jpg" class="uniform-image" alt="Forest">
-                          <h3>Audi RS7</h3>
-                          <p>A whole car for your efforts.</p>
-                          <p><b>PRICE:</b> 35,000,000</p>
-                          <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-medium w3-margin-top">Claim</button>
-                        </div>
-                        <div class="w3-third">
-                          <img src="images/books.jpg" class="uniform-image" alt="Forest" >
-                          <h3>15% Discount</h3>
-                          <p>Factum Books are expensive.</p>
-                          <p><b>PRICE:</b> 50,000</p>
-                          <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-medium w3-margin-top">Claim</button>
-                        </div>
-                        <div class="w3-third">
-                          <img src="images/soviet-rice-cooker.jpg" class="uniform-image" alt="Forest">
-                          <h3>Soviet Rice Cooker</h3>
-                          <p>Cook rice to perfection.</p>
-                          <p><b>PRICE:</b> 100,000</p>
-                          <button class="button button1 w3-button w3-black w3-hover-opacity w3-padding-large w3-medium w3-margin-top">Claim</button>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-              </div>
-            </div> -->
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- div with current points -->
-    <div class="w3-crow-padding w3-padding-64 w3-container w3-center">
-      <div class="w3-content">
+        <!-- div with current points -->
         <h2 id="points">CURRENT POINTS: 0</h2> <!-- "1.000.000" has to be a placeholder for username -->
         <i class="	fa fa-diamond w3-padding-64 w3-text-teal w3-opacity"></i>
       </div>
-    </div>
-
-    <script>
-      // Used to toggle the menu on small screens when clicking on the menu button
-      function myFunction() {
-        var x = document.getElementById("navDemo");
-        if (x.className.indexOf("w3-show") == -1) {
-          x.className += " w3-show";
-        } else {
-          x.className = x.className.replace(" w3-show", "");
-        }
-      }
-
-    </script>
-    <!-- Configuration to determine where to deploy -->
-    <script src="scripts/config.js" type="module"></script>
-    <script src="scripts/userProfile.js" type="module"></script>
-  </div>
-</body>
-
-</html> -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Profile Page</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Press Start 2P', cursive;
-      background-color: #009688;
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-
-    nav {
-      background-color: #1e3b36;
-      display: flex;
-      justify-content: space-between;
-      padding: 15px 30px;
-      align-items: center;
-      font-size: 14px;
-    }
-
-    .nav-left a,
-    .nav-right span,
-    .dropdown span,
-    .dropdown-content a {
-      color: #009688;
-      text-decoration: none;
-      margin-right: 20px;
-    }
-
-    .nav-left a:hover,
-    .dropdown-content a:hover {
-      background-color: #76ada1;
-      padding: 5px;
-      border-radius: 5px;
-    }
-
-    .container {
-      display: flex;
-      justify-content: space-between;
-      padding: 60px;
-    }
-
-    .section {
-      width: 40%;
-    }
-    .section:first-child {
-      margin-left: 130px;
-    }
-
-    .center-section {
-      text-align: center;
-    }
 
 
-    button {
-      background-color: black;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 30px;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 12px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
+      <!--Table-->
+      <table class="w3-table-all w3-centered w3-large">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Task</th>
+            <th>CPU</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dynamic rows will be inserted here -->
+        </tbody>
+      </table>
 
-    button:hover {
-      background-color: white;
-      color: black;
-    }
-
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      background-color: #2f4f4f;
-      min-width: 140px;
-      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-      z-index: 1;
-      border-radius: 8px;
-    }
-
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
-
-    .dropdown-content a {
-      display: block;
-      padding: 10px;
-    }
-/* For smaller screen (mobiles) */
-    @media (max-width: 768px) {
-  nav {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .nav-left,
-  .nav-right {
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .container {
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  .section {
-    width: 100%;
-    margin-bottom: 30px;
-  }
-
-  button {
-    font-size: 10px;
-    padding: 10px 18px;
-  }
-
-  h2 {
-    font-size: 12px;
-  }
-
-  p, li {
-    font-size: 10px;
-  }
-}
-
-  </style>
-</head>
-<body>
-
-  <nav>
-    <div class="nav-left">
-      <a href="landingPage.html">HOME</a>
-      <a href="aboutUs.html">ABOUT US</a>
-    </div>
-    <div class="nav-right">
-      <span id="points">POINTS</span>
-      <div class="dropdown">
-        <span>SETTINGS</span>
-        <div class="dropdown-content">
-          <a href="#">Settings</a>
-          <a href="#">Logout</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container">
-    <div class="section">
-      <h2>COMPLETED TASKS</h2>
-      <ul>
-        <li>Task 1</li>
-        <li>Task 2</li>
-        <li>Task 3</li>
-        <li>Task 4</li>
-      </ul>
-    </div>
-
-    <div class="section">
-      <h2>REWARDS</h2>
-      <img src="https://s3.eu-north-1.amazonaws.com/assets.boosted.dk/2021/10/22144957/maNSORY-RS7-700.jpeg" alt="RS7 MANSORY" style="width:250px;">      
-      <p>[ 🎟 Friis Kupon ]</p>
-      <button>SEE ALL REWARDS</button>
     </div>
   </div>
 
+  <!-- Configuration to determine where to deploy -->
+  <script src="scripts/config.js" type="module"></script>
+  <script src="scripts/userProfile.js" type="module"></script>
+
 </body>
+
 </html>
