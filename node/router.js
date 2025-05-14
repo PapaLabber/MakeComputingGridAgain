@@ -43,7 +43,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 case "/node/getUserProfile": {
                     authenticateToken(req, res, async () => {
                         // Extract the username from the query parameters
-                        const username = url.searchParams.get('email');
+                        const username = url.searchParams.get('username');
 
                         if (!username) {
                             return sendJsonResponse(res, 400, { message: 'Username is required' });
@@ -51,7 +51,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                         try {
                             // Fetch the user profile from the database
-                            const userData = await getUserProfile(dbConnection, email);
+                            const userData = await getUserProfile(dbConnection, username);
 
                             if (!userData) {
                                 return sendJsonResponse(res, 404, { message: 'User not found' });
@@ -61,7 +61,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             return sendJsonResponse(res, 200, {
                                 message: 'Token is valid. User is authorized.',
                                 points: userData.points,
-                                email: userData.email, // Include additional fields if needed
+                                username: userData.username, // Include additional fields if needed
                             });
                         } catch (error) {
                             console.error('Error fetching user profile:', error);

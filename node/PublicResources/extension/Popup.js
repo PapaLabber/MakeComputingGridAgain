@@ -148,7 +148,17 @@ function handleButtonContainer(username, loginFormContainer, buttonContainer, lo
     }
     if (userProfileButton) {
         userProfileButton.addEventListener('click', function () {
-            window.open(`${baseURL}/userProfile.html`, '_blank');
+            const username = localStorage.getItem('username');
+            const jwt = localStorage.getItem('jwt');
+            const newWindow = window.open(`${baseURL}/userProfile.html`, '_blank');
+
+            // ############## Ensure the message is sent with the correct data ##############
+            if (newWindow) {
+                newWindow.postMessage({ username, jwt }, `https://cs-25-sw-2-13.p2datsw.cs.aau.dk`); // Replace '*' with the correct target origin if possible
+                console.log('Message sent:', { username, jwt });
+            } else {
+                console.error('Failed to open the new window.');
+            }
         });
     }
     if (rewardsButton) {
@@ -300,9 +310,9 @@ function completedUserTasks(username) {
 // Display tasks in the UI
 function displayTasks(tasks) {
     const taskContainer = document.getElementById('task-container');
-    // taskContainer.innerHTML = ''; // Clear any previous content
+    taskContainer.innerHTML = ''; // Clear any previous content
 
-        // Ensure tasks is an array
+    // Ensure tasks is an array
     if (!Array.isArray(tasks)) {
         console.error('Invalid tasks data:', tasks);
         taskContainer.innerHTML = '<p>Error: Unable to load tasks.</p>';
@@ -311,7 +321,7 @@ function displayTasks(tasks) {
 
     // Filter tasks by their status
     const completedTasks = tasks.filter(task => task.status && task.status.toLowerCase() === 'completed');
-    const currentTask = tasks.find(task => task.status &&  task.status.toLowerCase() === 'in progress');
+    const currentTask = tasks.find(task => task.status && task.status.toLowerCase() === 'in progress');
 
     // Generate HTML for completed tasks
     const completedList = completedTasks.length
@@ -325,7 +335,7 @@ function displayTasks(tasks) {
 
     // Update the task container with the generated HTML
     taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
-    taskContainer.innerHTML = `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
+    taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
 }
 
 
