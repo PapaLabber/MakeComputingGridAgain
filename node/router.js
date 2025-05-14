@@ -227,7 +227,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             }
 
                             // Store results computed in the database and add points to the user
-                            storeResultsInDB(dbConnection, result.exponent, result.username, result.isMersennePrime, result.perfectIsEven);
+                            storeResultsInDB(dbConnection, result.exponent, result.username, result.isMersennePrime, result.perfectIsEven, result.points);
                             pointAdder(dbConnection, result.username, result.points);
 
                             // Call the acknowledge function to mark the task as completed

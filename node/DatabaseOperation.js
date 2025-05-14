@@ -46,9 +46,9 @@ async function registerUserToDB(dbConnection, userEmail, username, password) { /
 }
 
 // Function to store results in the database
-async function storeResultsInDB(dbConnection, primeComputed, username, resultIsPrime, isEven) {
+async function storeResultsInDB(dbConnection, primeComputed, username, resultIsPrime, isEven, points) {
     try {
-        const values = [primeComputed, username, resultIsPrime, isEven]; // Values being stored in the list.
+        const values = [primeComputed, username, resultIsPrime, isEven, points]; // Values being stored in the list.
 
         if (!resultIsPrime) { // Check if the result is prime or not.
             console.log("Result is not prime");
@@ -56,7 +56,7 @@ async function storeResultsInDB(dbConnection, primeComputed, username, resultIsP
             // Insert query. This stores the values in the database, setting is_even 
             // to be null, because the product of (2^{n-1})2^n-1 is not perfect.
             await dbConnection.execute(
-                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_even) VALUES (?, ?, ?, ?)', values
+                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_even, points_worth) VALUES (?, ?, ?, ?, ?)', values
             );
             console.log("Result has successfully been stored in the database!");
             return false;
@@ -66,7 +66,7 @@ async function storeResultsInDB(dbConnection, primeComputed, username, resultIsP
             await dbConnection.execute(
                 // Insert query. This stores all the values in the database, 
                 // notably, the value of is_even can be either 'Even' or 'Odd'.
-                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_even) VALUES (?, ?, ?, ?)', values
+                'INSERT INTO results (exponent, found_by_user, is_mersenne_prime, is_even, points_worth) VALUES (?, ?, ?, ?, ?)', values
             ); // If the value of is_even is 'Odd', the problem has been solved.
             console.log("Result has successfully been stored in the database!");
             return true; // Success
@@ -103,8 +103,9 @@ async function pointAdder(dbConnection, username, points) {
     try {
         let pointIncrementer =+ points; // Updates the users points based on what the result of the computation is.
         await dbConnection.execute(
-            `UPDATE users SET points_worth = points_worth + ? WHERE username = ?`, [pointIncrementer, username] // SQL query that updates the values in the DB
+            `UPDATE users SET points = points + ? WHERE username = ?`, [pointIncrementer, username] // SQL query that updates the values in the DB
         );
+
         return true;
     } catch (error) { // Error handling
         console.error("Error adding points:", error);

@@ -5,8 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameElement = document.getElementById('username');
     const pointsElement = document.getElementById('points');
 
+    const username = localStorage.getItem('username');
+    console.log('Webpage username:', username); // Debugging log
+
     // Fetch user profile data
-    fetch(`${baseURL}/node/getUserProfile?username=${localStorage.getItem('username')}`, {
+    fetch(`${baseURL}/node/getUserProfile?username=${username}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
@@ -33,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     // Fetch user tasks
-    fetch(`${baseURL}/node/userCompletedTasks?username=${localStorage.getItem('username')}`, {
+    fetch(`${baseURL}/node/userCompletedTasks?username=${username}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('jwt')}`,

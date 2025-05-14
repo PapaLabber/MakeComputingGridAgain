@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             console.log(username);
             console.log(password);
-
+            localStorage.setItem('username', username);
 
             // Validation checks...
             if (password !== repeatPassword) {

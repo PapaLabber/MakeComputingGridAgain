@@ -25,7 +25,7 @@ let currentState = state.IDLE; // default state
 // Login form
 document.addEventListener('DOMContentLoaded', function () {
     // The Username from the local storage in the browser
-    const username = localStorage.getItem('username');
+    let username = localStorage.getItem('username');
     if (!username) {
         console.log('No user found! Please log in to the website.');
     } else {
@@ -98,7 +98,7 @@ function handleLoginForm(username, loginFormContainer, buttonContainer, logoutCo
                     localStorage.setItem('username', data.username);
 
                     handleButtonContainer(localStorage.getItem('username'), loginFormContainer, buttonContainer, logoutContainer); // Call the function to handle button container
-
+                    window.location.reload();
                 } else {
                     alert('Error: ' + data.message);
                 }
@@ -204,6 +204,7 @@ function switchState(newState, requestTaskButton) {
 
 // Request a new task from the server
 export function requestTask() {
+    const username = localStorage.getItem('username');
     fetch(`${baseURL}/node/requestTask`)
         .then(response => {
             if (!response.ok) {
@@ -237,6 +238,7 @@ export function requestTask() {
 
 // Send the completed task result to the server
 function clientTaskDone(result) {
+    const username = localStorage.getItem('username');
     // Convert BigInt properties to strings before sending
     result.exponent = result.exponent.toString();
     console.log(result);
@@ -269,6 +271,7 @@ function clientTaskDone(result) {
 
 // Fetch completed tasks for a specific user
 function completedUserTasks(username) {
+    username = localStorage.getItem('username');
     fetch(`${baseURL}/node/users-tasks?username=${username}`, {
         method: 'GET',
         headers: {

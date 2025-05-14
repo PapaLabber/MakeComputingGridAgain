@@ -88,12 +88,12 @@ export function realLLT(testedExponent) {
         console.log("Is perfect number for M_" + testedExponent + " even? : " + resultObject.perfectIsEven);
     }
     
-    if (resultObject.isMersennePrime) { // if m_p is a mersenne prime
-        resultObject.points = 10000; // if m_p is a mersenne prime, we give 10000 point
-    } else if (resultObject.perfectIsEven) { // if m_p is not a mersenne prime, but the perfect number is even
-        resultObject.points = 1000000; // if m_p is not a mersenne prime, but the perfect number is even, we give 5000 points
-    } else {
-        resultObject.points = 10; // if m_p is not a mersenne prime we give 10 points
+    if (resultObject.perfectIsEven === false) { // If the resulting perfect number is odd, then the problem is solved and the user is awarded with 1.000.000.000 points
+        resultObject.points = 1000000000;
+    } else if (resultObject.isMersennePrime) { // If the result is a mersenne prime, but the perfect number is not odd, the user is awarded with 10.000 points
+        resultObject.points = 10000;
+    } else { // If the result isn't prime the user is awarded with 10 points.
+        resultObject.points = 10;
     }
 
     console.log(`... Took: ${Date.now() - timer} ms`); // end timer
