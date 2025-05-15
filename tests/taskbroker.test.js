@@ -71,10 +71,14 @@ describe("acknowledge", () => {
 
     it("should return false if the dqList is empty", () => {
         // Arrange
+        const _task1 = new task(123, 321);
+        const _messageQueue = new queue;
         const _dqList = new queue;
+        enqueue(_messageQueue, _task1);
+        dequeue(_messageQueue, _dqList);
 
         // Act
-        const result = acknowledge(_dqList, 123);
+        const result = acknowledge(_dqList, 321);
 
         // Assert
         expect(result).toBe(false);
