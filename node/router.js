@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, dbConnection, getUserProfile, pointAdder, getUserResults, checkLoginInfo } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, dbConnection, fillLeaderBoard, getUserProfile, pointAdder, getUserResults, checkLoginInfo, showUserPoints } from './DatabaseOperation.js';
 
 const __filename = fileURLToPath(import.meta.url); // Get the current file path
 const __dirname = path.dirname(__filename); // Get the directory name of the current file
@@ -40,34 +40,23 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                 }
 
                 // Get user profile
-                case "/node/getUserProfile": {
-                    authenticateToken(req, res, async () => {
-                        // Extract the username from the query parameters
-                        const username = url.searchParams.get('username');
-
-                        if (!username) {
-                            return sendJsonResponse(res, 400, { message: 'Username is required' });
-                        }
-
+                case "/node/fillLeaderBoard": {
+                    (async () => {
                         try {
                             // Fetch the user profile from the database
-                            const userData = await getUserProfile(dbConnection, username);
+                            const userData = await fillLeaderBoard(dbConnection);
 
-                            if (!userData) {
-                                return sendJsonResponse(res, 404, { message: 'User not found' });
+                            if (!userData || userData.length === 0) {
+                                return sendJsonResponse(res, 404, { message: 'Data not found' });
                             }
 
                             // Send the user profile data as a response
-                            return sendJsonResponse(res, 200, {
-                                message: 'Token is valid. User is authorized.',
-                                points: userData.points,
-                                username: userData.username, // Include additional fields if needed
-                            });
+                            return sendJsonResponse(res, 200, userData);
                         } catch (error) {
                             console.error('Error fetching user profile:', error);
                             return sendJsonResponse(res, 500, { message: 'Internal server error' });
                         }
-                    });
+                    })();
                     return;
                 }
 
@@ -81,13 +70,15 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                         try {
                             // Fetch completed tasks for the user from the database
-                            const userCompletedTasks = await getUserResults(dbConnection, username);
+                            const userPoints = await showUserPoints(dbConnection, username);
 
-                            if (!userCompletedTasks || userCompletedTasks.length === 0) {
+                            if (!userPoints || userPoints.length === 0) {
                                 return sendJsonResponse(res, 404, { message: 'No tasks found for this user' });
                             }
 
-                            return sendJsonResponse(res, 200, userCompletedTasks); // Send tasks as JSON response
+                            return sendJsonResponse(res, 200, {
+                                points: userPoints[0].points
+                            }); // Send tasks as JSON response
                         } catch (error) {
                             console.error('Error fetching user tasks:', error);
                             return sendJsonResponse(res, 500, { message: 'Internal server error' });

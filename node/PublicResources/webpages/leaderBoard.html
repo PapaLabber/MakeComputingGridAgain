@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Silkscreen">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="userProfile.css">
+  <link rel="stylesheet" href="leaderBoard.css">
 </head>
 
 <body>
@@ -18,7 +18,7 @@
     <!-- Header -->
     <header class="w3-container w3-teal w3-center" style="padding:40px 16px">
       <!--TODO: Need to add customizable user greeting-->
-      <h2 class="w3-margin w3-jumbo w3-text-black"><b id="username">Hello user!</b></h2>
+      <h2 class="w3-margin w3-jumbo w3-text-black"><b id="leaderboard">Leaderboard</b></h2>
 
     </header>
 
@@ -31,7 +31,7 @@
         </a>
 
         <!-- div with current points -->
-        <h2 id="points">CURRENT POINTS: 0</h2> <!-- "1.000.000" has to be a placeholder for username -->
+        <!-- <h2 id="points">CURRENT POINTS: 0</h2> "1.000.000" has to be a placeholder for username -->
         <i class="	fa fa-diamond w3-padding-64 w3-text-teal w3-opacity"></i>
       </div>
 
@@ -44,6 +44,7 @@
             <th>Is it a prime</th>
             <th>Perfect odd or even</th>
             <th>Points</th>
+            <th>User</th>
           </tr>
         </thead>
         <tbody>
@@ -56,7 +57,7 @@
 
   <!-- Configuration to determine where to deploy -->
   <script src="./config.js" type="module"></script>
-  <script src="./userProfile.js" type="module"></script>
+  <script src="./leaderBoard.js" type="module"></script>
 
 </body>
 

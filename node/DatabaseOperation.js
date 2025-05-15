@@ -1,7 +1,7 @@
 //Database pushing (not drugs)
 // these will essentially just be SQL queries with placeholders instead of example values
 // Export
-export { registerUserToDB, storeResultsInDB, getUserProfile, pointAdder, getUserResults, checkLoginInfo, dbConnection };
+export { registerUserToDB, storeResultsInDB, getUserProfile, fillLeaderBoard, pointAdder, getUserResults, showUserPoints, checkLoginInfo, dbConnection };
 
 // Imports
 import bcrypt from 'bcrypt';
@@ -131,6 +131,48 @@ async function getUserResults(dbConnection, username) {
         }
     } catch (error) {
         console.error("Error fetching user results:", error);
+        return [];
+    }
+}
+
+async function fillLeaderBoard(dbConnection) {
+    try {
+        const [rows] = await dbConnection.execute(
+            `SELECT exponent, is_mersenne_prime, is_even, points_worth, found_by_user 
+             FROM results`, 
+        );
+
+        if (rows.length > 0) {
+            // console.log("Results found:");
+            return rows; // Return all tasks
+        } else {
+            console.log("No results found.");
+            return [];
+        }
+    } catch (error) {
+        console.error("Error fetching results:", error);
+        return [];
+    }
+}
+
+async function showUserPoints(dbConnection, username) {
+    try {
+        const [rows] = await dbConnection.execute(
+            `SELECT points 
+             FROM users 
+             WHERE username = ?`, 
+            [username]
+        );
+
+        if (rows.length > 0) {
+            console.log("User points found:");
+            return rows; // Return all tasks
+        } else {
+            console.log("No points found for the user.");
+            return [];
+        }
+    } catch (error) {
+        console.error("Error fetching user points:", error);
         return [];
     }
 }

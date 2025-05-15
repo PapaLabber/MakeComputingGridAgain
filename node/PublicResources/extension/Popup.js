@@ -9,19 +9,6 @@ const state = {
 };
 let currentState = state.IDLE; // default state
 
-
-// TODO:x check om dom er loaded 
-// TODO:x hvis ja load login status: om der findes JWT og username i local storage
-// TODO:x Hvis der ikke er noget i JWT og username, inject login form.
-// TODO:x  - udfør login
-// TODO:x  - ellers udfør buttons
-// TODO:x Håndter status: active / idle
-// TODO:x func: requestTask
-// TODO:x func: clientTaskDone
-// TODO: func: completedUserTask
-// TODO: Håndter alle de dynamiske informationer i bunden.
-
-
 // Login form
 document.addEventListener('DOMContentLoaded', function () {
     // The Username from the local storage in the browser
@@ -30,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('No user found! Please log in to the website.');
     } else {
         console.log('username retrieved:', username);
-        completedUserTasks(username);
+        getUserPoints(username);
     }
 
     const loginFormContainer = document.getElementById('login-form-container');
@@ -150,7 +137,7 @@ function handleButtonContainer(username, loginFormContainer, buttonContainer, lo
         userProfileButton.addEventListener('click', function () {
             const username = localStorage.getItem('username');
             const jwt = localStorage.getItem('jwt');
-            const newWindow = window.open(`${baseURL}/userProfile.html`, '_blank');
+            const newWindow = window.open(`${baseURL}/leaderBoard.html`, '_blank');
 
             // ############## Ensure the message is sent with the correct data ##############
             if (newWindow) {
@@ -234,6 +221,7 @@ export function requestTask() {
                 const result = realLLT(BigInt(newTask.taskData)); // Perform Mersenne prime calculation
                 result.taskID = newTask.id; // Add task ID to the result object
                 clientTaskDone(result); // Send the result back to the server
+                getUserPoints(username);
                 return true;
             } catch (error) {
                 console.error('Error calculating Mersenne prime:', error);
@@ -280,7 +268,7 @@ function clientTaskDone(result) {
 }
 
 // Fetch completed tasks for a specific user
-function completedUserTasks(username) {
+function getUserPoints(username) {
     username = localStorage.getItem('username');
     fetch(`${baseURL}/node/users-tasks?username=${username}`, {
         method: 'GET',
@@ -295,12 +283,8 @@ function completedUserTasks(username) {
             return response.json(); // Parse the response as JSON
         })
         .then(tasks => {
-            if (!tasks || !Array.isArray(tasks)) {
-                console.error('Invalid tasks data received:', tasks);
-                displayTasks([]); // Pass an empty array to avoid errors
-                return;
-            }
-            displayTasks(tasks); // Display the fetched tasks
+            const pointsElement = document.getElementById('points');
+            pointsElement.innerHTML = `${tasks.points}`;
         })
         .catch(error => {
             console.error('Error fetching tasks:', error);
@@ -308,7 +292,7 @@ function completedUserTasks(username) {
 }
 
 // Display tasks in the UI
-function displayTasks(tasks) {
+function displayCurrentTask(tasks) {
     const taskContainer = document.getElementById('task-container');
     taskContainer.innerHTML = ''; // Clear any previous content
 
