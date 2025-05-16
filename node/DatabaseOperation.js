@@ -1,6 +1,6 @@
-//Database pushing (not drugs)
-// these will essentially just be SQL queries with placeholders instead of example values
-// Export
+// Database operations. Handles communication with the database.
+
+// Exports
 export { registerUserToDB, storeResultsInDB, getUserProfile, fillLeaderBoard, pointAdder, getUserResults, showUserPoints, checkLoginInfo, dbConnection };
 
 // Imports

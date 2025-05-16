@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, dbConnection, fillLeaderBoard, getUserProfile, pointAdder, getUserResults, checkLoginInfo, showUserPoints } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, dbConnection, fillLeaderBoard, pointAdder, checkLoginInfo, showUserPoints } from './DatabaseOperation.js';
 
 const __filename = fileURLToPath(import.meta.url); // Get the current file path
 const __dirname = path.dirname(__filename); // Get the directory name of the current file
@@ -235,14 +235,6 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                             console.error('Error processing task result:', error);
                             return sendJsonResponse(res, 500, { message: 'Internal Server Error' });
                         }
-                    });
-                    return;
-                }
-
-                case "/node/protected": {
-                    authenticateToken(req, res, () => {
-                        // Handle the protected route
-                        sendJsonResponse(res, 200, { message: 'You have access to this protected route.' });
                     });
                     return;
                 }

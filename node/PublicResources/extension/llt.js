@@ -54,12 +54,6 @@ function isMersennePrime(p) {           // function to check if a number is a Me
         return s === 0n;                // if s == 0, m_p is a Mersenne prime
     }                                   // 2^p - 1 is prime if and only if p is prime and 2^p - 1 is prime
 }
-
-// ACTUAL FUNCTION WE MIGHT USE (which checks one number at a time)
-let testedExponentTrueMP = 2n;  // 2 gives mersenne prime
-let testedExponentFalseMP = 8n; // 8 gives not mersenne prime
-// fetch OR input tasked exponent instead (from somewhere????)
-
 console.log("-------------------------"); // log separator
 
 export function realLLT(testedExponent) {
@@ -102,10 +96,3 @@ export function realLLT(testedExponent) {
 
     return resultObject; // return result object
 }
-/*
-
-// testing different exponents
-realLLT(testedExponentTrueMP);  // call the function with the true exponent
-realLLT(testedExponentFalseMP); // call the function with the false exponent
-
-*/
