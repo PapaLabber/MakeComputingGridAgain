@@ -44,7 +44,11 @@ export function taskBrokerMain() {
         })
         .on('end', () => {
             console.log('CSV file successfully processed.');
-            //printQueue(messageQueue);
+
+            // Periodically check for expired tasks every 10 seconds
+            setInterval(() => {
+                checkExperationTime(dqList, messageQueue);
+            }, 10000);
         });
 }
 
@@ -64,13 +68,13 @@ export function enqueue(queue, task) {
 
 // Make a function that removes a task from the list (dequeue)
 export function dequeue(mq, dq) {
-    if (!mq.head.task) { // If queue empty
+    if (!mq.head || !mq.head.task) { // If queue empty
         console.log("Cannot dequeue - Message Queue is empty");
         return null;
     }
 
     const newdqNode = new node(mq.head.task); // Make a node in dqList
-    newdqNode.experationTime = Date.now() + 120000; // Set an experation to signal time for requeue.
+    newdqNode.timeStamp = Date.now(); // Set the timestamp to the current time
 
     if (mq.head === mq.tail) { // If there is only one node in the message queue
         mq.head.task = null; // Set the head task to null to keep pointers
@@ -90,7 +94,7 @@ export function dequeue(mq, dq) {
         newdqNode.prev = dq.tail; // Set the previous of the new node to the tail
         dq.tail = newdqNode; // Set the tail to the new node
     }
-        
+
     console.log(`Task ${newdqNode.task.id} has been dequeued and is now stored in the dequeued list`);
     return newdqNode.task;
 
@@ -99,7 +103,7 @@ export function dequeue(mq, dq) {
 // A function that marks a task as done/finished when it has computed it fully (acknowledge)
 // The function takes two parametres. The queue itself and the ID of the task we are looking for.
 export function acknowledge(queue, taskId) {
-    if (!queue.head.task) { // If queue empty
+    if (!queue.head || !queue.head.task) { // If queue empty
         console.log("Dequeue list is empty");
         return null;
     }
@@ -122,7 +126,7 @@ export function acknowledge(queue, taskId) {
 // Make a function that re-adds unfinished tasks, that have already been started, but not finished
 // to the back of the list again (requeue)
 export function requeue(dq, mq, targetId) {
-    if (!dq.head.task) { // If queue empty
+    if (!dq.head || !dq.head.task) { // If queue empty
         console.log("Dequeue list is empty");
         return null;
     }
@@ -150,7 +154,7 @@ export function requeue(dq, mq, targetId) {
 
 // Print the linked list
 function printQueue(queue) {
-    if (!queue.head.task) { // If queue empty
+    if (!queue.head || !queue.head.task) { // If queue empty
         console.log("Nothing to print - List is empty");
         return null;
     }
@@ -162,7 +166,7 @@ function printQueue(queue) {
 }
 
 // Helper function 
-function removeNode(queue, targetNode) {
+export function removeNode(queue, targetNode) {
     if (queue.head === queue.tail) { // Check if target node is the only node in the list.
         queue.head = null; // Nuke all pointers, because target node is the only node in the list.
         queue.tail = null;
@@ -183,13 +187,17 @@ function removeNode(queue, targetNode) {
 }
 
 // Function to check if a task has reached its experation.
-function checkExperationTime(dq, mq) {
-    if ((dq.head.timeStamp + 120000) === dq.head.experationTime) { // Check if it has been 2 minutes since the task was added to the dq list.
-        console.log(`${dq.head.id} has reached it's experation time and will be requeued`); // Let the server know that it has been expired.
-        requeue(dq, mq, dq.head.id); // Requeue the task using the requeue function.
-        timer(dq, mq); // Check the new head if it has also been expired.
-        return true; // Return true if the first iteration of the recursion is true
-    } else { // If the head of the dq list hasn't been expired
+export function checkExperationTime(dq, mq) {
+    if (!dq.head || !dq.head.task) { // If queue empty
+        console.log("Dequeue list is empty");
+        return null;
+    }
+    
+    if (dq.head.timeStamp + 120000 <= Date.now()) { // Check if the task has reached its expiration time (120000 ms = 2 minutes)
+        console.log(`${dq.head.task.id} has reached it's experation time and will be requeued`); // Let the server know that it has been expired.
+        requeue(dq, mq, dq.head.task.id); // Requeue the task using the requeue function.
+        return true; // Return true if the task has expired.
+    } else { // If the head of the dq list hasn't been expired.
         return false; // Return false.
     }
 }

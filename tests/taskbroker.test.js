@@ -1,7 +1,7 @@
 // In this testing environment we follow the AAA principle: Arrange, Act, Assert. 
 
 import { describe, test, it, expect } from "vitest";
-import { dequeue, enqueue, queue, task, acknowledge, requeue, checkExperationTime } from "../node/TaskBroker";
+import { dequeue, enqueue, queue, task, acknowledge, requeue, removeNode, checkExperationTime } from "../node/TaskBroker";
 
 describe("enqueue", () => {
     it("should confirm that enqueue adds a node at the tail of messageQueue", () => {
@@ -18,6 +18,39 @@ describe("enqueue", () => {
     })
 })
 
+describe("removeNode", () => {
+    it("should confirm that removeNode removes the tail from the queue", () => {
+        // Arrange
+        const _task1 = new task(123, 321);
+        const _task2 = new task(234, 432); // becomes tail
+        const _messageQueue = new queue;
+        enqueue(_messageQueue, _task1);
+        enqueue(_messageQueue, _task2);
+
+        // Act
+        removeNode(_messageQueue, _messageQueue.tail);
+
+        // Assert
+        expect(_messageQueue.tail.task.id).toBe(123); // tail of messageQueue should be 123
+    })
+
+    it("should confirm that removeNode removes the head from the queue", () => {
+        // Arrange
+        const _task1 = new task(123, 321); // becomes head
+        const _task2 = new task(234, 432);
+        const _messageQueue = new queue;
+        enqueue(_messageQueue, _task1);
+        enqueue(_messageQueue, _task2);
+
+        // Act
+        removeNode(_messageQueue, _messageQueue.head);
+
+        // Assert
+        expect(_messageQueue.head.task.id).toBe(234); // head of messageQueue should be 234
+    })
+});
+
+
 describe("dequeue", () => {
     it("should confirm that the head of messageQueue is removed and stored as the tail of dqList", () => {
         // Arrange
@@ -25,11 +58,11 @@ describe("dequeue", () => {
         const _task2 = new task(234, 432);
         const _messageQueue = new queue;
         const _dqList = new queue;
-
-        // Act
         enqueue(_messageQueue, _task1); 
         enqueue(_messageQueue, _task2);
         expect(_messageQueue.head.task.id).toBe(123); // head of messageQueue should be 123
+
+        // Act
         dequeue(_messageQueue, _dqList);            
 
         // Assert
@@ -72,28 +105,30 @@ describe("acknowledge", () => {
     it("should return false if the dqList is empty", () => {
         // Arrange
         const _task1 = new task(123, 321);
-        const _messageQueue = new queue;
         const _dqList = new queue;
-        enqueue(_messageQueue, _task1);
-        dequeue(_messageQueue, _dqList);
+        enqueue(_dqList, _task1);
 
         // Act
-        const result = acknowledge(_dqList, 321);
+        let result = acknowledge(_dqList, 123);
+        expect(result).toBe(true); // Task should be acknowledged
+        result = acknowledge(_dqList, 999); // Try to acknowledge again
 
         // Assert
-        expect(result).toBe(false);
+        expect(result).toBe(null); // dqList should be empty
     });
 });
 
-// ########################################################## Not done:
 describe("requeue", () => {
     it("should requeue a task from dqList to the head of messageQueue", () => {
         // Arrange
         const _task1 = new task(123, 321);
+        const _task2 = new task(234, 432);
         const _dqList = new queue;
         const _messageQueue = new queue;
-
-        enqueue(_dqList, _task1);
+        enqueue(_messageQueue, _task1);
+        enqueue(_messageQueue, _task2);
+        dequeue(_messageQueue, _dqList); // Move task1 to messageQueue
+        expect(_messageQueue.head.task.id).toBe(234); // head of messageQueue should be 123
 
         // Act
         const result = requeue(_dqList, _messageQueue, 123);
@@ -104,7 +139,7 @@ describe("requeue", () => {
         expect(_dqList.head).toBe(null); // dqList should be empty
     });
 
-    it("should return false if the task is not found in dqList", () => {
+    it("should return null if the task is not found in dqList", () => {
         // Arrange
         const _dqList = new queue;
         const _messageQueue = new queue;
@@ -113,7 +148,7 @@ describe("requeue", () => {
         const result = requeue(_dqList, _messageQueue, 999);
 
         // Assert
-        expect(result).toBe(false);
+        expect(result).toBe(null);
     });
 });
 
@@ -123,20 +158,17 @@ describe("checkExperationTime", () => {
         const _task1 = new task(123, 321);
         const _dqList = new queue;
         const _messageQueue = new queue;
-        const expiredNode = new node(_task1);
-
-        expiredNode.timeStamp = Date.now() - 120000; // Set timestamp to 2 minutes ago
-        expiredNode.experationTime = Date.now();
-        _dqList.head = expiredNode;
-        _dqList.tail = expiredNode;
+        enqueue(_messageQueue, _task1);
+        dequeue(_messageQueue, _dqList); // Move task1 to _dqList
+        _dqList.tail.timeStamp -= 120000; // offset the timestamp to be 2 minutes in the past
 
         // Act
         const result = checkExperationTime(_dqList, _messageQueue);
 
         // Assert
         expect(result).toBe(true);
-        expect(_messageQueue.head.task.id).toBe(123);
         expect(_dqList.head).toBe(null); // dqList should be empty
+        expect(_messageQueue.head.task.id).toBe(123); // Task should be requeued
     });
 
     it("should return false if no task has reached its expiration time", () => {
@@ -144,19 +176,30 @@ describe("checkExperationTime", () => {
         const _task1 = new task(123, 321);
         const _dqList = new queue;
         const _messageQueue = new queue;
-        const nonExpiredNode = new node(_task1);
-
-        nonExpiredNode.timeStamp = Date.now();
-        nonExpiredNode.experationTime = Date.now() + 120000; // Set expiration time to 2 minutes later
-        _dqList.head = nonExpiredNode;
-        _dqList.tail = nonExpiredNode;
+        enqueue(_messageQueue, _task1);
+        dequeue(_messageQueue, _dqList); // Move task1 to _dqList
 
         // Act
         const result = checkExperationTime(_dqList, _messageQueue);
 
         // Assert
         expect(result).toBe(false);
-        expect(_messageQueue.head).toBe(null); // messageQueue should remain empty
+        expect(_dqList.head.task.id).toBe(123); // Task should still be in dqList
+
+    });
+
+    it("should return null if dqList is empty", () => {
+        // Arrange
+        const _dqList = new queue;
+        const _messageQueue = new queue;
+
+        // Act
+        const result = checkExperationTime(_dqList, _messageQueue);
+
+        // Assert
+        expect(result).toBe(null);
     });
 });
+
+
 
