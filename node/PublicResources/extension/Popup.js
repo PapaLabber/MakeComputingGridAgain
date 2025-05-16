@@ -23,20 +23,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const loginFormContainer = document.getElementById('login-form-container');
     const buttonContainer = document.getElementById('button-container');
     const logoutContainer = document.getElementById('logout-container');
+    const statContainer = document.getElementById('stat-container');
 
     // Check if the user is already logged in
     if (!localStorage.getItem('jwt') || !username) {
-        handleLoginForm(username, loginFormContainer, buttonContainer, logoutContainer);
+        handleLoginForm(username, loginFormContainer, buttonContainer, logoutContainer, statContainer);
     } else {
         handleButtonContainer(username, loginFormContainer, buttonContainer, logoutContainer);
+        injectStats(statContainer);
     }
 });
 
 // function for login form handling
-function handleLoginForm(username, loginFormContainer, buttonContainer, logoutContainer) {
+function handleLoginForm(username, loginFormContainer, buttonContainer, logoutContainer, statContainer) {
     // Hide the buttons
     buttonContainer.style.display = 'none';
+    statContainer.style.display = 'none';
     logoutContainer.style.display = 'none';
+    
 
     // Show the login form
     loginFormContainer.style.display = 'block';
@@ -110,7 +114,7 @@ function handleButtonContainer(username, loginFormContainer, buttonContainer, lo
     buttonContainer.innerHTML = `
         <p id="username-display">Hello, <span id="username">${username}</span>!</p>
         <button id="request-task-btn" class="w3-button w3-green w3-large" style="width: 100%;">Earn Points Now!</button><br>
-        <button id="user-profile-btn" class="w3-button w3-blue w3-large" style="width: 100%;">User Profile</button><br>
+        <button id="user-profile-btn" class="w3-button w3-blue w3-large" style="width: 100%;">Leaderboard</button><br>
         <button id="rewards-btn" class="w3-button w3-teal w3-large" style="width: 100%;">Rewards</button><br>
         <button id="home-btn" class="w3-button w3-orange w3-large" style="width: 100%;">Home</button><br>
     `;
@@ -215,6 +219,11 @@ export function requestTask() {
                 return false;
             }
 
+            const currentTaskElement = document.getElementById('current-task');
+            if (currentTaskElement) {
+                currentTaskElement.innerHTML = `M<sub>${newTask.taskData}</sub>`;
+            }
+
             console.log('(taskOverview) New task received:', newTask.taskData);
 
             try {
@@ -291,36 +300,14 @@ function getUserPoints(username) {
         })
 }
 
-// Display tasks in the UI
-function displayCurrentTask(tasks) {
-    const taskContainer = document.getElementById('task-container');
-    taskContainer.innerHTML = ''; // Clear any previous content
+function injectStats(statContainer) {
+    statContainer.style.display = 'block';
+   
+    statContainer.innerHTML = `
+    <p class="section-title">🔢 Total Points: <span id="points">0</span></p>
 
-    // Ensure tasks is an array
-    if (!Array.isArray(tasks)) {
-        console.error('Invalid tasks data:', tasks);
-        taskContainer.innerHTML = '<p>Error: Unable to load tasks.</p>';
-        return;
-    }
-
-    // Filter tasks by their status
-    const completedTasks = tasks.filter(task => task.status && task.status.toLowerCase() === 'completed');
-    const currentTask = tasks.find(task => task.status && task.status.toLowerCase() === 'in progress');
-
-    // Generate HTML for completed tasks
-    const completedList = completedTasks.length
-        ? '<ul>' + completedTasks.map(task => `<li>${task.exponent}</li>`).join('') + '</ul>'
-        : '<p>No completed tasks yet!</p>';
-
-    // Generate HTML for the current task
-    const currentTaskDisplay = currentTask
-        ? `<p>Currently working on: <strong>${currentTask.exponent}</strong></p>`
-        : '<p>No current task in progress.</p>';
-
-    // Update the task container with the generated HTML
-    taskContainer.innerHTML += `<h3>✅ Completed Tasks:</h3>${completedList}`;
-    taskContainer.innerHTML += `<h3>🔄 Current Task:</h3>${currentTaskDisplay}`;
+    <p class="section-title">🔄 Current Task: <span id="current-task">Loading current task...</span></p>`;
+    return;
 }
-
 
 
