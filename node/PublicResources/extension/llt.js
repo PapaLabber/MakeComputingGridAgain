@@ -1,6 +1,6 @@
 // since JS doesn't support sqrt for BigInt, we use:
 function newtonRaphsonMethod(n, x0) {    // Newton-Raphson method for square root approximation
-    const x1 = ((n / x0) + x0) >> 1n;    // division by 2 (using bitwise right shift)
+    const x1 = ((n / x0) + x0) >> 1n;    // division by 2^1n = 2 (using bitwise right shift)
     if (x0 === x1 || x0 === (x1 - 1n)) { // checking if approximation is close enough
         return x0;                       // if so, return the approximation
     }
@@ -16,10 +16,14 @@ function sqrt(value) {                     // actual sqrt function
     return newtonRaphsonMethod(value, 1n); // otherwise, use NRM for sqrt
 }
 
+function isEven(number) {      // function to check if a number is even
+    return number % 2n === 0n; // using modulus 2
+}
+
 function isPrime(p) {                          // function to check if a number is prime (using trial division)
     if (p == 2n) {                             // 2 is prime
         return true;                           // so return true
-    } else if (p <= 1n || p % 2n === 0n) {     // even numbers and numbers leq 1 are not prime
+    } else if (p <= 1n || isEven(p)) {         // even numbers and numbers >= 1 are not prime
         return false;                          // so return false
     } else {
         let root_p = sqrt(p);                  // calculate the square root of p using sqrt function
@@ -31,13 +35,9 @@ function isPrime(p) {                          // function to check if a number 
     }
 }
 
-function calculatePerfectNumber(p) {            // calculate the perfect number 2^(p-1) * (2^p - 1)
+function calculatePerfectNumber(p) {            // calculate the perfect number 2^(p - 1) * (2^p - 1)
     return ((1n << p) - 1n) * (1n << (p - 1n)); // return the perfect number (using bitwise left shift)
 }                                               // no validations needed (we did that already)
-
-function isEven(number) {      // function to check if a number is even
-    return number % 2n === 0n; // using modulus 2
-}
 
 function isMersennePrime(p) {           // function to check if a number is a Mersenne prime
     if (!isPrime(p))                    // check if p is prime first (using isPrime function)
@@ -54,6 +54,8 @@ function isMersennePrime(p) {           // function to check if a number is a Me
         return s === 0n;                // if s == 0, m_p is a Mersenne prime
     }                                   // 2^p - 1 is prime if and only if p is prime and 2^p - 1 is prime
 }
+
+// ACTUAL FUNCTION WE MIGHT USE (which checks one number at a time)
 console.log("-------------------------"); // log separator
 
 export function realLLT(testedExponent) {
@@ -89,7 +91,7 @@ export function realLLT(testedExponent) {
     } else { // If the result isn't prime the user is awarded with 10 points.
         resultObject.points = 10;
     }
-
+    
     console.log(`... Took: ${Date.now() - timer} ms`); // end timer
     console.log(`M_${testedExponent} checked :)`)      // log checked exponent
     console.log("-------------------------");          // log separator
