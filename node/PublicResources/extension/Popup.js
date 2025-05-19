@@ -60,7 +60,7 @@ function handleLoginForm(username, loginFormContainer, buttonContainer, logoutCo
 
     // Add event listener for the login form submission
     loginFormContainer.addEventListener('submit', function (event) {
-        event.preventDefault(); // TODO: necessary???
+        event.preventDefault(); 
 
         const formUsername = document.getElementById('login-username').value;
         const formPassword = document.getElementById('login-password').value;
@@ -114,14 +114,14 @@ function handleButtonContainer(username, loginFormContainer, buttonContainer, lo
     buttonContainer.innerHTML = `
         <p id="username-display">Hello, <span id="username">${username}</span>!</p>
         <button id="request-task-btn" class="w3-button w3-green w3-large" style="width: 100%;">Earn Points Now!</button><br>
-        <button id="user-profile-btn" class="w3-button w3-blue w3-large" style="width: 100%;">Leaderboard</button><br>
+        <button id="leaderboard-btn" class="w3-button w3-blue w3-large" style="width: 100%;">Leaderboard</button><br>
         <button id="rewards-btn" class="w3-button w3-teal w3-large" style="width: 100%;">Rewards</button><br>
         <button id="home-btn" class="w3-button w3-orange w3-large" style="width: 100%;">Home</button><br>
     `;
 
     // Add event listeners for the buttons
     const requestTaskButton = document.getElementById('request-task-btn');
-    const userProfileButton = document.getElementById('user-profile-btn');
+    const leaderboardButton = document.getElementById('leaderboard-btn');
     const rewardsButton = document.getElementById('rewards-btn');
     const homeButton = document.getElementById('home-btn');
 
@@ -137,19 +137,9 @@ function handleButtonContainer(username, loginFormContainer, buttonContainer, lo
             }
         });
     }
-    if (userProfileButton) {
-        userProfileButton.addEventListener('click', function () {
-            const username = localStorage.getItem('username');
-            const jwt = localStorage.getItem('jwt');
-            const newWindow = window.open(`${baseURL}/leaderBoard.html`, '_blank');
-
-            // ############## Ensure the message is sent with the correct data ##############
-            if (newWindow) {
-                newWindow.postMessage({ username, jwt }, `https://cs-25-sw-2-13.p2datsw.cs.aau.dk`); // Replace '*' with the correct target origin if possible
-                console.log('Message sent:', { username, jwt });
-            } else {
-                console.error('Failed to open the new window.');
-            }
+    if (leaderboardButton) {
+        leaderboardButton.addEventListener('click', function () {
+            window.open(`${baseURL}/leaderBoard.html`, '_blank');
         });
     }
     if (rewardsButton) {
