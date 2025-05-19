@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'; // Import jsonwebtoken for token generation and 
 import { sendJsonResponse } from './server.js'; // Import helper functions
 import { fileURLToPath } from 'url'; // Import fileURLToPath for ES modules
 import { dequeue, messageQueue, dqList, acknowledge } from './TaskBroker.js'; // Import dequeue function
-import { registerUserToDB, storeResultsInDB, dbConnection, fillLeaderBoard, pointAdder, checkLoginInfo, showUserPoints } from './DatabaseOperation.js';
+import { registerUserToDB, storeResultsInDB, fillLeaderBoard, pointAdder, checkLoginInfo, showUserPoints, getDbConnection } from './DatabaseOperation.js';
 
 const __filename = fileURLToPath(import.meta.url); // Get the current file path
 const __dirname = path.dirname(__filename); // Get the directory name of the current file
@@ -44,6 +44,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     (async () => {
                         try {
                             // Fetch the user profile from the database
+                            const dbConnection = await getDbConnection();
                             const userData = await fillLeaderBoard(dbConnection);
 
                             if (!userData || userData.length === 0) {
@@ -70,6 +71,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                         try {
                             // Fetch completed tasks for the user from the database
+                            const dbConnection = await getDbConnection();
                             const userPoints = await showUserPoints(dbConnection, username);
 
                             if (!userPoints || userPoints.length === 0) {
@@ -180,6 +182,7 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                                 return sendJsonResponse(res, 400, { message: 'Username and password is required.' });
                             }
   
+                            const dbConnection = await getDbConnection();
                             const isValidLogin = await checkLoginInfo(dbConnection, username, password);
 
                             if (isValidLogin) {

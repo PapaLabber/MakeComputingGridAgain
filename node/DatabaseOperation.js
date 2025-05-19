@@ -1,15 +1,11 @@
 // Database operations. Handles communication with the database.
 
-// Exports
-export { registerUserToDB, storeResultsInDB, getUserProfile, fillLeaderBoard, pointAdder, getUserResults, showUserPoints, checkLoginInfo, dbConnection };
-
 // Imports
 import bcrypt from 'bcrypt';
-import { get } from 'http';
 import mysql from 'mysql2/promise';
 
 // Create a connection to the database
-async function initializeConnection() {
+export async function getDbConnection() {
     return await mysql.createConnection({
         host: 'localhost',
         user: 'cs-25-sw-2-13@student.aau.dk',
@@ -19,11 +15,8 @@ async function initializeConnection() {
 }
 
 
-// Initialize the connection
-const dbConnection = await initializeConnection();
-
 // Function to hash the password and insert a new user into the database
-async function registerUserToDB(dbConnection, userEmail, username, password) { // Function is async, because it involves asynchronous operations,
+export async function registerUserToDB(dbConnection, userEmail, username, password) { // Function is async, because it involves asynchronous operations,
     try {                                                                                     // such as password hashing and database interactions
         // Hash the password using bcrypt
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -46,7 +39,7 @@ async function registerUserToDB(dbConnection, userEmail, username, password) { /
 }
 
 // Function to store results in the database
-async function storeResultsInDB(dbConnection, primeComputed, username, resultIsPrime, isEven, points) {
+export async function storeResultsInDB(dbConnection, primeComputed, username, resultIsPrime, isEven, points) {
     try {
         const values = [primeComputed, username, resultIsPrime, isEven, points]; // Values being stored in the list.
 
@@ -78,7 +71,7 @@ async function storeResultsInDB(dbConnection, primeComputed, username, resultIsP
 }
 
 // Function that fetches information about the userprofile to display it
-async function getUserProfile(dbConnection, username) {
+export async function getUserProfile(dbConnection, username) {
     try {
         const [rows] = await dbConnection.execute(              // Select query. This selects the column that matches
             `SELECT * FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.
@@ -99,7 +92,7 @@ async function getUserProfile(dbConnection, username) {
     }
 }
 
-async function pointAdder(dbConnection, username, points) {
+export async function pointAdder(dbConnection, username, points) {
     try {
         let pointIncrementer =+ points; // Updates the users points based on what the result of the computation is.
         await dbConnection.execute(
@@ -113,7 +106,7 @@ async function pointAdder(dbConnection, username, points) {
     }
 }
 
-async function getUserResults(dbConnection, username) {
+export async function getUserResults(dbConnection, username) {
     try {
         const [rows] = await dbConnection.execute(
             `SELECT exponent, is_mersenne_prime, is_even, points_worth 
@@ -135,7 +128,7 @@ async function getUserResults(dbConnection, username) {
     }
 }
 
-async function fillLeaderBoard(dbConnection) {
+export async function fillLeaderBoard(dbConnection) {
     try {
         const [rows] = await dbConnection.execute(
             `SELECT exponent, is_mersenne_prime, is_even, points_worth, found_by_user 
@@ -155,7 +148,7 @@ async function fillLeaderBoard(dbConnection) {
     }
 }
 
-async function showUserPoints(dbConnection, username) {
+export async function showUserPoints(dbConnection, username) {
     try {
         const [rows] = await dbConnection.execute(
             `SELECT points 
@@ -179,7 +172,7 @@ async function showUserPoints(dbConnection, username) {
 
 
 // Function that checks if the username and password given by a user on the login page matches something in the database.
-async function checkLoginInfo(dbConnection, username, password) {
+export async function checkLoginInfo(dbConnection, username, password) {
     try {
            const [rows] = await dbConnection.execute(              // Select query. This selects the column that matches
             `SELECT password FROM users WHERE username = ?`, [username] // both the username and password provided and stores it in an array.

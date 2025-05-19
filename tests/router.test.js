@@ -4,14 +4,15 @@ import * as router from '../node/router.js';
 
 // --- MOCK DEPENDENCIES ---
 // Mock all external modules used by router.js to isolate tests from real DB, broker, and server logic
+
 vi.mock('../node/DatabaseOperation.js', () => ({
-  fillLeaderBoard: vi.fn(async () => [{ username: 'test', points: 100 }]), // fillLeaderBoard returns a static leaderboard array
-  showUserPoints: vi.fn(async () => [{ points: 42 }]), // showUserPoints returns a static points array
-  checkLoginInfo: vi.fn(async (db, user, pass) => user === 'valid' && pass === 'pass'), // checkLoginInfo only returns true for a specific valid user/pass
+  fillLeaderBoard: vi.fn(async (db = mockDbConnection) => [{ username: 'test', points: 100 }]), // fillLeaderBoard returns a static leaderboard array
+  showUserPoints: vi.fn(async (db = mockDbConnection) => [{ points: 42 }]), // showUserPoints returns a static points array
+  checkLoginInfo: vi.fn(async (db = mockDbConnection, user, pass) => user === 'valid' && pass === 'pass'), // checkLoginInfo only returns true for a specific valid user/pass
   registerUserToDB: vi.fn(() => true), // registerUserToDB always succeeds
   storeResultsInDB: vi.fn(), // storeResultsInDB and pointAdder are dummies
   pointAdder: vi.fn(),
-  dbConnection: {}, // dummy DB connection
+  dbConnection: { execute: vi.fn() }, // dummy DB connection (mocked in tests, not imported from DatabaseOperation.js)
 }));
 vi.mock('../node/TaskBroker.js', () => ({
   dequeue: vi.fn(() => ({ id: 1, taskData: 'data' })), // dequeue always returns a dummy task
