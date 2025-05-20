@@ -3,8 +3,6 @@ import{ baseURL } from './config.js'
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     const tableBody = document.querySelector('.w3-table-all tbody');
-    const leaderboardElement = document.getElementById('leaderboard');
-    // const pointsElement = document.getElementById('points');
 
     // Fetch user profile data
     fetch(`${baseURL}/node/fillLeaderBoard`, {
