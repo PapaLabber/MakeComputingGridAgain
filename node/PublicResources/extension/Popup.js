@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // function for login form handling
-function handleLoginForm(username, loginFormContainer, buttonContainer, logoutContainer, statContainer) {
+export function handleLoginForm(username, loginFormContainer, buttonContainer, logoutContainer, statContainer) {
     // Hide the buttons
     buttonContainer.style.display = 'none';
     statContainer.style.display = 'none';
@@ -103,7 +103,7 @@ function handleLoginForm(username, loginFormContainer, buttonContainer, logoutCo
 
 
 // function for button handling
-function handleButtonContainer(username, loginFormContainer, buttonContainer, logoutContainer) {
+export function handleButtonContainer(username, loginFormContainer, buttonContainer, logoutContainer) {
     // Hide the login form
     loginFormContainer.style.display = 'none';
 
@@ -183,7 +183,7 @@ function handleButtonContainer(username, loginFormContainer, buttonContainer, lo
     }
 }
 
-function switchState(newState, requestTaskButton) {
+export function switchState(newState, requestTaskButton) {
     currentState = newState;
     console.log(`State changed to: ${currentState}`);
 
@@ -194,6 +194,7 @@ function switchState(newState, requestTaskButton) {
         requestTaskButton.classList.add('w3-red');
 
         // Start the task loop
+        const username = localStorage.getItem('username');
         requestTask(username);
     } else if (currentState === state.IDLE) {
         // Revert button to idle state
@@ -244,7 +245,7 @@ export function requestTask() {
 }
 
 // Send the completed task result to the server
-function clientTaskDone(result) {
+export function clientTaskDone(result) {
     const username = localStorage.getItem('username');
     // Convert BigInt properties to strings before sending
     result.exponent = result.exponent.toString();
@@ -277,7 +278,7 @@ function clientTaskDone(result) {
 }
 
 // Fetch completed tasks for a specific user
-function getUserPoints(username) {
+export function getUserPoints(username) {
     username = localStorage.getItem('username');
     fetch(`${baseURL}/node/users-tasks?username=${username}`, {
         method: 'GET',
@@ -300,7 +301,7 @@ function getUserPoints(username) {
         })
 }
 
-function injectStats(statContainer) {
+export function injectStats(statContainer) {
     statContainer.style.display = 'block';
    
     statContainer.innerHTML = `

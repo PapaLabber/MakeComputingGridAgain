@@ -29,6 +29,7 @@
     "ws": "^8.18.1"
   },
   "devDependencies": {
+    "jsdom": "^26.1.0",
     "vitest": "^3.1.3"
   }
 }

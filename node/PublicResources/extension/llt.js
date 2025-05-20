@@ -1,26 +1,27 @@
 // since JS doesn't support sqrt for BigInt, we use:
-function newtonRaphsonMethod(n, x0) {    // Newton-Raphson method for square root approximation
-    const x1 = ((n / x0) + x0) >> 1n;    // division by 2^1n = 2 (using bitwise right shift)
-    if (x0 === x1 || x0 === (x1 - 1n)) { // checking if approximation is close enough
-        return x0;                       // if so, return the approximation
-    }
-    return newtonRaphsonMethod(n, x1);   // recursive call with new approximation
+export function newtonRaphsonMethod(n, x = n / 2n + 1n) {
+  const next = (x + n / x) >> 1n; // Integer division by 2
+  if (next === x || next === x - 1n) {
+    // Converged: next guess is the same or one less than previous
+    return next * next > n ? next - 1n : next;
+  }
+  return newtonRaphsonMethod(n, next); // Recurse with improved guess
 }
 
-function sqrt(value) {                     // actual sqrt function
+export function sqrt(value) {                     // actual sqrt function
     if (value < 0n) {                      // check for negative numbers
         throw 'Taking the square of negative numbers (<0) is not supported.'
     } else if (value < 2n) {               // because sqrt(0) = 0 and sqrt(1) = 1, if value = 0 or 1
         return value;                      // return 0 or 1 (value itself)
     }
-    return newtonRaphsonMethod(value, 1n); // otherwise, use NRM for sqrt
+    return newtonRaphsonMethod(value); // otherwise, use NRM for sqrt
 }
 
-function isEven(number) {      // function to check if a number is even
+export function isEven(number) {      // function to check if a number is even
     return number % 2n === 0n; // using modulus 2
 }
 
-function isPrime(p) {                          // function to check if a number is prime (using trial division)
+export function isPrime(p) {                          // function to check if a number is prime (using trial division)
     if (p == 2n) {                             // 2 is prime
         return true;                           // so return true
     } else if (p <= 1n || isEven(p)) {         // even numbers and numbers >= 1 are not prime
@@ -35,11 +36,11 @@ function isPrime(p) {                          // function to check if a number 
     }
 }
 
-function calculatePerfectNumber(p) {            // calculate the perfect number 2^(p - 1) * (2^p - 1)
+export function calculatePerfectNumber(p) {            // calculate the perfect number 2^(p - 1) * (2^p - 1)
     return ((1n << p) - 1n) * (1n << (p - 1n)); // return the perfect number (using bitwise left shift)
 }                                               // no validations needed (we did that already)
 
-function isMersennePrime(p) {           // function to check if a number is a Mersenne prime
+export function isMersennePrime(p) {           // function to check if a number is a Mersenne prime
     if (!isPrime(p))                    // check if p is prime first (using isPrime function)
         return false;                   // if p is not prime, m_p is not a mersenne prime
 
