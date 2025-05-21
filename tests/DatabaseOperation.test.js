@@ -310,6 +310,3 @@ describe('checkLoginInfo', () => {
     expect(result).toBe(false); // Should return false on error
   });
 });
-
-
-

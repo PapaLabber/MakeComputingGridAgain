@@ -44,9 +44,7 @@ describe('leaderBoard.js', () => {
 
     // Act: import the script (triggers DOMContentLoaded logic)
     await import('../node/PublicResources/webpages/leaderBoard.js');
-    // Manually trigger DOMContentLoaded for the script
     document.dispatchEvent(new Event('DOMContentLoaded'));
-    // Wait for all microtasks and .then() chains to complete
     await new Promise(resolve => setTimeout(resolve, 0));
 
     // Assert: check that the table contains the rendered data
@@ -64,31 +62,37 @@ describe('leaderBoard.js', () => {
   });
 
   it('shows message if no leaderboard data', async () => {
+    // Arrange:
     global.fetch = vi.fn(() => Promise.resolve({
       ok: true,
       json: () => Promise.resolve([])
     }));
-    await import('../node/PublicResources/webpages/leaderBoard.js');
-    document.dispatchEvent(new Event('DOMContentLoaded'));
-    await new Promise(resolve => setTimeout(resolve, 0));
-    const tableBody = document.querySelector('.w3-table-all tbody');
-    // Debug output for troubleshooting
-    // console.log('tableBody.innerHTML:', tableBody.innerHTML);
-    expect(tableBody.innerHTML).toContain('No tasks found.');
+
+    // Act:
+    await import('../node/PublicResources/webpages/leaderBoard.js'); // Loads and runs the leaderboard logic
+    document.dispatchEvent(new Event('DOMContentLoaded')); // Simulates the page load event
+    await new Promise(resolve => setTimeout(resolve, 0)); // Ensures all async code and .then() chains complete
+
+    // Assert: 
+    const tableBody = document.querySelector('.w3-table-all tbody'); // Selects the leaderboard table body
+    expect(tableBody.innerHTML).toContain('No tasks found.'); // Checks for the empty state message
   });
 
   it('handles fetch error gracefully', async () => {
-    global.fetch = vi.fn(() => Promise.reject(new Error('fail')));
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const alertMock = vi.fn();
-    global.alert = alertMock;
-    await import('../node/PublicResources/webpages/leaderBoard.js');
-    document.dispatchEvent(new Event('DOMContentLoaded'));
-    await new Promise(resolve => setTimeout(resolve, 0));
-    // Debug output for troubleshooting
-    // console.log(errorSpy.mock.calls);
-    expect(errorSpy).toHaveBeenCalled();
-    expect(alertMock).toHaveBeenCalledWith('Failed to fetch user profile.');
-    errorSpy.mockRestore();
+    // Arrange:
+    global.fetch = vi.fn(() => Promise.reject(new Error('fail'))); // Simulates fetch failure
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {}); // Prevents error output in test logs
+    const alertMock = vi.fn(); // Mock alert to capture calls
+    global.alert = alertMock; // Replace global alert with mock
+
+    // Act:
+    await import('../node/PublicResources/webpages/leaderBoard.js'); // Loads and runs the leaderboard logic
+    document.dispatchEvent(new Event('DOMContentLoaded')); // Simulates the page load event
+    await new Promise(resolve => setTimeout(resolve, 0)); // Ensures all async code and .then() chains complete
+
+    // Assert:
+    expect(errorSpy).toHaveBeenCalled(); // Checks that console.error was called
+    expect(alertMock).toHaveBeenCalledWith('Failed to fetch user profile.'); // Checks that alert was shown with the correct message
+    errorSpy.mockRestore(); // Restore original console.error
   });
 });
