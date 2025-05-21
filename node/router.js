@@ -11,6 +11,8 @@ const __dirname = path.dirname(__filename); // Get the directory name of the cur
 
 const SECRET_KEY = 'your_secret_key'; // Replace with a secure key
 
+const dbConnection = await getDbConnection();
+
 export function handleRoutes(req, res, hostname, PORT, users, tasks) {
     res.setHeader('Access-Control-Allow-Origin', 'chrome-extension://gfcplmcfadkdfogebjbjngfoiecmpmln');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -44,7 +46,6 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                     (async () => {
                         try {
                             // Fetch the user profile from the database
-                            const dbConnection = await getDbConnection();
                             const userData = await fillLeaderBoard(dbConnection);
 
                             if (!userData || userData.length === 0) {
@@ -71,7 +72,6 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
 
                         try {
                             // Fetch completed tasks for the user from the database
-                            const dbConnection = await getDbConnection();
                             const userPoints = await showUserPoints(dbConnection, username);
 
                             if (!userPoints || userPoints.length === 0) {
@@ -182,7 +182,6 @@ export function handleRoutes(req, res, hostname, PORT, users, tasks) {
                                 return sendJsonResponse(res, 400, { message: 'Username and password is required.' });
                             }
   
-                            const dbConnection = await getDbConnection();
                             const isValidLogin = await checkLoginInfo(dbConnection, username, password);
 
                             if (isValidLogin) {

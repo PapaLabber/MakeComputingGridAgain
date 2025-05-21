@@ -189,10 +189,9 @@ export function removeNode(queue, targetNode) {
 // Function to check if a task has reached its experation.
 export function checkExperationTime(dq, mq) {
     if (!dq.head || !dq.head.task) { // If queue empty
-        console.log("Dequeue list is empty");
         return null;
     }
-    
+
     if (dq.head.timeStamp + 120000 <= Date.now()) { // Check if the task has reached its expiration time (120000 ms = 2 minutes)
         console.log(`${dq.head.task.id} has reached it's experation time and will be requeued`); // Let the server know that it has been expired.
         requeue(dq, mq, dq.head.task.id); // Requeue the task using the requeue function.
